@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VelesServer", "VelesServer\VelesServer.csproj", "{3EDA24EC-4ACD-4942-865E-A3DB92B010B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VelesClient", "VelesClient\VelesClient.csproj", "{5130F37C-23FA-43C1-8276-A08DEA1233B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3EDA24EC-4ACD-4942-865E-A3DB92B010B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EDA24EC-4ACD-4942-865E-A3DB92B010B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EDA24EC-4ACD-4942-865E-A3DB92B010B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EDA24EC-4ACD-4942-865E-A3DB92B010B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5130F37C-23FA-43C1-8276-A08DEA1233B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5130F37C-23FA-43C1-8276-A08DEA1233B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5130F37C-23FA-43C1-8276-A08DEA1233B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5130F37C-23FA-43C1-8276-A08DEA1233B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

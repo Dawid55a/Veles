@@ -1,0 +1,32 @@
+version: '3'
+services:
+    veles_server:
+        build:
+            context: .
+            dockerfile: VelesServer/Dockerfile
+        env_file:
+            -   .env
+        image: mcr.microsoft.com/dotnet/sdk:6.0
+        networks:
+            - apps-network
+        depends_on:
+            -   postgres
+        
+    postgres:
+        image: postgres
+        restart: always
+        ports:
+            - "5432:5432"
+        env_file:
+            - .env
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - apps-network
+networks:
+    apps-network:
+        driver: bridge
+
+volumes:
+    postgres_data:
+        driver: local

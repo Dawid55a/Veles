@@ -1,0 +1,7 @@
+﻿# IDE setings 
+.vs
+.idea
+
+# .Net temorary files 
+obj
+bin
