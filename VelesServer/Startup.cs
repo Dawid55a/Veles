@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VelesServer.Hubs;
 using VelesServer.Data;
+using VelesServer.DataModels;
 
 namespace VelesServer
 {

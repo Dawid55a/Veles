@@ -5,22 +5,28 @@ services:
             context: .
             dockerfile: VelesServer/Dockerfile
         env_file:
-            -   .env
+            - .env
         image: mcr.microsoft.com/dotnet/sdk:6.0
-        network_mode: "host"
+        networks:
+            - veles_network
         depends_on:
-            -   postgres
+            - postgres
         
     postgres:
         image: postgres:14.2
         restart: always
         env_file:
-            -   .env
+            - .env
         ports:
             - "5432:5432"
         volumes:
             - postgres_data:/var/lib/postgresql/data
-
+        networks:
+            - veles_network
+networks:
+    veles_network:
+        driver: bridge
+        
 volumes:
     postgres_data:
         driver: local

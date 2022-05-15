@@ -1,4 +1,5 @@
 using System.Linq;
+using VelesServer.DataModels;
 using VelesServer.Models;
 
 namespace VelesServer.Data

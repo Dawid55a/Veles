@@ -10,6 +10,7 @@ using VelesServer.Hubs;
 using VelesServer.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Migrations.Operations;
+using VelesServer.DataModels;
 
 namespace VelesServer
 {
