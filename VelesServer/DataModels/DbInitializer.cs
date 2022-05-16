@@ -1,6 +1,6 @@
 using System.Linq;
 using VelesServer.DataModels;
-using VelesServer.Models;
+
 
 namespace VelesServer.Data
 {
@@ -16,9 +16,7 @@ namespace VelesServer.Data
 
             var users = new User[]
             {
-                new User {Email = "test@test1.pl", ID = 1, UserName = "Tom"},
-                new User {Email = "elisese@test2.pl", ID = 2, UserName = "Elise"},
-                new User {Email = "emi@test3.pl", ID = 3, UserName = "Emanuel"}
+                new User {Id = 1, Email = "mail@mail.com", Nick = "Tom", Avatar = "asaasasas", Password = "1234"},
             };
 
 

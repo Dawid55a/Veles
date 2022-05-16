@@ -1,4 +1,4 @@
-using VelesServer.Models;
+using VelesServer.DataModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace VelesServer.DataModels
@@ -9,15 +9,16 @@ namespace VelesServer.DataModels
         {
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Users> User { get; set; } //to change name
-        public DbSet<Groups> Groups { get; set; }
-        public DbSet<Messages> Messages { get; set; }
+        
+        public DbSet<User> Users { get; set; } //to change name
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<Group>().ToTable("Group");
         }
     }
 }

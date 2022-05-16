@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VelesClient", "VelesClient\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VelesServer", "VelesServer\VelesServer.csproj", "{F6949A3E-231D-4BF5-B69A-3D1C42D90731}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C0A8EA83-2B67-41ED-AEB9-D24CC72E56F4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{F6949A3E-231D-4BF5-B69A-3D1C42D90731}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6949A3E-231D-4BF5-B69A-3D1C42D90731}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6949A3E-231D-4BF5-B69A-3D1C42D90731}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C0A8EA83-2B67-41ED-AEB9-D24CC72E56F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C0A8EA83-2B67-41ED-AEB9-D24CC72E56F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C0A8EA83-2B67-41ED-AEB9-D24CC72E56F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C0A8EA83-2B67-41ED-AEB9-D24CC72E56F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
