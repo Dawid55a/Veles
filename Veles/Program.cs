@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Veles;
 
 var cs = "Host=localhost;Username=postgres;Password=postgres;Database=postgres";
 
@@ -22,7 +24,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<ChatDataContext>(
+    o => o.UseNpgsql(builder.Configuration.GetConnectionString("ChatDb")));
+
 var app = builder.Build();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -31,10 +37,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.Seed();
 
 app.Run();
