@@ -3,6 +3,7 @@ using VelesAPI.DbModels;
 
 namespace VelesAPI
 {
+    //Adding example data to database
     public static class DataSeeder
     {
         public static void Seed(this IHost host)
@@ -12,12 +13,11 @@ namespace VelesAPI
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             AddUser(context);
-            //var a = context.
         }
 
         private static void AddUser(ChatDataContext context)
         {
-            var user = context.Users.FirstOrDefault();
+            var user = context.Users.FirstOrDefault();//checks if there is any data
             if (user != null) return;
 
             var group1 = new Group { Name = "nowaki" };
