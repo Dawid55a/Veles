@@ -24,8 +24,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add database services to the container
 builder.Services.AddDbContext<ChatDataContext>(
-    o => o.UseNpgsql(builder.Configuration.GetConnectionString("ChatDb")));
+    o => o.UseNpgsql(builder.Configuration.GetConnectionString("ChatDb")));//takes connection string from Veles/appsettings.json
 
 var app = builder.Build();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -41,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Seed();
+app.Seed();//runs function Seed() from DataSeeder 
 
 app.Run();
