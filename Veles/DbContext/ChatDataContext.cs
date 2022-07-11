@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using VelesAPI.DbModels;
 
-namespace Veles
+namespace VelesAPI.DbContext
 {
-    public class ChatDataContext : DbContext 
+    public class ChatDataContext : Microsoft.EntityFrameworkCore.DbContext 
     {
         public ChatDataContext(DbContextOptions<ChatDataContext> options):
             base(options)

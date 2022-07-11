@@ -1,4 +1,4 @@
-﻿namespace Veles
+﻿namespace VelesAPI.DbModels
 {
     // Relation many to many between user and group
     public class UserGroup

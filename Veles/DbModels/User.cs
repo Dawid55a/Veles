@@ -1,4 +1,4 @@
-﻿namespace Veles
+﻿namespace VelesAPI.DbModels
 {
     public class User
     {

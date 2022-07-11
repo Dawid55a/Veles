@@ -1,4 +1,7 @@
-﻿namespace Veles
+﻿using VelesAPI.DbContext;
+using VelesAPI.DbModels;
+
+namespace VelesAPI
 {
     public static class DataSeeder
     {
@@ -32,7 +35,7 @@
             context.Messages.Add(new Message()
             {
                 Text = "Initial",
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
                 User = user1,
                 Group = group1,
             }) ;
