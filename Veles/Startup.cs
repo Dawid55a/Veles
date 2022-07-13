@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
+using VelesAPI.Hubs;
 
 namespace VelesAPI
 {
@@ -26,6 +27,7 @@ namespace VelesAPI
                     options.UseNpgsql(Configuration.GetConnectionString("ChatDb"));
                 });
 
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,6 +46,7 @@ namespace VelesAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
 
         }
