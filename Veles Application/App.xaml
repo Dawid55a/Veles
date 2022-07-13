@@ -2,8 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Veles_Application"
-             StartupUri="Views\MainWindow.xaml">
+             xmlns:views="clr-namespace:Veles_Application.Views"
+             xmlns:viewmodels="clr-namespace:Veles_Application.ViewModels"
+             Startup="Main">
     <Application.Resources>
-         
+        
     </Application.Resources>
 </Application>
