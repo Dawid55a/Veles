@@ -24,5 +24,9 @@ namespace Veles_Application
         {
             InitializeComponent();
         }
+
+        
+        //private Chat Instance;
+        
     }
 }
