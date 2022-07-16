@@ -1,10 +1,12 @@
-﻿namespace VelesAPI.DbModels
+﻿using VelesAPI.DbModels;
+
+namespace VelesAPI.DTOs
 {
-    public class Message
+    public class MessageDto
     {
         public int Id { get; set; }
         public string? Text { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedDate { get; set; }
         public User User { get; set; } = null!;
         public Group Group { get; set; } = null!;
     }

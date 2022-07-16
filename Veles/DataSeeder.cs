@@ -8,7 +8,7 @@ namespace VelesAPI
     {
         public static void Seed(this IHost host)
         {
-            using var scope = host.Services.CreateScope();  
+            using var scope = host.Services.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<ChatDataContext>();
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
@@ -30,7 +30,16 @@ namespace VelesAPI
 
                 Groups = new List<Group> { group1 }
             };
-            
+
+            var user2 = new User
+            {
+                Name = "Karol",
+                Email = "karol@k.pl",
+                Password = "1234",
+                Avatar = "https://www.karol.ma/avatar",
+
+                Groups = new List<Group> { group1 }
+            };
 
             context.Messages.Add(new Message()
             {
@@ -38,7 +47,7 @@ namespace VelesAPI
                 CreatedDate = DateTime.UtcNow,
                 User = user1,
                 Group = group1,
-            }) ;
+            });
 
             context.SaveChanges();
         }
