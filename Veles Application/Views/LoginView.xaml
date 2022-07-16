@@ -1,0 +1,67 @@
+﻿<Window x:Class="Veles_Application.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Veles_Application.Views"
+        xmlns:viewModel="clr-namespace:Veles_Application.ViewModels" 
+        xmlns:command="clr-namespace:Veles_Application.Commands"
+        
+        mc:Ignorable="d"
+        Title="LoginView" Height="450" Width="800">
+
+    <!-- Add view model -->
+    <Window.DataContext>
+        <viewModel:LoginViewModel/>
+    </Window.DataContext>
+    
+    <!-- Dodaje widocznosc potrzebne aby "zamknac okno" -->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityBool" />
+    </Window.Resources>
+
+    <!-- Zmieniamy widocznosc okna -->
+    <Window.Visibility>
+        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource VisibilityBool}"/>
+    </Window.Visibility>
+    
+    <Grid Background="White">
+
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="LOGIN" Grid.Row="0"  FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock  Text="Username" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Password" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+            <PasswordBox Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        </Grid>
+
+
+
+        <Button Command="{Binding LoginCommand}" Content="Login" Grid.Row="3"/>
+
+
+
+    </Grid>
+</Window>
