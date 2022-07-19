@@ -16,6 +16,7 @@ namespace Veles_Application
     {
         protected void Main(object sender, StartupEventArgs e)//Main
         {
+            /*
             var loginView = new LoginView();
             loginView.Show();//Show LoginView window
             loginView.IsVisibleChanged += (s, ev) =>
@@ -23,7 +24,10 @@ namespace Veles_Application
                   var mainView = new MainView();
                   mainView.Show();//Show MainView window
                   loginView.Close();//Close LoginView window
-              };
+              };*/
+
+            var tmp = new tmp();
+            tmp.Show();
         }
     }
 }

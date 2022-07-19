@@ -6,6 +6,8 @@
              xmlns:viewmodels="clr-namespace:Veles_Application.ViewModels"
              Startup="Main">
     <Application.Resources>
-        
+        <DataTemplate DataType="{x:Type viewmodels:GroupViewModel}">
+            <views:GroupView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>
