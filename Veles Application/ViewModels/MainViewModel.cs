@@ -1,62 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Veles_Application.Commands;
+using Veles_Application.Models;
 
 namespace Veles_Application.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private string _Text = null!;
-        private string _username = null!;// Thread.CurrentPrincipal.Identity.Name;
-        private string _message = null!;
+        public ObservableCollection<Group> GroupList { get; set; }
+        private ListBoxItem listBoxItem;
 
-        public string Text
+        public ListBoxItem ListBoxItem
         {
-            get { return _Text; }
-            set 
-            { 
-                _Text = value; 
-                OnPropertyChanged(nameof(Text));
+            get { return listBoxItem; }
+            set { listBoxItem = value; OnPropertyChanged(nameof(ListBoxItem)); }
+        }
+
+        //public BaseViewModel groupModel = new GroupViewModel();
+        public BaseViewModel midViewModel = new HomeViewModel();
+
+        public BaseViewModel MidViewModel
+        {
+            get { return midViewModel; }
+            set { 
+                midViewModel = value; 
+                OnPropertyChanged(nameof(MidViewModel));
             }
         }
 
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                _username = value;
-                OnPropertyChanged(nameof(Username));
-            }
-        }
-
-        public string Message
-        {
-            get { return _message; }
-            set 
-            {
-                _message = value;
-                OnPropertyChanged(nameof(Message));
-            }
-        }
-
-        public ICommand SendCommand { get; }
+        public ICommand ListBoxSelectedCommand { get; }
+        public ICommand ChangePanelCommand { get; }
 
         public MainViewModel()
         {
-            SendCommand = new ViewModelCommand(ExecuteLoginCommand);
+            GroupList = new ObservableCollection<Group>();
+            GroupList.Add(new Group("Jaga"));
+            GroupList.Add(new Group("Perun"));
+            GroupList.Add(new Group("Bies"));
+
+            ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
+            ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
         }
 
-        //write to text
-        private void ExecuteLoginCommand(object obj)
+        private void ExecutePanelChange(object parameter)
         {
-            Text += Username + ": " + Message + "\n" ;
-            Message = "";
+            if (parameter.ToString() == "Home")
+                MidViewModel = new HomeViewModel();
+            //else if (parameter.ToString() == "Options") needs implementation
+
+        }
+
+        private void ExecuteChangeGroup(object parameter)
+        {
+            //System.Diagnostics.Debug.WriteLine(ListBoxItem.Content.ToString());
+            MidViewModel = new ChatViewModel();
         }
     }
 }

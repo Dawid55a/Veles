@@ -10,25 +10,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-//using Veles_Application.ViewModels;
+using Veles_Application.Models;
+using Veles_Application.ViewModels;
 
-namespace Veles_Application
+namespace Veles_Application.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for tmp.xaml
     /// </summary>
     public partial class MainView : Window
     {
         public MainView()
         {
             InitializeComponent();
+
+            DataContext = new MainViewModel();
             
         }
 
-        
-        //private Chat Instance;
-        
     }
 }

@@ -26,8 +26,8 @@ namespace Veles_Application
                   loginView.Close();//Close LoginView window
               };*/
 
-            var tmp = new tmp();
-            tmp.Show();
+            var mainView = new MainView();
+            mainView.Show();
         }
     }
 }
