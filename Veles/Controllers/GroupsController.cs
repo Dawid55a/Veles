@@ -10,9 +10,7 @@ using VelesAPI.DbModels;
 
 namespace VelesAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GroupsController : ControllerBase
+    public class GroupsController : BaseApiController
     {
         private readonly ChatDataContext _context;
 

@@ -12,10 +12,9 @@ namespace VelesAPI.DbContext
         private readonly ChatDataContext _context;
         private readonly IMapper _mapper;
 
-        public ChatRepository(ChatDataContext context, IMapper mapper)
+        public ChatRepository(ChatDataContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public void AddUser(User user)
@@ -31,6 +30,7 @@ namespace VelesAPI.DbContext
         public void AddMessage(Message message)
         {
             _context.Messages.Add(message);
+            _context.SaveChangesAsync();
         }
 
         public void RemoveMessage(Message message)
@@ -47,8 +47,21 @@ namespace VelesAPI.DbContext
         {
             // TODO: Returns only first group
             var user = await _context.Users.FindAsync(id);
-            return await _context.Groups.FirstOrDefaultAsync(g => g.Id == user.Groups.ToList()[0].Id);
+            var Groups = await (from g in _context.Groups where g.Users.Any(u => u.Id == id) select g).ToListAsync();
+            return Groups[0];
         }
+
+        public async Task<IEnumerable<Group>> GetGroupsForUserTask(User user)
+        {
+            return await _context.Groups.Where(g => g.Users.Any(u => u.Id == user.Id)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Group>> GetGroupsForUserNameTask(string username)
+        {
+            var user = await _context.Users.FindAsync(username) ?? throw new InvalidOperationException();
+            return await _context.Groups.Where(g => g.Users.Any(u => u.Id == user.Id)).ToListAsync();
+        }
+
 
         public async Task<Group> GetGroup(int id)
         {
@@ -57,7 +70,7 @@ namespace VelesAPI.DbContext
 
         public async Task<User> GetUser(string name)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Name == name) ?? throw new InvalidOperationException();
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserName == name) ?? throw new InvalidOperationException();
         }
 
         public async Task<Group> GetGroup(string name)
@@ -65,11 +78,20 @@ namespace VelesAPI.DbContext
             return await _context.Groups.FirstOrDefaultAsync(g => g.Name == name) ?? throw new InvalidOperationException();
         }
 
-        public async Task<IEnumerable<MessageDto>> GetMessageThreadTask(Group g)
+        public Task<IEnumerable<Message>> GetMessageThreadForUserAndGroup(User user, Group group)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<IEnumerable<Message>>> MessageThreadsFromUsersGroups(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Message>> GetMessageThreadTask(Group g)
         {
             var messages = await _context.Messages
                 .Where(m => m.Group.Id == g.Id)
-                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
             return messages;
         }

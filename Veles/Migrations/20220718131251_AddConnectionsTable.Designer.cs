@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Veles;
 using VelesAPI.DbContext;
 
 #nullable disable
@@ -13,8 +12,8 @@ using VelesAPI.DbContext;
 namespace Veles.Migrations
 {
     [DbContext(typeof(ChatDataContext))]
-    [Migration("20220708070429_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20220718131251_AddConnectionsTable")]
+    partial class AddConnectionsTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +39,22 @@ namespace Veles.Migrations
                     b.ToTable("GroupUser");
                 });
 
-            modelBuilder.Entity("Veles.Group", b =>
+            modelBuilder.Entity("VelesAPI.DbModels.Connection", b =>
+                {
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ConnectionId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("Connections");
+                });
+
+            modelBuilder.Entity("VelesAPI.DbModels.Group", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,7 +71,7 @@ namespace Veles.Migrations
                     b.ToTable("Groups");
                 });
 
-            modelBuilder.Entity("Veles.Message", b =>
+            modelBuilder.Entity("VelesAPI.DbModels.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,7 +100,7 @@ namespace Veles.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("Veles.User", b =>
+            modelBuilder.Entity("VelesAPI.DbModels.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,28 +131,39 @@ namespace Veles.Migrations
 
             modelBuilder.Entity("GroupUser", b =>
                 {
-                    b.HasOne("Veles.Group", null)
+                    b.HasOne("VelesAPI.DbModels.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Veles.User", null)
+                    b.HasOne("VelesAPI.DbModels.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Veles.Message", b =>
+            modelBuilder.Entity("VelesAPI.DbModels.Connection", b =>
                 {
-                    b.HasOne("Veles.Group", "Group")
+                    b.HasOne("VelesAPI.DbModels.Group", "Group")
+                        .WithMany("Connections")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("VelesAPI.DbModels.Message", b =>
+                {
+                    b.HasOne("VelesAPI.DbModels.Group", "Group")
                         .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Veles.User", "User")
+                    b.HasOne("VelesAPI.DbModels.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,6 +172,11 @@ namespace Veles.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VelesAPI.DbModels.Group", b =>
+                {
+                    b.Navigation("Connections");
                 });
 #pragma warning restore 612, 618
         }

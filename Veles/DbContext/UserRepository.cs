@@ -8,17 +8,25 @@ namespace VelesAPI.DbContext
     public class UserRepository : IUserRepository
     {
         private readonly ChatDataContext _context;
-        private readonly IMapper _mapper;
 
-        public UserRepository(ChatDataContext context, IMapper mapper)
+        public UserRepository(ChatDataContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public void Update(User user)
         {
             _context.Entry(user).State = EntityState.Modified;
+        }
+
+        public async void AddUser(User user)
+        {
+            await _context.Users.AddAsync(user);
+        }
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync()
@@ -33,8 +41,7 @@ namespace VelesAPI.DbContext
 
         public async Task<User> GetUserByUsernameAsync(string username)
         {
-            return await _context.Users
-                .SingleOrDefaultAsync(x => x.Name == username);
+            return await _context!.Users!.SingleOrDefaultAsync(x => x.UserName == username) ;
         }
 
         public async Task<Group> GetGroupByNameTask(string groupName)

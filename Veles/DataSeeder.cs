@@ -23,9 +23,11 @@ namespace VelesAPI
             var group1 = new Group { Name = "nowaki" };
             var user1 = new User
             {
-                Name = "Adam3",
+                UserName = "Adam3",
                 Email = "a@da.m",
                 Password = "1234",
+                PasswordHash = BitConverter.GetBytes(1234),
+                PasswordSalt = BitConverter.GetBytes(1234),
                 Avatar = "https://www.adam.ma/avatar",
 
                 Groups = new List<Group> { group1 }
@@ -33,13 +35,17 @@ namespace VelesAPI
 
             var user2 = new User
             {
-                Name = "Karol",
+                UserName = "Karol",
                 Email = "karol@k.pl",
                 Password = "1234",
+                PasswordHash = BitConverter.GetBytes(1234),
+                PasswordSalt = BitConverter.GetBytes(1234),
                 Avatar = "https://www.karol.ma/avatar",
 
                 Groups = new List<Group> { group1 }
             };
+
+            context.Users.Add(user2);
 
             context.Messages.Add(new Message()
             {

@@ -15,8 +15,9 @@ namespace VelesAPI.DbContext
             modelBuilder.UseSerialColumns();
         }
 
-        public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Group> Groups { get; set; } = null!;
-        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<User> Users { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Connection> Connections { get; set; }
     }
 }

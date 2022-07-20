@@ -1,4 +1,5 @@
-﻿using VelesAPI.DbModels;
+﻿using System.Xml.Serialization;
+using VelesAPI.DbModels;
 using VelesAPI.DTOs;
 
 namespace VelesAPI.Interfaces
@@ -12,9 +13,12 @@ namespace VelesAPI.Interfaces
         Task<User> GetUser(int id);
         Task<Group> GetGroup(int id);
         Task<Group> GetGroupForUserId(int id);
+        Task<IEnumerable<Group>> GetGroupsForUserTask(User user);
+        Task<IEnumerable<Group>> GetGroupsForUserNameTask(string username);
         Task<User> GetUser(string name);
         Task<Group> GetGroup(string name);
-
-        Task<IEnumerable<MessageDto>> GetMessageThreadTask(Group g);
+        Task<IEnumerable<Message>> GetMessageThreadForUserAndGroup(User user, Group group);
+        Task<IEnumerable<IEnumerable<Message>>> MessageThreadsFromUsersGroups(User user);
+        Task<IEnumerable<Message>> GetMessageThreadTask(Group g);
     }
 }

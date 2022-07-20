@@ -9,6 +9,6 @@
         // Relation
         public ICollection<User> Users { get; set; } = null!;
 
-
+        public ICollection<Connection> Connections { get; set; } = null!;
     }
 }
