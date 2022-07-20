@@ -12,17 +12,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Veles_Application.Models;
 
 namespace Veles_Application.Views
 {
     /// <summary>
     /// Interaction logic for GroupView.xaml
     /// </summary>
-    public partial class GroupView : UserControl
+    public partial class GroupViewOld : UserControl
     {
-        public GroupView()
+        public GroupViewOld()
         {
+            
+
             InitializeComponent();
+            
         }
     }
 }

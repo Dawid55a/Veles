@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Veles_Application.Views
 {
     /// <summary>
-    /// Interaction logic for GroupView.xaml
+    /// Interaction logic for ChatView.xaml
     /// </summary>
-    public partial class GroupView : UserControl
+    public partial class ChatView : UserControl
     {
-        public GroupView()
+        public ChatView()
         {
             InitializeComponent();
         }

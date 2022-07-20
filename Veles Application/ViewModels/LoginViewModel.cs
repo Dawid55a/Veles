@@ -12,7 +12,7 @@ namespace Veles_Application.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        private string _username;
+        private string _username = null!;
         private string _password;
         private string _errorMessage;
         private bool _isViewVisible = true;

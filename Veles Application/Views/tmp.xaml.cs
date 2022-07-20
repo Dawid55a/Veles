@@ -26,6 +26,8 @@ namespace Veles_Application.Views
             InitializeComponent();
 
             DataContext = new TmpViewModel();
+            
         }
+
     }
 }

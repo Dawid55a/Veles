@@ -31,7 +31,7 @@ namespace Veles_Application.Commands
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return _canExecute == null ? true : _canExecute(parameter);
         }

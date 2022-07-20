@@ -9,5 +9,11 @@
         <DataTemplate DataType="{x:Type viewmodels:GroupViewModel}">
             <views:GroupView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ChatViewModel}">
+            <views:ChatView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
+            <views:HomeView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

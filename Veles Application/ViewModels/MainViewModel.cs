@@ -11,9 +11,9 @@ namespace Veles_Application.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private string _Text;
-        private string _username;// Thread.CurrentPrincipal.Identity.Name;
-        private string _message;
+        private string _Text = null!;
+        private string _username = null!;// Thread.CurrentPrincipal.Identity.Name;
+        private string _message = null!;
 
         public string Text
         {
