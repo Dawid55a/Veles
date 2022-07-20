@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using VelesAPI.Hubs;
 using Veles;
 using VelesAPI;
 using VelesAPI.DbContext;
@@ -23,10 +24,10 @@ namespace VelesAPI
 
             using var cmd = new NpgsqlCommand(sql, con);
 
-            var version = cmd.ExecuteScalar().ToString();
+            var version = cmd.ExecuteScalar()!.ToString();
             Debug.WriteLine($"PostgreSQL version: {version}");
 
-            app.Seed();
+            app.Seed(); //runs function Seed() from DataSeeder 
 
             app.Run();
         }
