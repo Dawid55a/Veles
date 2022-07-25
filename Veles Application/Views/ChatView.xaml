@@ -7,9 +7,7 @@
              xmlns:viewModel="clr-namespace:Veles_Application.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <viewModel:ChatViewModel/>
-    </UserControl.DataContext>
+    
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
@@ -39,8 +37,8 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0"/>
-            <Button Grid.Column="1" Content="Send"/>
+            <TextBox Grid.Column="0" Text="{Binding UserMessage}"/>
+            <Button Grid.Column="1" Content="Send" Command="{Binding SendMessageCommand}"/>
         </Grid>
     </Grid>
 </UserControl>

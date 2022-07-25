@@ -15,5 +15,7 @@
         <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
             <views:HomeView/>
         </DataTemplate>
+
+        
     </Application.Resources>
 </Application>

@@ -41,7 +41,7 @@
 
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding ListBoxSelectedCommand}" CommandParameter="{Binding ElementName=GroupList,Path=SelectedItem}"/>
+                        <i:InvokeCommandAction Command="{Binding ChangePanelCommand}" CommandParameter="{Binding ElementName=GroupList,Path=SelectedItem}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListView>

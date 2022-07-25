@@ -5,8 +5,10 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Veles_Application.Commands;
+using Veles_Application.Models;
 
 namespace Veles_Application.ViewModels
 {
@@ -70,8 +72,10 @@ namespace Veles_Application.ViewModels
         private void ExecuteLoginCommand(object obj)
         {
             //add authenticate
+
             Thread.CurrentPrincipal = new GenericPrincipal(
                 new GenericIdentity(Username), null);//przechwouje username w generycznej wątku nie wiem jak za bardzo to dziala, choc sie domyslam
+            
             IsViewVisible = false;//changes visibility to close LoginView
         }
     }
