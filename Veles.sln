@@ -4,11 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veles Application", "Veles Application\Veles Application.csproj", "{637E4EF3-4D4C-4193-A64E-55892A9630C9}"
-EndProject
-
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VelesAPI", "Veles\VelesAPI.csproj", "{7B991B28-2930-4CA5-A3CA-7A7ABFFDC95D}"
-
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veles Application", "Veles Application\Veles Application.csproj", "{637E4EF3-4D4C-4193-A64E-55892A9630C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

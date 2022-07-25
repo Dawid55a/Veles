@@ -1,31 +1,34 @@
-﻿using Microsoft.EntityFrameworkCore;
-using VelesAPI.DbContext;
+﻿using VelesAPI.Hubs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VelesAPI.Extensions;
 
 namespace VelesAPI
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationServices(_configuration);
+
             services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            //builder.Services.AddEndpointsApiExplorer();
-            //builder.Services.AddSwaggerGen();
+            services.AddSignalR(o =>
+            {
+                o.EnableDetailedErrors = true;
+            });
 
-            services.AddDbContext<ChatDataContext>(options =>
-                {
-                    options.UseNpgsql(Configuration.GetConnectionString("ChatDb"));
-                });
-
+            services.AddIdentityServices(_configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -38,12 +41,14 @@ namespace VelesAPI
                 //app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
-            
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
 
         }
