@@ -1,4 +1,4 @@
-﻿using VelesAPI.DbModels;
+﻿using VelesLibrary.DbModels;
 
 namespace VelesAPI.Interfaces
 {

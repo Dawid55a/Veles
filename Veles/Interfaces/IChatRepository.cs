@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
-using VelesAPI.DbModels;
-using VelesAPI.DTOs;
+using VelesLibrary.DTOs;
+using VelesLibrary.DbModels;
 
 namespace VelesAPI.Interfaces
 {
@@ -20,5 +20,9 @@ namespace VelesAPI.Interfaces
         Task<IEnumerable<Message>> GetMessageThreadForUserAndGroup(User user, Group group);
         Task<IEnumerable<IEnumerable<Message>>> MessageThreadsFromUsersGroups(User user);
         Task<IEnumerable<Message>> GetMessageThreadTask(Group g);
+        Task<Group> GetGroupForConnection(string connection);
+        void RemoveConnection(Connection connection);
+        Task<bool> SaveAllAsync();
+
     }
 }

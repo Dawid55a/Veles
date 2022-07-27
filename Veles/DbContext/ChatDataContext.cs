@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VelesAPI.DbModels;
+using VelesLibrary.DbModels;
 
 namespace VelesAPI.DbContext
 {

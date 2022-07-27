@@ -3,9 +3,9 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using VelesAPI.DbContext;
-using VelesAPI.DbModels;
-using VelesAPI.DTOs;
 using VelesAPI.Interfaces;
+using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace VelesAPI.Controllers
 {
@@ -24,7 +24,8 @@ namespace VelesAPI.Controllers
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await UserExists(registerDto.UserName)) return BadRequest("Username is taken");
-
+            HttpResponseMessage m;
+            
             using var hmac = new HMACSHA512();
 
             var user = new User()
@@ -33,8 +34,8 @@ namespace VelesAPI.Controllers
                 Password = registerDto.Password,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
                 PasswordSalt = hmac.Key,
-                Email = "test@test.test",
-                Avatar = "https://www.karol.ma/avatar"
+                Email = registerDto.Email,
+                Avatar = registerDto.Avatar
             };
 
             _userRepository.AddUser(user);
@@ -78,8 +79,8 @@ namespace VelesAPI.Controllers
         private async Task<bool> UserExists(string username)
         {
             var result = await _userRepository.GetUserByUsernameAsync(username);
-            return result != null ? true : false;
-        }
+            return result != null;
+        } 
 
     }
 }
