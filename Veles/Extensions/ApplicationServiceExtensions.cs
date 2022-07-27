@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using VelesAPI.DbContext;
+using VelesAPI.Helpers;
 using VelesAPI.Interfaces;
 using VelesAPI.Services;
 
@@ -15,7 +16,7 @@ namespace VelesAPI.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            //services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             //builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();

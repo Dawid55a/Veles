@@ -1,5 +1,6 @@
 ﻿using VelesAPI.DbContext;
-using VelesAPI.DbModels;
+using VelesLibrary.DTOs;
+using VelesLibrary.DbModels;
 
 namespace VelesAPI
 {

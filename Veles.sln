@@ -6,7 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VelesAPI", "Veles\VelesAPI.csproj", "{7B991B28-2930-4CA5-A3CA-7A7ABFFDC95D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veles Application", "Veles Application\Veles Application.csproj", "{637E4EF3-4D4C-4193-A64E-55892A9630C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veles Application", "Veles Application\Veles Application.csproj", "{637E4EF3-4D4C-4193-A64E-55892A9630C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VelesTests", "VelesTests\VelesTests.csproj", "{18F936AA-D0C1-41B0-912C-0D6966EB61EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VelesLibrary", "VelesLibrary\VelesLibrary.csproj", "{F50FBD4F-8C0C-4739-A6CD-B4C112A033F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +26,14 @@ Global
 		{637E4EF3-4D4C-4193-A64E-55892A9630C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{637E4EF3-4D4C-4193-A64E-55892A9630C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{637E4EF3-4D4C-4193-A64E-55892A9630C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F936AA-D0C1-41B0-912C-0D6966EB61EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F936AA-D0C1-41B0-912C-0D6966EB61EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F936AA-D0C1-41B0-912C-0D6966EB61EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F936AA-D0C1-41B0-912C-0D6966EB61EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50FBD4F-8C0C-4739-A6CD-B4C112A033F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50FBD4F-8C0C-4739-A6CD-B4C112A033F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50FBD4F-8C0C-4739-A6CD-B4C112A033F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50FBD4F-8C0C-4739-A6CD-B4C112A033F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

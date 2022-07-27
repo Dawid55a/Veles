@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
-using VelesAPI.DbModels;
+using VelesLibrary.DTOs;
+using VelesLibrary.DbModels;
 
 namespace VelesAPI.Controllers
 {

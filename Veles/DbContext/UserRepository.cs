@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using VelesAPI.DbModels;
+using VelesLibrary.DTOs;
+using VelesLibrary.DbModels;
 using VelesAPI.Interfaces;
 
 namespace VelesAPI.DbContext

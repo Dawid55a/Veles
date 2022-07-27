@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using VelesAPI.DbModels;
-using VelesAPI.DTOs;
+using VelesLibrary.DTOs;
+using VelesLibrary.DbModels;
 using VelesAPI.Interfaces;
 
 namespace VelesAPI.DbContext
@@ -94,6 +94,29 @@ namespace VelesAPI.DbContext
                 .Where(m => m.Group.Id == g.Id)
                 .ToListAsync();
             return messages;
+        }
+
+        public async Task<Group> GetGroupForConnection(string connection)
+        {
+            var query = await (from g in _context.Groups
+                join c in _context.Connections on g equals c.Group
+                where c.ConnectionId == connection
+                select c.Group).ToListAsync();
+            if (query.Count > 1)
+            {
+                throw new ArgumentOutOfRangeException("Returned more than one group! Should be one");
+            }
+            return query[0];
+        }
+
+        public void RemoveConnection(Connection connection)
+        {
+            _context.Connections.Remove(connection);
+        }
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
