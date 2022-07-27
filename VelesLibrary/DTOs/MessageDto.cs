@@ -1,6 +1,6 @@
-﻿using VelesAPI.DbModels;
+﻿using VelesLibrary.DbModels;
 
-namespace VelesAPI.DTOs
+namespace VelesLibrary.DTOs
 {
     public class MessageDto
     {

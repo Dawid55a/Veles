@@ -1,4 +1,4 @@
-﻿namespace VelesAPI.DbModels
+﻿namespace VelesLibrary.DbModels
 {
     public class Group
     {
