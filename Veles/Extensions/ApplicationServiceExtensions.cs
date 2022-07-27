@@ -27,7 +27,7 @@ namespace VelesAPI.Extensions
                 options.EnableDetailedErrors();
                 options.EnableSensitiveDataLogging();
             });
-
+            
             return services;
         }
         

@@ -5,15 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Veles;
 using VelesAPI.DbContext;
 
 #nullable disable
 
-namespace Veles.Migrations
+namespace VelesAPI.Migrations
 {
     [DbContext(typeof(ChatDataContext))]
-    [Migration("20220708070429_InitialMigration")]
+    [Migration("20220727211516_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +39,22 @@ namespace Veles.Migrations
                     b.ToTable("GroupUser");
                 });
 
-            modelBuilder.Entity("Veles.Group", b =>
+            modelBuilder.Entity("VelesLibrary.DbModels.Connection", b =>
+                {
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ConnectionId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("Connections");
+                });
+
+            modelBuilder.Entity("VelesLibrary.DbModels.Group", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,7 +62,7 @@ namespace Veles.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -57,7 +71,7 @@ namespace Veles.Migrations
                     b.ToTable("Groups");
                 });
 
-            modelBuilder.Entity("Veles.Message", b =>
+            modelBuilder.Entity("VelesLibrary.DbModels.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,7 +100,7 @@ namespace Veles.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("Veles.User", b =>
+            modelBuilder.Entity("VelesLibrary.DbModels.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,18 +109,25 @@ namespace Veles.Migrations
                     NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -117,28 +138,39 @@ namespace Veles.Migrations
 
             modelBuilder.Entity("GroupUser", b =>
                 {
-                    b.HasOne("Veles.Group", null)
+                    b.HasOne("VelesLibrary.DbModels.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Veles.User", null)
+                    b.HasOne("VelesLibrary.DbModels.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Veles.Message", b =>
+            modelBuilder.Entity("VelesLibrary.DbModels.Connection", b =>
                 {
-                    b.HasOne("Veles.Group", "Group")
+                    b.HasOne("VelesLibrary.DbModels.Group", "Group")
+                        .WithMany("Connections")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("VelesLibrary.DbModels.Message", b =>
+                {
+                    b.HasOne("VelesLibrary.DbModels.Group", "Group")
                         .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Veles.User", "User")
+                    b.HasOne("VelesLibrary.DbModels.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,6 +179,11 @@ namespace Veles.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VelesLibrary.DbModels.Group", b =>
+                {
+                    b.Navigation("Connections");
                 });
 #pragma warning restore 612, 618
         }
