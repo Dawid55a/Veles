@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -63,6 +66,29 @@ namespace Veles_Application.ViewModels
             LoginCommand = new ViewModelCommand(ExecuteLoginCommand, CanExecuteLoginCommand);//Check Commands/ViewModelCommand
         }
 
+        public static Task<HttpResponseMessage> GetCall(string url)
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                //string apiUrl = API_URIs.baseURI + url;
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.Timeout = TimeSpan.FromSeconds(900);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.GetAsync(url);
+                    response.Wait();
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         private bool CanExecuteLoginCommand(object obj)
         {
             //add validation 
@@ -75,8 +101,15 @@ namespace Veles_Application.ViewModels
 
             Thread.CurrentPrincipal = new GenericPrincipal(
                 new GenericIdentity(Username), null);//przechwouje username w generycznej wątku nie wiem jak za bardzo to dziala, choc sie domyslam
-            
-            IsViewVisible = false;//changes visibility to close LoginView
+
+            var employeeDetails = GetCall("http://localhost:5152/Account/login");
+            if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                System.Diagnostics.Debug.WriteLine("OK"); 
+                IsViewVisible = false;
+            }
+
+           //changes visibility to close LoginView
         }
     }
 }
