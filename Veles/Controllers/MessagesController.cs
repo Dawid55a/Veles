@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
+using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 
 namespace VelesAPI.Controllers;
@@ -8,10 +9,14 @@ namespace VelesAPI.Controllers;
 public class MessagesController : BaseApiController
 {
     private readonly ChatDataContext _context;
+    private readonly IChatRepository _chatRepository;
+    private readonly IGroupRepository _groupRepository;
 
-    public MessagesController(ChatDataContext context)
+    public MessagesController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository)
     {
         _context = context;
+        _chatRepository = chatRepository;
+        _groupRepository = groupRepository;
     }
 
     // GET: api/Messages
@@ -25,6 +30,20 @@ public class MessagesController : BaseApiController
 
         return await _context.Messages.ToListAsync();
     }
+
+    // GET: api/Messages/Group/Karols
+    [HttpGet("Group/{groupName}")]
+    public async Task<ActionResult<IEnumerable<Message>>> GetMessagesForGroup(string groupName)
+    {
+        var group = await _groupRepository.GetGroupWithNameAsync(groupName);
+        var messages = await _chatRepository.GetMessageThreadAsync(group);
+        if (messages == null)
+        {
+            return NotFound();
+        }
+        return messages.ToList();
+    }
+
 
     // GET: api/Messages/5
     [HttpGet("{id}")]
