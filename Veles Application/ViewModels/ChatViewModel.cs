@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Veles_Application.Commands;
 using Veles_Application.Models;
+using Veles_Application.WepAPI;
 using VelesLibrary.DTOs;
 
 namespace Veles_Application.ViewModels
@@ -51,17 +53,28 @@ namespace Veles_Application.ViewModels
         private void ExecuteSend(object obj)
         {
             //messageList.Add(new MessageDto("Def", userMessage));
-            UserMessage = "";
+            MessageDto message = new MessageDto();
+            message.Text = userMessage;
+            message.CreatedDate = DateTime.Now;
+            //message.User.
         }
 
         public async Task<ObservableCollection<MessageDto>> GetMessageListAsync()
         {
             ObservableCollection<MessageDto> messages = new ObservableCollection<MessageDto>();
 
+            var result = RestApiMethods.GetCall("Messages/Group/"+group.Name);
+
+            if(result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                messages = JsonConvert.DeserializeObject<ObservableCollection<MessageDto>>(jsonResult);
+                //return messages;
+            }
             //Recive message from group
             //messages.Add(new Message("Adam" + group.Name, "Hello in " + group.Name));
             //messages.Add(new Message("userfrom_"+group.Name, "Hello in" + group.Name));
-            
+
 
             return messages;
         }

@@ -24,9 +24,9 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock  Text="{Binding Path=User}" FontWeight="Bold"/>
+                        <TextBlock  Text="{Binding Path=User.UserName}" FontWeight="Bold"/>
                         <TextBlock  Text="{Binding Path=Text}"/>
-                        <TextBlock  Text="{Binding Path=Time}"/>
+                        <TextBlock  Text="{Binding Path=CreatedDate}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
