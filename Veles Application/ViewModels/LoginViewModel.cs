@@ -83,7 +83,7 @@ namespace Veles_Application.ViewModels
             loginDto.Password = Password;
 
             //send login request to API
-            var result = await Task.Run(()=> RestApiMethods.PostCall("http://localhost:5152/api/Account/Login", loginDto));
+            var result = await Task.Run(()=> RestApiMethods.PostCall("Account/Login", loginDto));
             
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {

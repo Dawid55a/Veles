@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Veles_Application.Commands;
 using Veles_Application.Models;
+using VelesLibrary.DTOs;
 
 namespace Veles_Application.ViewModels
 {
@@ -14,10 +15,10 @@ namespace Veles_Application.ViewModels
     {
         public Group group { get; set; }
 
-        private ObservableCollection<Message> messageList;
+        private ObservableCollection<MessageDto> messageList;
         private string userMessage = "";
 
-        public ObservableCollection<Message> MessageList
+        public ObservableCollection<MessageDto> MessageList
         {
             get { return messageList; }
             set 
@@ -49,17 +50,17 @@ namespace Veles_Application.ViewModels
 
         private void ExecuteSend(object obj)
         {
-            messageList.Add(new Message("Def", userMessage));
+            //messageList.Add(new MessageDto("Def", userMessage));
             UserMessage = "";
         }
 
-        public async Task<ObservableCollection<Message>> GetMessageListAsync()
+        public async Task<ObservableCollection<MessageDto>> GetMessageListAsync()
         {
-            ObservableCollection<Message> messages = new ObservableCollection<Message>();
+            ObservableCollection<MessageDto> messages = new ObservableCollection<MessageDto>();
 
             //Recive message from group
             //messages.Add(new Message("Adam" + group.Name, "Hello in " + group.Name));
-            messages.Add(new Message("userfrom_"+group.Name, "Hello in" + group.Name));
+            //messages.Add(new Message("userfrom_"+group.Name, "Hello in" + group.Name));
             
 
             return messages;

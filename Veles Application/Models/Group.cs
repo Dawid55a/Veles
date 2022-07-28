@@ -8,12 +8,7 @@ namespace Veles_Application.Models
 {
     public class Group
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-
-        public Group(string Name)
-        {
-            this.Name = Name;
-        }
     }
 }

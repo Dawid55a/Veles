@@ -1,19 +1,23 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Veles_Application.Commands;
 using Veles_Application.Models;
+using Veles_Application.WepAPI;
 
 namespace Veles_Application.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
+        private string userName = Properties.Settings.Default.Username;
         public ObservableCollection<Group> GroupList { get; set; }
 
         //public BaseViewModel groupModel = new GroupViewModel();
@@ -22,8 +26,9 @@ namespace Veles_Application.ViewModels
         public BaseViewModel MidViewModel
         {
             get { return midViewModel; }
-            set { 
-                midViewModel = value; 
+            set
+            {
+                midViewModel = value;
                 OnPropertyChanged(nameof(MidViewModel));
             }
         }
@@ -36,22 +41,17 @@ namespace Veles_Application.ViewModels
         {
             GroupList = GetGroupsAsync().Result;
 
-            //Add group to list
-            //when you implement communication remove and add via server 
-            //GroupList = recive(ServerGroupList as GroupList)
-            //GroupList.Add(new Group("Jaga"));
-            //GroupList.Add(new Group("Perun"));
-            //GroupList.Add(new Group("Bies"));
-
             ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
         }
 
         private void ExecutePanelChange(object parameter)
         {
-            if (parameter.ToString() == "Home")
+            if (parameter == null)
+                return;
+            else if (parameter.ToString() == "Home")
                 MidViewModel = new HomeViewModel();
-            else if(parameter != null)
+            else if (parameter != null)
             {
                 MidViewModel = new ChatViewModel(parameter as Group);
             }
@@ -62,16 +62,26 @@ namespace Veles_Application.ViewModels
         private void ExecuteChangeGroup(object parameter)
         {
             //System.Diagnostics.Debug.WriteLine(ListBoxItem.Content.ToString());
-            
+
         }
 
         private async Task<ObservableCollection<Group>> GetGroupsAsync()
         {
-            ObservableCollection<Group> groups = new ObservableCollection<Group>();
-            groups.Add(new Group("Jaga"));
-            groups.Add(new Group("Perun"));
-            groups.Add(new Group("Bies"));
-            return groups;
+            ObservableCollection<Group> groups;
+
+            var result = RestApiMethods.GetCall("Groups");
+
+            if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
+                return groups;
+            }
+            else
+            {
+                MessageBox.Show("connection interrupted");
+                return groups = new ObservableCollection<Group>();
+            }
         }
     }
 }
