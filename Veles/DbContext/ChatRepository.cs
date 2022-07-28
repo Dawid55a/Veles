@@ -41,8 +41,12 @@ public class ChatRepository : IChatRepository
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserNameAsync(string username)
     {
-        var user = await _context.Users.FindAsync(username);
-        if (user == null) return null;
+        var user = await _context!.Users!.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
+        if (user == null)
+        {
+            return null;
+        }
+
         return await _context.Groups.Where(g => g.Users.Any(u => u.Id == user.Id)).ToListAsync();
     }
 

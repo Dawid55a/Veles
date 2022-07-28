@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using VelesAPI.Interfaces;
@@ -24,7 +23,7 @@ public class AccountController : BaseApiController
     {
         if (await UserExists(registerDto.UserName))
         {
-            return BadRequest(new { Response = "Username is taken" });
+            return BadRequest(new {Response = "Username is taken"});
         }
 
 
@@ -44,7 +43,7 @@ public class AccountController : BaseApiController
         var result = await _userRepository.SaveAllAsync();
         if (!result)
         {
-            return BadRequest(new { Response = "User didn't saved" });
+            return BadRequest(new {Response = "User didn't saved"});
         }
 
         return new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)};
@@ -66,7 +65,7 @@ public class AccountController : BaseApiController
         {
             if (computedHash[i] != user.PasswordHash[i])
             {
-                return Unauthorized(new { Response = "Invalid password" });
+                return Unauthorized(new {Response = "Invalid password"});
             }
         }
 
