@@ -46,5 +46,17 @@ namespace Veles_Application.Properties {
                 this["Token"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:5152/api/")]
+        public string BaseUrl {
+            get {
+                return ((string)(this["BaseUrl"]));
+            }
+            set {
+                this["BaseUrl"] = value;
+            }
+        }
     }
 }

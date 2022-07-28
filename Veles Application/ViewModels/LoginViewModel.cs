@@ -117,7 +117,7 @@ namespace Veles_Application.ViewModels
 
         private bool CanExecuteLoginCommand(object obj)
         {
-            //add validation 
+            //add validation if need
             return true;
         }
 
@@ -131,6 +131,8 @@ namespace Veles_Application.ViewModels
             LoginDto loginDto = new LoginDto();
             loginDto.UserName = Username;
             loginDto.Password = Password;
+
+            //send login request to API
             var result = await Task.Run(()=> PostCall("http://localhost:5152/api/Account/Login", loginDto));
             
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -139,7 +141,8 @@ namespace Veles_Application.ViewModels
                 string jsonResult = result.Content.ReadAsStringAsync().Result;
                 UserDto userDto = JsonConvert.DeserializeObject<UserDto>(jsonResult);
 
-                if(userDto == null)
+                //checking if the API returned correct data
+                if (userDto == null)
                 {
                     MessageBox.Show("Server return empty object", "Login error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
@@ -150,10 +153,7 @@ namespace Veles_Application.ViewModels
                     Properties.Settings.Default.Username = userDto.UserName;
                     Properties.Settings.Default.Token = userDto.Token;
                 }
-
-                string test = Properties.Settings.Default.Token;
-                System.Diagnostics.Debug.WriteLine("OK"); 
-                //Properties.Settings.Default.Username = 
+ 
                 //Close window
                 IsViewVisible = false;
             }
