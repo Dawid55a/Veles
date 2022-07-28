@@ -34,7 +34,6 @@ namespace Veles_Application.ViewModels
         //Constructor
         public MainViewModel()
         {
-            string test = Properties.Settings.Default.Username;
             GroupList = GetGroupsAsync().Result;
 
             //Add group to list
