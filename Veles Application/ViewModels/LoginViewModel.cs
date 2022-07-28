@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -103,7 +104,7 @@ namespace Veles_Application.ViewModels
                     client.Timeout = TimeSpan.FromSeconds(900);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = client.PostAsJsonAsync(url, model);
+                    var response =  client.PostAsJsonAsync(url, model);
                     response.Wait();
                     return response;
                 }
@@ -130,16 +131,36 @@ namespace Veles_Application.ViewModels
             LoginDto loginDto = new LoginDto();
             loginDto.UserName = Username;
             loginDto.Password = Password;
-            var employeeDetails = await Task.Run(() => PostCall("http://localhost:5152/api/Account/Login", loginDto));
+            var result = await Task.Run(()=> PostCall("http://localhost:5152/api/Account/Login", loginDto));
             
-            if (employeeDetails.StatusCode == System.Net.HttpStatusCode.OK)
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
+                //Read json
+                string jsonResult = result.Content.ReadAsStringAsync().Result;
+                UserDto userDto = JsonConvert.DeserializeObject<UserDto>(jsonResult);
+
+                if(userDto == null)
+                {
+                    MessageBox.Show("Server return empty object", "Login error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    //Save to setting
+                    Properties.Settings.Default.Username = userDto.UserName;
+                    Properties.Settings.Default.Token = userDto.Token;
+                }
+
+                string test = Properties.Settings.Default.Token;
                 System.Diagnostics.Debug.WriteLine("OK"); 
+                //Properties.Settings.Default.Username = 
+                //Close window
                 IsViewVisible = false;
             }
             else
             {
-                MessageBox.Show("Incorrect username or password");
+                MessageBox.Show("Incorrect username or password\n Status code: " + result.StatusCode.ToString(), "Login error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
            //changes visibility to close LoginView
