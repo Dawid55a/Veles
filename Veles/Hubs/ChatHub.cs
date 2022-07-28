@@ -62,6 +62,31 @@ public class ChatHub : Hub
     }
 
 
+    public async Task SendMessageTest(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessageTest", user, message);
+    }
+
+    [Authorize]
+    public async Task SendAuthorizedMessageTest(string user, string message)
+    {
+        var userClaim = Context.User;
+        if (userClaim == null)
+        {
+            message = $"user: {user}" +
+                      $"contex user: null" +
+                      $"message: {message}";
+        }
+        else
+        {
+            message = $"user: {user}" +
+                      $"contex user: {Context.User!.GetUsername()} == {user}" +
+                      $"message: {message}";
+        }
+        await Clients.All.SendAsync("ReceiveAuthorizedMessageTest", user, message);
+    }
+
+
     // NewMessage
 
     // ReceiveMessagesFromGroup
