@@ -46,6 +46,8 @@
                 </i:Interaction.Triggers>
             </ListView>
         </Grid>
+        
+        <!--HomeView or ChatView-->
         <ContentControl Grid.Column="1" Content="{Binding MidViewModel}"/>
         
     </Grid>
