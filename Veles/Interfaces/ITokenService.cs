@@ -1,9 +1,8 @@
 ﻿using VelesLibrary.DbModels;
 
-namespace VelesAPI.Interfaces
+namespace VelesAPI.Interfaces;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string CreateToken(User user);
-    }
+    string CreateToken(User user);
 }

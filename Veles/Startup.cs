@@ -1,57 +1,48 @@
-﻿using VelesAPI.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VelesAPI.Extensions;
+﻿using VelesAPI.Extensions;
+using VelesAPI.Hubs;
 
-namespace VelesAPI
+namespace VelesAPI;
+
+public class Startup
 {
-    public class Startup
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
+        _configuration = configuration;
+    }
 
-        public Startup(IConfiguration configuration)
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddApplicationServices(_configuration);
+
+        services.AddControllers();
+        services.AddSignalR(o =>
         {
-            _configuration = configuration;
+            o.EnableDetailedErrors = true;
+        });
+
+        services.AddIdentityServices(_configuration);
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        // Configure the HTTP request pipeline.
+        if (env.IsDevelopment())
+        {
+            //app.UseSwagger();
+            //app.UseSwaggerUI();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
         {
-            services.AddApplicationServices(_configuration);
-
-            services.AddControllers();
-            services.AddSignalR(o =>
-            {
-                o.EnableDetailedErrors = true;
-            });
-
-            services.AddIdentityServices(_configuration);
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-
-            // Configure the HTTP request pipeline.
-            if (env.IsDevelopment())
-            {
-                //app.UseSwagger();
-                //app.UseSwaggerUI();
-            }
-
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapHub<ChatHub>("/chatHub");
-            });
-
-        }
-
+            endpoints.MapControllers();
+            endpoints.MapHub<ChatHub>("/chatHub");
+        });
     }
 }
