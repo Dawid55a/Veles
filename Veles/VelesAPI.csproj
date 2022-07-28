@@ -29,4 +29,12 @@
     <ProjectReference Include="..\VelesLibrary\VelesLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="..\Veles\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Veles\.editorconfig" />
+  </ItemGroup>
+
 </Project>

@@ -2,25 +2,24 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace VelesAPI.Extensions
+namespace VelesAPI.Extensions;
+
+public static class IdentityServiceExtensions
 {
-    public static class IdentityServiceExtensions
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddIdentityServices(this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    };
-                });
-            return services;
-        }
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+        return services;
     }
 }

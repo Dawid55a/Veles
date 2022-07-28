@@ -2,13 +2,12 @@
 using VelesLibrary.DbModels;
 using VelesLibrary.DTOs;
 
-namespace VelesAPI.Helpers
+namespace VelesAPI.Helpers;
+
+public class AutoMapperProfiles : Profile
 {
-    public class AutoMapperProfiles : Profile
+    public AutoMapperProfiles()
     {
-        public AutoMapperProfiles()
-        {
-            CreateMap<User, UserDto>();
-        }
+        CreateMap<User, UserDto>();
     }
-} 
+}
