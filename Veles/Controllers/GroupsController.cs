@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
+using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 
 namespace VelesAPI.Controllers;
@@ -8,10 +9,12 @@ namespace VelesAPI.Controllers;
 public class GroupsController : BaseApiController
 {
     private readonly ChatDataContext _context;
+    private readonly IChatRepository _chatRepository;
 
-    public GroupsController(ChatDataContext context)
+    public GroupsController(ChatDataContext context, IChatRepository chatRepository)
     {
         _context = context;
+        _chatRepository = chatRepository;
     }
 
     // GET: api/Groups
@@ -24,6 +27,18 @@ public class GroupsController : BaseApiController
         }
 
         return await _context.Groups.ToListAsync();
+    }
+
+    // GET: api/Groups/User/Karol
+    [HttpGet("User/{username}")]
+    public async Task<ActionResult<IEnumerable<Group>>> GetGroupsForUser(string username)
+    {
+        var groups = await _chatRepository.GetGroupsForUserNameAsync(username);
+        if (groups == null)
+        {
+            return NotFound();
+        }
+        return groups.ToList();
     }
 
     // GET: api/Groups/5
