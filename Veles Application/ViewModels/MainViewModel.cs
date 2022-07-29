@@ -45,7 +45,7 @@ namespace Veles_Application.ViewModels
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
         }
 
-        private void ExecutePanelChange(object parameter)
+        private async void ExecutePanelChange(object parameter)
         {
             if (parameter == null)
                 return;
@@ -53,7 +53,12 @@ namespace Veles_Application.ViewModels
                 MidViewModel = new HomeViewModel();
             else if (parameter != null)
             {
-                MidViewModel = new ChatViewModel(parameter as Group);
+                ChatViewModel chatView = new ChatViewModel(parameter as Group);
+                chatView.OpenConnectionAsync();
+                MidViewModel = chatView;
+                //MidViewModel = new ChatViewModel(parameter as Group);
+                
+                
             }
             //else if (parameter.ToString() == "Options") needs implementation
 
