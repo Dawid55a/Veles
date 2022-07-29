@@ -76,15 +76,15 @@ public class ChatHub : Hub
         var userClaim = Context.User;
         if (userClaim == null)
         {
-            message = $"user: {user}" +
-                      $"contex user: null" +
-                      $"message: {message}";
+            message = $"user: {user} \n" +
+                      $"contex user: null \n" +
+                      $"message: {message} \n";
         }
         else
         {
-            message = $"user: {user}" +
-                      $"contex user: {Context.User!.GetUsername()} == {user}" +
-                      $"message: {message}";
+            message = $"user: {user}\n" +
+                      $"contex user: {Context.User!.GetUsername()} == {user} \n" +
+                      $"message: {message}\n";
         }
         await Clients.All.SendAsync("ReceiveAuthorizedMessageTest", user, message);
     }

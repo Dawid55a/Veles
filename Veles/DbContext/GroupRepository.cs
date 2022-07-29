@@ -33,6 +33,12 @@ public class GroupRepository : IGroupRepository
         return await _context.Groups.FirstAsync(g => g.Name == groupName);
     }
 
+    public async Task<IEnumerable<Group>?> GetGroupsWithNameLikeAsync(string namePattern)
+    {
+        var groups = from g in _context.Groups where g.Name.Contains(namePattern) select g;
+        return await groups.ToListAsync();
+    }
+
     public async Task<Group?> GetGroupWithIdAsync(int groupId)
     {
         return await _context.Groups.FindAsync(groupId);

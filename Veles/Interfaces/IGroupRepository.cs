@@ -8,6 +8,7 @@ public interface IGroupRepository
     void RemoveGroup(Group group);
     void UpdateGroup(Group group);
     Task<Group?> GetGroupWithNameAsync(string groupName);
+    Task<IEnumerable<Group>?> GetGroupsWithNameLikeAsync(string namePattern);
     Task<Group?> GetGroupWithIdAsync(int groupId);
 
     public Task<bool> SaveAllAsync();
