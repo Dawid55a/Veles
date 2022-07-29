@@ -55,7 +55,10 @@ namespace Veles_Application.ViewModels
             SendMessageCommand = new ViewModelCommand(ExecuteSend);
 
             connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5152/chathub")
+                .WithUrl("http://localhost:5152/chathub", options =>
+                {
+                    options.AccessTokenProvider = () => Task.FromResult(Properties.Settings.Default.Token);
+                })
                 .Build();
 
             string t = null;
@@ -66,7 +69,7 @@ namespace Veles_Application.ViewModels
                 await connection.StartAsync();
             };
 
-            OpenConnectionAsync();
+            //OpenConnectionAsync();
 
         }
 
@@ -75,7 +78,7 @@ namespace Veles_Application.ViewModels
             //messageList.Add(new MessageDto("Def", userMessage));
             try
             {
-                await connection.InvokeAsync("SendMessageTest",
+                await connection.InvokeAsync("SendAuthorizedMessageTest",
                     Properties.Settings.Default.Username, UserMessage);
 
                 UserMessage = "";
@@ -102,15 +105,13 @@ namespace Veles_Application.ViewModels
                 messages = JsonConvert.DeserializeObject<ObservableCollection<MessageDto>>(jsonResult);
             }
 
-            
-
-
             return messages;
         }
 
-        private async void OpenConnectionAsync()
+        //Receive message from server
+        public async void OpenConnectionAsync()
         {
-            connection.On<string, string>("ReceiveMessageTest", (user, message) =>
+            connection.On<string, string>("ReceiveAuthorizedMessageTest", (user, message) =>
             {
                 App.Current.Dispatcher.Invoke(() =>
                 {
