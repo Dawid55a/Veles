@@ -14,7 +14,7 @@
     <Window.DataContext>
         <viewModel:LoginViewModel/>
     </Window.DataContext>
-    
+
     <!-- Dodaje widocznosc potrzebne aby "zamknac okno" -->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityBool" />
@@ -24,48 +24,104 @@
     <Window.Visibility>
         <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource VisibilityBool}"/>
     </Window.Visibility>
-    
+
     <Grid Background="White">
-
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-
-        <TextBlock Text="LOGIN" Grid.Row="0"  FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-        <!--Username-->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock  Text="Username" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
-            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         
-        <!--Password-->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!--Login-->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
 
-            <TextBlock Text="Password" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
-            <components:BindablePasswordBox  Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" 
+            <TextBlock Text="LOGIN" Grid.Row="0"  FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+            <!--Username-->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock  Text="Username" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            </Grid>
+
+            <!--Password-->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Password" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+                <components:BindablePasswordBox  Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" 
                                              Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            
+
+            </Grid>
+
+
+
+            <Button Command="{Binding LoginCommand}" Content="Login" Grid.Row="3"/>
+
+
         </Grid>
 
+        <!--Registration-->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Registration" Grid.Row="0"  FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+            <!--Username-->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock  Text="Username" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+                <TextBox Text="{Binding RegistrationUsername, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            </Grid>
+
+            <!--Password-->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Password" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+                <components:BindablePasswordBox  Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                             Password="{Binding RegistrationPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
+            </Grid>
+
+            <!--Email-->
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock  Text="Email" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
+                <TextBox Text="{Binding RegistrationEmail, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            </Grid>
 
 
-        <Button Command="{Binding LoginCommand}" Content="Login" Grid.Row="3"/>
-
-
-
+            <Button Command="{Binding RegistrationCommand}" Content="Registration" Grid.Row="4"/>
+        </Grid>
     </Grid>
 </Window>
