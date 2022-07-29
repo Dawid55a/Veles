@@ -8,8 +8,11 @@
     <Setting Name="Token" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="BaseUrl" Type="System.String" Scope="User">
+    <Setting Name="ApiBaseUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://localhost:5152/api/</Value>
+    </Setting>
+    <Setting Name="BaseUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:5152/</Value>
     </Setting>
   </Settings>
 </SettingsFile>

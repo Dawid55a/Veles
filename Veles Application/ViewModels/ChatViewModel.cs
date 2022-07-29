@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Veles_Application.Commands;
@@ -40,7 +42,11 @@ namespace Veles_Application.ViewModels
             }
         }
 
+        //RelayCommand
         public ICommand SendMessageCommand { get; }
+
+        //Constructor
+        HubConnection connection;
         public ChatViewModel(Group group)
         {
             this.group = group;
@@ -48,14 +54,39 @@ namespace Veles_Application.ViewModels
 
             SendMessageCommand = new ViewModelCommand(ExecuteSend);
 
+            connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5152/chathub")
+                .Build();
+
+            string t = null;
+
+            connection.Closed += async (error) =>
+            {
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                await connection.StartAsync();
+            };
+
+            OpenConnectionAsync();
+
         }
 
-        private void ExecuteSend(object obj)
+        private async void ExecuteSend(object obj)
         {
             //messageList.Add(new MessageDto("Def", userMessage));
-            MessageDto message = new MessageDto();
-            message.Text = userMessage;
-            message.CreatedDate = DateTime.Now;
+            try
+            {
+                await connection.InvokeAsync("SendMessageTest",
+                    Properties.Settings.Default.Username, UserMessage);
+
+                UserMessage = "";
+            }
+            catch (Exception ex)
+            {
+                MessageDto errorMessage = new MessageDto();
+                errorMessage.Text = ex.Message;
+                errorMessage.CreatedDate = DateTime.Now;
+                messageList.Add(errorMessage);
+            }
             //message.User.
         }
 
@@ -69,14 +100,39 @@ namespace Veles_Application.ViewModels
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
                 messages = JsonConvert.DeserializeObject<ObservableCollection<MessageDto>>(jsonResult);
-                //return messages;
             }
-            //Recive message from group
-            //messages.Add(new Message("Adam" + group.Name, "Hello in " + group.Name));
-            //messages.Add(new Message("userfrom_"+group.Name, "Hello in" + group.Name));
+
+            
 
 
             return messages;
+        }
+
+        private async void OpenConnectionAsync()
+        {
+            connection.On<string, string>("ReceiveMessageTest", (user, message) =>
+            {
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageDto messageDto = new MessageDto();
+                    messageDto.Text = message;
+                    //messageDto.User.UserName = user;
+                    messageList.Add(messageDto);
+                });
+            });
+
+            try
+            {
+                await connection.StartAsync();
+                
+            }
+            catch (Exception ex)
+            {
+                MessageDto errorMessage = new MessageDto();
+                errorMessage.Text = ex.Message;
+                errorMessage.CreatedDate = DateTime.Now;
+                messageList.Add(errorMessage);
+            }
         }
         //public ChatViewModel
     }

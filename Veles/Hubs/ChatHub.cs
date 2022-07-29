@@ -24,6 +24,7 @@ public class ChatHub : Hub
         _mapper = mapper;
     }
 
+    /*
     [Authorize]
     public override async Task OnConnectedAsync()
     {
@@ -45,7 +46,7 @@ public class ChatHub : Hub
             allMessages.Add(messages);
         }
 
-        await Clients.Caller.SendAsync("ReceiveMessageThreadsFromUsersGroups", allMessages);*/
+        await Clients.Caller.SendAsync("ReceiveMessageThreadsFromUsersGroups", allMessages);
         var username = Context.User!.GetUsername();
         var groups = await _chatRepository.GetGroupsForUserNameAsync(username);
         foreach (var group in groups)
@@ -54,12 +55,14 @@ public class ChatHub : Hub
             AddToGroup(group);
         }
     }
-
+    */
+    /*
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var group = await RemoveFromMessageGroup();
         await base.OnDisconnectedAsync(exception);
     }
+    */
 
 
     public async Task SendMessageTest(string user, string message)

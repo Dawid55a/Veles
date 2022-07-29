@@ -12,7 +12,7 @@ namespace Veles_Application.WepAPI
 {
     public class RestApiMethods
     {
-        private static string baseApiUrl = Properties.Settings.Default.BaseUrl;
+        private static string baseApiUrl = Properties.Settings.Default.ApiBaseUrl;
 
         //GET
         public static Task<HttpResponseMessage> GetCall(string url)
