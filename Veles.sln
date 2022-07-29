@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
+
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VelesAPI", "Veles\VelesAPI.csproj", "{7B991B28-2930-4CA5-A3CA-7A7ABFFDC95D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veles Application", "Veles Application\Veles Application.csproj", "{637E4EF3-4D4C-4193-A64E-55892A9630C9}"

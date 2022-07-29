@@ -1,62 +1,87 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Veles_Application.Commands;
+using Veles_Application.Models;
+using Veles_Application.WepAPI;
 
 namespace Veles_Application.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private string _Text;
-        private string _username = Thread.CurrentPrincipal.Identity.Name;
-        private string _message;
+        private string userName = Properties.Settings.Default.Username;
+        public ObservableCollection<Group> GroupList { get; set; }
 
-        public string Text
-        {
-            get { return _Text; }
-            set 
-            { 
-                _Text = value; 
-                OnPropertyChanged(nameof(Text));
-            }
-        }
+        //public BaseViewModel groupModel = new GroupViewModel();
+        public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
 
-        public string Username
+        public BaseViewModel MidViewModel
         {
-            get { return _username; }
+            get { return midViewModel; }
             set
             {
-                _username = value;
-                OnPropertyChanged(nameof(Username));
+                midViewModel = value;
+                OnPropertyChanged(nameof(MidViewModel));
             }
         }
 
-        public string Message
-        {
-            get { return _message; }
-            set 
-            {
-                _message = value;
-                OnPropertyChanged(nameof(Message));
-            }
-        }
+        public ICommand ListBoxSelectedCommand { get; }
+        public ICommand ChangePanelCommand { get; }
 
-        public ICommand SendCommand { get; }
-
+        //Constructor
         public MainViewModel()
         {
-            SendCommand = new ViewModelCommand(ExecuteLoginCommand);
+            GroupList = GetGroupsAsync().Result;
+
+            ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
+            ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
         }
 
-        //write to text
-        private void ExecuteLoginCommand(object obj)
+        private void ExecutePanelChange(object parameter)
         {
-            Text += Username + ": " + Message + "\n" ;
-            Message = "";
+            if (parameter == null)
+                return;
+            else if (parameter.ToString() == "Home")
+                MidViewModel = new HomeViewModel();
+            else if (parameter != null)
+            {
+                MidViewModel = new ChatViewModel(parameter as Group);
+            }
+            //else if (parameter.ToString() == "Options") needs implementation
+
+        }
+
+        private void ExecuteChangeGroup(object parameter)
+        {
+            //System.Diagnostics.Debug.WriteLine(ListBoxItem.Content.ToString());
+
+        }
+
+        private async Task<ObservableCollection<Group>> GetGroupsAsync()
+        {
+            ObservableCollection<Group> groups;
+
+            var result = RestApiMethods.GetCall("Groups");
+
+            if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
+                return groups;
+            }
+            else
+            {
+                MessageBox.Show("connection interrupted");
+                return groups = new ObservableCollection<Group>();
+            }
         }
     }
 }

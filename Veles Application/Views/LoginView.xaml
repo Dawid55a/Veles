@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Veles_Application.Views"
         xmlns:viewModel="clr-namespace:Veles_Application.ViewModels" 
-        xmlns:command="clr-namespace:Veles_Application.Commands"
-        
+        xmlns:command="clr-namespace:Veles_Application.Commands" 
+        xmlns:components="clr-namespace:Veles_Application.Components"
         mc:Ignorable="d"
         Title="LoginView" Height="450" Width="800">
 
@@ -37,6 +37,7 @@
 
         <TextBlock Text="LOGIN" Grid.Row="0"  FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
+        <!--Username-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -46,7 +47,8 @@
             <TextBlock  Text="Username" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
             <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
         </Grid>
-
+        
+        <!--Password-->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -54,7 +56,9 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Text="Password" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
-            <PasswordBox Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <components:BindablePasswordBox  Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                             Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            
         </Grid>
 
 
