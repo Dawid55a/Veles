@@ -33,26 +33,6 @@ public class ChatHub : Hub
     [Authorize]
     public override async Task OnConnectedAsync()
     {
-        /*var username = Context.User!.GetUsername();
-        
-        // TODO: Implement adding users Groups to Groups in Hubs Groups
-        var groups = await _chatRepository.GetGroupsForUserNameAsync(username);
-
-        foreach (var group in groups)
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, group.Name);
-        }
-
-        var allMessages = new List<IEnumerable<Message>>();
-
-        foreach (var group in groups)
-        {
-            var messages = await _chatRepository.GetMessageThreadAsync(group);
-            allMessages.Add(messages);
-        }
-
-        await Clients.Caller.SendAsync("ReceiveMessageThreadsFromUsersGroups", allMessages);
-        */
         var userId = Context.User!.GetUserId();
         var groups = await _chatRepository.GetGroupsForUserIdIncludingConnectionsAsync(userId);
         foreach (var group in groups)
