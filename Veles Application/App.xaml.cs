@@ -21,13 +21,19 @@ namespace Veles_Application
         {
             var loginView = new LoginView();
             loginView.Show();//Show LoginView window
-            loginView.IsVisibleChanged += (s, ev) =>
-              {
-                  var mainView = new MainView();
-                  mainView.Show();//Show MainView window
-                  loginView.Close();//Close LoginView window
-              };
+            try
+            {
+                loginView.IsVisibleChanged += (s, ev) =>
+                {
+                    var mainView = new MainView();
+                    mainView.Show();//Show MainView window
+                    loginView.Close();//Close LoginView window
+                };
+            }
+            catch (InvalidOperationException ex)
+            {
 
+            }
             //var mainView = new MainView();
             //mainView.Show();
         }
