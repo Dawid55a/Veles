@@ -8,13 +8,15 @@ namespace VelesAPI.Controllers;
 
 public class GroupsController : BaseApiController
 {
-    private readonly ChatDataContext _context;
     private readonly IChatRepository _chatRepository;
+    private readonly ChatDataContext _context;
+    private readonly IGroupRepository _groupRepository;
 
-    public GroupsController(ChatDataContext context, IChatRepository chatRepository)
+    public GroupsController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository)
     {
         _context = context;
         _chatRepository = chatRepository;
+        _groupRepository = groupRepository;
     }
 
     // GET: api/Groups
@@ -29,6 +31,19 @@ public class GroupsController : BaseApiController
         return await _context.Groups.ToListAsync();
     }
 
+    // GET: api/Groups/Name/Karo
+    [HttpGet("Name/{namePattern}")]
+    public async Task<ActionResult<IEnumerable<Group>>> GetGroupsWithNameLike(string namePattern)
+    {
+        var groups = await _groupRepository.GetGroupsWithNameLikeAsync(namePattern);
+        if (!groups.Any())
+        {
+            return NotFound();
+        }
+
+        return groups.ToList();
+    }
+
     // GET: api/Groups/User/Karol
     [HttpGet("User/{username}")]
     public async Task<ActionResult<IEnumerable<Group>>> GetGroupsForUser(string username)
@@ -38,6 +53,7 @@ public class GroupsController : BaseApiController
         {
             return NotFound();
         }
+
         return groups.ToList();
     }
 

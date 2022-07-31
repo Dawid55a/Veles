@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
@@ -9,23 +10,27 @@ namespace VelesAPI.Controllers;
 
 public class AccountController : BaseApiController
 {
+    private readonly IGroupRepository _groupRepository;
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
 
-    public AccountController(IUserRepository userRepository, ITokenService tokenService)
+    public AccountController(IUserRepository userRepository, ITokenService tokenService,
+        IGroupRepository groupRepository)
     {
         _userRepository = userRepository;
         _tokenService = tokenService;
+        _groupRepository = groupRepository;
     }
 
     [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.UserName))
         {
             return BadRequest(new {Response = "Username is taken"});
         }
-
 
         using var hmac = new HMACSHA512();
 
@@ -40,15 +45,19 @@ public class AccountController : BaseApiController
         };
 
         _userRepository.AddUserAsync(user);
+
         var result = await _userRepository.SaveAllAsync();
         if (!result)
         {
             return BadRequest(new {Response = "User didn't saved"});
         }
 
-        return new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)};
+        return CreatedAtAction(nameof(Register),
+            new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
@@ -70,6 +79,36 @@ public class AccountController : BaseApiController
         }
 
         return new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)};
+    }
+
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("add_to_group")]
+    public async Task<ActionResult<UserDto>> AddToGroup(AddToGroupDto addToGroupDto)
+    {
+        var user = await _userRepository.GetUserByUsernameAsync(addToGroupDto.UserName);
+        if (user == null)
+        {
+            return Unauthorized(new {Response = "User does not exist"});
+        }
+
+        var group = await _groupRepository.GetGroupWithNameAsync(addToGroupDto.GroupName);
+        if (group == null)
+        {
+            return Unauthorized(new {Response = "Group does not exist"});
+        }
+
+        user.Groups.Add(group);
+        _userRepository.Update(user);
+        var result = await _userRepository.SaveAllAsync();
+        if (!result)
+        {
+            return BadRequest(new {Response = $"Group {group.Name} wasn't added to User {user.UserName}"});
+        }
+
+        return Ok();
     }
 
     private async Task<bool> UserExists(string username)

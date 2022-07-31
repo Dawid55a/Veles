@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Veles_Application.Commands;
 using Veles_Application.Models;
@@ -19,10 +20,10 @@ namespace Veles_Application.ViewModels
     {
         public Group group { get; set; }
 
-        private ObservableCollection<MessageDto> messageList;
+        private ObservableCollection<NewMessageDto> messageList;
         private string userMessage = "";
 
-        public ObservableCollection<MessageDto> MessageList
+        public ObservableCollection<NewMessageDto> MessageList
         {
             get { return messageList; }
             set 
@@ -73,34 +74,41 @@ namespace Veles_Application.ViewModels
 
         private async void ExecuteSend(object obj)
         {
-            //messageList.Add(new MessageDto("Def", userMessage));
+            //messageList.Add(new NewMessageDto("Def", userMessage));
             try
             {
-                await connection.InvokeAsync("SendAuthorizedMessageTest",
-                    Properties.Settings.Default.Username, UserMessage);
+                var createMessageDto = new CreateMessageDto()
+                {
+                    Content = UserMessage,
+                    Sender = Properties.Settings.Default.Username,
+                    Created = DateTime.UtcNow,
+                    GroupName = group.Name
+                };
+                await connection.InvokeAsync("SendMessage", createMessageDto);
 
                 UserMessage = "";
             }
             catch (Exception ex)
             {
-                MessageDto errorMessage = new MessageDto();
-                errorMessage.Text = ex.Message;
-                errorMessage.CreatedDate = DateTime.Now;
-                messageList.Add(errorMessage);
+                NewMessageDto errorNewMessage = new NewMessageDto();
+                errorNewMessage.Text = ex.Message;
+                errorNewMessage.CreatedDate = DateTime.Now;
+                messageList.Add(errorNewMessage);
             }
             //message.User.
         }
+        
 
-        public async Task<ObservableCollection<MessageDto>> GetMessageListAsync()
+        public async Task<ObservableCollection<NewMessageDto>> GetMessageListAsync()
         {
-            ObservableCollection<MessageDto> messages = new ObservableCollection<MessageDto>();
+            ObservableCollection<NewMessageDto> messages = new ObservableCollection<NewMessageDto>();
 
             var result = RestApiMethods.GetCall("Messages/Group/"+group.Name);
 
             if(result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
-                messages = JsonConvert.DeserializeObject<ObservableCollection<MessageDto>>(jsonResult);
+                messages = JsonConvert.DeserializeObject<ObservableCollection<NewMessageDto>>(jsonResult);
             }
 
             return messages;
@@ -109,14 +117,15 @@ namespace Veles_Application.ViewModels
         //Receive message from server
         public async void OpenConnectionAsync()
         {
-            connection.On<string, string>("ReceiveAuthorizedMessageTest", (user, message) =>
+            connection.On<NewMessageDto>("NewMessage", (newMessageDto) =>
             {
-                App.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    MessageDto messageDto = new MessageDto();
-                    messageDto.Text = message;
-                    //messageDto.User.UserName = user;
-                    messageList.Add(messageDto);
+                    if (newMessageDto.Group == group.Name)
+                    {
+                        messageList.Add(newMessageDto);
+                    }
+                    
                 });
             });
 
@@ -127,10 +136,10 @@ namespace Veles_Application.ViewModels
             }
             catch (Exception ex)
             {
-                MessageDto errorMessage = new MessageDto();
-                errorMessage.Text = ex.Message;
-                errorMessage.CreatedDate = DateTime.Now;
-                messageList.Add(errorMessage);
+                NewMessageDto newMessageDto = new NewMessageDto();
+                newMessageDto.Text = ex.Message;
+                newMessageDto.CreatedDate = DateTime.Now;
+                messageList.Add(newMessageDto);
             }
         }
         //public ChatViewModel

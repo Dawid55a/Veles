@@ -12,7 +12,7 @@ namespace Veles_Application.ViewModels
     public class GroupViewModel : BaseViewModel
     {
         public ObservableCollection<Group> GroupList { get; set; }
-        public ObservableCollection<MessageDto> MessageList { get; set; }
+        public ObservableCollection<NewMessageDto> MessageList { get; set; }
 
         public GroupViewModel()
         {

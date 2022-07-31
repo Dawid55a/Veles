@@ -15,10 +15,9 @@ public class ChatRepository : IChatRepository
         _context = context;
     }
 
-    public void AddMessage(Message message)
+    public async Task AddMessage(Message message)
     {
-        _context.Messages.Add(message);
-        _context.SaveChangesAsync();
+        await _context.Messages.AddAsync(message);
     }
 
     public void RemoveMessage(Message message)
@@ -47,7 +46,25 @@ public class ChatRepository : IChatRepository
             return null;
         }
 
-        return await _context.Groups.Where(g => g.Users.Any(u => u.Id == user.Id)).ToListAsync();
+        return await _context.Groups
+            .Where(g => g.Users
+                .Any(u => u.Id == user.Id))
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Group>?> GetGroupsForUserIdIncludingConnectionsAsync(int id)
+    {
+        var user = await _context!.Users!.SingleOrDefaultAsync(x => x.Id == id);
+        if (user == null)
+        {
+            return null;
+        }
+
+        return await _context.Groups
+            .Include(g => g.Connections)
+            .Where(g => g.Users
+                .Any(u => u.Id == user.Id))
+            .ToListAsync(); ;
     }
 
     public async Task<IEnumerable<Message>?> GetMessageThreadAsync(Group g)
@@ -60,16 +77,17 @@ public class ChatRepository : IChatRepository
 
     public async Task<Group?> GetGroupForConnectionAsync(string connection)
     {
-        var query = await (from g in _context.Groups
-            join c in _context.Connections on g equals c.Group
-            where c.ConnectionId == connection
-            select c.Group).ToListAsync();
-        if (query.Count > 1)
+
+        var q = await _context.Connections
+            .Include(c=>c.Group)
+            .Where(c => c.ConnectionString == connection)
+            .ToListAsync();
+        /*if (query.Count > 1)
         {
             throw new ArgumentOutOfRangeException("Returned more than one group! Should be one");
-        }
+        }*/
 
-        return query[0];
+        return q[0].Group;
     }
 
     public void RemoveConnection(Connection connection)

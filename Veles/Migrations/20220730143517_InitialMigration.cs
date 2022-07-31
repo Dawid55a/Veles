@@ -45,12 +45,14 @@ namespace VelesAPI.Migrations
                 name: "Connections",
                 columns: table => new
                 {
-                    ConnectionId = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    ConnectionString = table.Column<string>(type: "text", nullable: false),
                     GroupId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Connections", x => x.ConnectionId);
+                    table.PrimaryKey("PK_Connections", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Connections_Groups_GroupId",
                         column: x => x.GroupId,

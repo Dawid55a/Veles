@@ -28,14 +28,25 @@ public class GroupRepository : IGroupRepository
         _context.Entry(group).State = EntityState.Modified;
     }
 
+    public async void AddConnection(Connection connection)
+    {
+        await _context.Connections.AddAsync(connection);
+    }
+
     public async Task<Group?> GetGroupWithNameAsync(string groupName)
     {
         return await _context.Groups.FirstAsync(g => g.Name == groupName);
     }
 
+    public async Task<IEnumerable<Group>?> GetGroupsWithNameLikeAsync(string namePattern)
+    {
+        var groups = from g in _context.Groups where g.Name.Contains(namePattern) select g;
+        return await groups.ToListAsync();
+    }
+
     public async Task<Group?> GetGroupWithIdAsync(int groupId)
     {
-        return await _context.Groups.FindAsync(groupId);
+        return await _context.Groups.Include(g => g.Connections).FirstOrDefaultAsync(g => g.Id == groupId);
     }
 
     public async Task<bool> SaveAllAsync()

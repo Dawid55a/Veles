@@ -12,8 +12,8 @@ using VelesAPI.DbContext;
 namespace VelesAPI.Migrations
 {
     [DbContext(typeof(ChatDataContext))]
-    [Migration("20220728150305_Update1")]
-    partial class Update1
+    [Migration("20220730143517_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,13 +41,20 @@ namespace VelesAPI.Migrations
 
             modelBuilder.Entity("VelesLibrary.DbModels.Connection", b =>
                 {
-                    b.Property<string>("ConnectionId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConnectionString")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("GroupId")
                         .HasColumnType("integer");
 
-                    b.HasKey("ConnectionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 

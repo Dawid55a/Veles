@@ -30,7 +30,7 @@ public class UserRepository : IUserRepository
 
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users.Include(u => u.Groups).ToListAsync();
     }
 
     public async Task<User?> GetUserByIdAsync(int id)
@@ -40,6 +40,6 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await _context!.Users!.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
+        return await _context.Users.Include(u => u.Groups).SingleOrDefaultAsync(x => x.UserName == username.ToLower());
     }
 }
