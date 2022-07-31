@@ -61,8 +61,6 @@ namespace Veles_Application.ViewModels
                 })
                 .Build();
 
-            string t = null;
-
             connection.Closed += async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
