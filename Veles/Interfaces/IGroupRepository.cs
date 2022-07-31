@@ -7,6 +7,7 @@ public interface IGroupRepository
     void AddGroupAsync(Group group);
     void RemoveGroup(Group group);
     void UpdateGroup(Group group);
+    void AddConnection(Connection connection);
     Task<Group?> GetGroupWithNameAsync(string groupName);
     Task<IEnumerable<Group>?> GetGroupsWithNameLikeAsync(string namePattern);
     Task<Group?> GetGroupWithIdAsync(int groupId);

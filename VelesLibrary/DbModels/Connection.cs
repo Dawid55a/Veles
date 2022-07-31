@@ -3,13 +3,13 @@
     public class Connection
     {
         public Connection(){}
-        public Connection(string connectionId, Group group)
+        public Connection(string connectionString, Group group)
         {
-            ConnectionId = connectionId;
+            ConnectionString = connectionString;
             Group = group;
         }
-
-        public string ConnectionId { get; set; }
+        public int Id { get; set; }
+        public string ConnectionString { get; set; }
         public Group Group { get; set; }
     }
 }

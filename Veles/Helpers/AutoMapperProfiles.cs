@@ -9,5 +9,12 @@ public class AutoMapperProfiles : Profile
     public AutoMapperProfiles()
     {
         CreateMap<User, UserDto>();
+        CreateMap<Message, NewMessageDto>()
+            .ForMember(dest => dest.User,
+                opt => opt
+                    .MapFrom(src => src.User.UserName))
+            .ForMember(dest => dest.Group,
+                opt => opt
+                    .MapFrom(src => src.Group.Name));
     }
 }

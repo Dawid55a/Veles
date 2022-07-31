@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace VelesAPI.Controllers;
 
@@ -11,12 +13,14 @@ public class MessagesController : BaseApiController
     private readonly ChatDataContext _context;
     private readonly IChatRepository _chatRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly IMapper _mapper;
 
-    public MessagesController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository)
+    public MessagesController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository, IMapper mapper)
     {
         _context = context;
         _chatRepository = chatRepository;
         _groupRepository = groupRepository;
+        _mapper = mapper;
     }
 
     // GET: api/Messages
@@ -41,7 +45,8 @@ public class MessagesController : BaseApiController
         {
             return NotFound();
         }
-        return messages.ToList();
+
+        return Ok(_mapper.Map<IEnumerable<NewMessageDto>>(messages));
     }
 
 
