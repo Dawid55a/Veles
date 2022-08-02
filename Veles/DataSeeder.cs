@@ -6,9 +6,16 @@ using VelesLibrary.DbModels;
 
 namespace VelesAPI;
 
-//Adding example data to database
+/// <summary>
+///     Adding example data to database
+/// </summary>
 public static class DataSeeder
 {
+    /// <summary>
+    ///     Run seed on host's DbContext if there is no data in database
+    /// </summary>
+    /// <param name="host"></param>
+    /// <returns>Task</returns>
     public static async Task Seed(this IHost host)
     {
         using var scope = host.Services.CreateScope();
@@ -16,7 +23,7 @@ public static class DataSeeder
         {
             await using var context = scope.ServiceProvider.GetRequiredService<ChatDataContext>();
             await context.Database.MigrateAsync();
-            await SeedUsers(context);
+            await SeedData(context);
         }
         catch (Exception e)
         {
@@ -24,7 +31,12 @@ public static class DataSeeder
         }
     }
 
-    private static async Task SeedUsers(ChatDataContext context)
+    /// <summary>
+    ///     Creating data and applying it to database
+    /// </summary>
+    /// <param name="context">ChatDataContext</param>
+    /// <returns>Task</returns>
+    private static async Task SeedData(ChatDataContext context)
     {
         if (await context.Users.AnyAsync())
         {
@@ -32,9 +44,6 @@ public static class DataSeeder
         }
 
         var groupsKarolsAdam = new List<Group> {new() {Name = "Karols"}, new() {Name = "Adams"}};
-
-        var groupsKarols = new List<Group> {new() {Name = "Karols"}};
-
         var users = new List<User>
         {
             new()

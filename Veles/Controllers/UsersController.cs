@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
+using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 
 namespace VelesAPI.Controllers;
@@ -9,22 +10,26 @@ namespace VelesAPI.Controllers;
 public class UsersController : BaseApiController
 {
     private readonly ChatDataContext _context;
+    private readonly IUserRepository _userRepository;
 
-    public UsersController(ChatDataContext context)
+    public UsersController(ChatDataContext context, IUserRepository userRepository)
     {
         _context = context;
+        _userRepository = userRepository;
     }
 
     // GET: api/Users
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
-        if (_context.Users == null)
+        var users = await _userRepository.GetUsersAsync();
+        if (users == null)
         {
             return NotFound();
         }
 
-        return await _context.Users.ToListAsync();
+        return Ok(users.ToList());
     }
 
     // GET: api/Users/5
@@ -32,24 +37,34 @@ public class UsersController : BaseApiController
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-        if (_context.Users == null)
-        {
-            return NotFound();
-        }
 
-        var user = await _context.Users.FindAsync(id);
+        var user = await _userRepository.GetUserByIdAsync(id);
 
         if (user == null)
         {
             return NotFound();
         }
 
-        return user;
+        return Ok(user);
+    }
+    // GET: api/Users/Group/Karols
+    [Authorize]
+    [HttpGet("Group/{groupName}")]
+    public async Task<ActionResult<IEnumerable<User>>> GetUsersForGroupName(string groupName)
+    {
+        var users = await _userRepository.GetUsersForGroupName(groupName);
+        if (users == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(users.ToList());
     }
 
+    // NOT IMPLEMENTED
     // PUT: api/Users/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
+    /*[HttpPut("{id}")]
     public async Task<IActionResult> PutUser(int id, User user)
     {
         if (id != user.Id)
@@ -74,26 +89,10 @@ public class UsersController : BaseApiController
         }
 
         return NoContent();
-    }
-
-    // POST: api/Users
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
-    {
-        if (_context.Users == null)
-        {
-            return Problem("Entity set 'ChatDataContext.Users'  is null.");
-        }
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetUser), new {id = user.Id}, user);
-    }
+    }*/
 
     // DELETE: api/Users/5
-    [HttpDelete("{id}")]
+    /*[HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         if (_context.Users == null)
@@ -111,7 +110,7 @@ public class UsersController : BaseApiController
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
+    }*/
 
     private bool UserExists(int id)
     {

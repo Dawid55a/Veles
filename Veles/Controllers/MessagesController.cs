@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
@@ -10,12 +11,13 @@ namespace VelesAPI.Controllers;
 
 public class MessagesController : BaseApiController
 {
-    private readonly ChatDataContext _context;
     private readonly IChatRepository _chatRepository;
+    private readonly ChatDataContext _context;
     private readonly IGroupRepository _groupRepository;
     private readonly IMapper _mapper;
 
-    public MessagesController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository, IMapper mapper)
+    public MessagesController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository,
+        IMapper mapper)
     {
         _context = context;
         _chatRepository = chatRepository;
@@ -24,6 +26,7 @@ public class MessagesController : BaseApiController
     }
 
     // GET: api/Messages
+    /*[Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
     {
@@ -33,9 +36,10 @@ public class MessagesController : BaseApiController
         }
 
         return await _context.Messages.ToListAsync();
-    }
+    }*/
 
     // GET: api/Messages/Group/Karols
+    [Authorize]
     [HttpGet("Group/{groupName}")]
     public async Task<ActionResult<IEnumerable<Message>>> GetMessagesForGroup(string groupName)
     {
@@ -51,6 +55,7 @@ public class MessagesController : BaseApiController
 
 
     // GET: api/Messages/5
+    /*[Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<Message>> GetMessage(int id)
     {
@@ -67,11 +72,11 @@ public class MessagesController : BaseApiController
         }
 
         return message;
-    }
+    }*/
 
     // PUT: api/Messages/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
+    /*[HttpPut("{id}")]
     public async Task<IActionResult> PutMessage(int id, Message message)
     {
         if (id != message.Id)
@@ -96,11 +101,11 @@ public class MessagesController : BaseApiController
         }
 
         return NoContent();
-    }
+    }*/
 
     // POST: api/Messages
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPost]
+    /*[HttpPost]
     public async Task<ActionResult<Message>> PostMessage(Message message)
     {
         if (_context.Messages == null)
@@ -112,10 +117,10 @@ public class MessagesController : BaseApiController
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetMessage), new {id = message.Id}, message);
-    }
+    }*/
 
     // DELETE: api/Messages/5
-    [HttpDelete("{id}")]
+    /*[HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMessage(int id)
     {
         if (_context.Messages == null)
@@ -133,7 +138,7 @@ public class MessagesController : BaseApiController
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
+    }*/
 
     private bool MessageExists(int id)
     {

@@ -8,7 +8,6 @@ namespace VelesAPI.DbContext;
 public class ChatRepository : IChatRepository
 {
     private readonly ChatDataContext _context;
-    private readonly IMapper _mapper;
 
     public ChatRepository(ChatDataContext context)
     {
@@ -25,17 +24,10 @@ public class ChatRepository : IChatRepository
         _context.Messages.Remove(message);
     }
 
-    public async Task<Group?> GetGroupForUserIdAsync(int id)
+    public async Task<IEnumerable<Group>?> GetGroupsForUserIdAsync(int userId)
     {
-        // TODO: Returns only first group
-        var user = await _context.Users.FindAsync(id);
-        var groups = await (from g in _context.Groups where g.Users.Any(u => u.Id == id) select g).ToListAsync();
-        return groups[0];
-    }
-
-    public async Task<IEnumerable<Group>?> GetGroupsForUserAsync(User user)
-    {
-        return await _context.Groups.Where(g => g.Users.Any(u => u.Id == user.Id)).ToListAsync();
+        var userWithGroups = await _context.Users.Include(u => u.Groups).Where(u => u.Id == userId).ToListAsync();
+        return userWithGroups[0].Groups;
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserNameAsync(string username)
@@ -64,35 +56,15 @@ public class ChatRepository : IChatRepository
             .Include(g => g.Connections)
             .Where(g => g.Users
                 .Any(u => u.Id == user.Id))
-            .ToListAsync(); ;
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Message>?> GetMessageThreadAsync(Group g)
     {
-        var messages = await _context.Messages
+        return await _context.Messages
+            .Include(m => m.User)
             .Where(m => m.Group.Id == g.Id)
             .ToListAsync();
-        return messages;
-    }
-
-    public async Task<Group?> GetGroupForConnectionAsync(string connection)
-    {
-
-        var q = await _context.Connections
-            .Include(c=>c.Group)
-            .Where(c => c.ConnectionString == connection)
-            .ToListAsync();
-        /*if (query.Count > 1)
-        {
-            throw new ArgumentOutOfRangeException("Returned more than one group! Should be one");
-        }*/
-
-        return q[0].Group;
-    }
-
-    public void RemoveConnection(Connection connection)
-    {
-        _context.Connections.Remove(connection);
     }
 
     public async Task<bool> SaveAllAsync()

@@ -29,7 +29,7 @@ public class AccountController : BaseApiController
     {
         if (await UserExists(registerDto.UserName))
         {
-            return BadRequest(new {Response = "Username is taken"});
+            return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "User already exists"});
         }
 
         using var hmac = new HMACSHA512();
@@ -44,12 +44,12 @@ public class AccountController : BaseApiController
             Avatar = registerDto.Avatar
         };
 
-        _userRepository.AddUserAsync(user);
+        await _userRepository.AddUserAsync(user);
 
         var result = await _userRepository.SaveAllAsync();
         if (!result)
         {
-            return BadRequest(new {Response = "User didn't saved"});
+            return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "User did not saved"});
         }
 
         return CreatedAtAction(nameof(Register),
@@ -64,7 +64,11 @@ public class AccountController : BaseApiController
         var user = await _userRepository.GetUserByUsernameAsync(loginDto.UserName);
         if (user == null)
         {
-            return Unauthorized(new {Response = "User does not exist"});
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = "User does not exist",
+            });
         }
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
@@ -78,7 +82,7 @@ public class AccountController : BaseApiController
             }
         }
 
-        return new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)};
+        return Ok(new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [Authorize]
@@ -91,13 +95,21 @@ public class AccountController : BaseApiController
         var user = await _userRepository.GetUserByUsernameAsync(addToGroupDto.UserName);
         if (user == null)
         {
-            return Unauthorized(new {Response = "User does not exist"});
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = "User does not exist",
+            });
         }
 
         var group = await _groupRepository.GetGroupWithNameAsync(addToGroupDto.GroupName);
         if (group == null)
         {
-            return Unauthorized(new {Response = "Group does not exist"});
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = "Group does not exist",
+            });
         }
 
         user.Groups.Add(group);
@@ -105,7 +117,11 @@ public class AccountController : BaseApiController
         var result = await _userRepository.SaveAllAsync();
         if (!result)
         {
-            return BadRequest(new {Response = $"Group {group.Name} wasn't added to User {user.UserName}"});
+            return BadRequest(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = $"Group {group.Name} wasn't added to User {user.UserName}",
+            });
         }
 
         return Ok();
