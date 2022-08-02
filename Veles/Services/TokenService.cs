@@ -8,6 +8,9 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace VelesAPI.Services;
 
+/// <summary>
+///     Service responsible for handling token
+/// </summary>
 public class TokenService : ITokenService
 {
     private readonly SymmetricSecurityKey _key;

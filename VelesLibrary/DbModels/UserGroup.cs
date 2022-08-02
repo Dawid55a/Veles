@@ -1,15 +1,13 @@
-﻿namespace VelesLibrary.DbModels
+﻿namespace VelesLibrary.DbModels;
+
+// Relation many to many between user and group
+public class UserGroup
 {
-    // Relation many to many between user and group
-    public class UserGroup
-    {
-        public int UserId { get; set; }
+    public int UserId { get; set; }
 
-        public User User { get; set; } = null!;
+    public User User { get; set; } = null!;
 
-        public int GroupId { get; set; }
+    public int GroupId { get; set; }
 
-        public Group Group { get; set; } = null!;
-    }
+    public Group Group { get; set; } = null!;
 }
-
