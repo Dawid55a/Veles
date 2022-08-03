@@ -103,7 +103,7 @@ namespace Veles_Application.ViewModels
         {
             ObservableCollection<NewMessageDto> messages = new ObservableCollection<NewMessageDto>();
 
-            var result = RestApiMethods.GetCall("Messages/Group/"+group.Name);
+            var result = RestApiMethods.GetCallAuthorization("Messages/Group/"+group.Name);
 
             if(result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {

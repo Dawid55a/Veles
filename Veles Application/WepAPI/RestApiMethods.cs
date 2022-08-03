@@ -15,7 +15,7 @@ namespace Veles_Application.WepAPI
         private static string baseApiUrl = Properties.Settings.Default.ApiBaseUrl;
 
         //GET
-        public static Task<HttpResponseMessage> GetCall(string url)
+        public static Task<HttpResponseMessage> GetCallAuthoraized(string url)
         {
             try
             {
@@ -53,6 +53,32 @@ namespace Veles_Application.WepAPI
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var response = client.PostAsJsonAsync(apiUrl, model);
+                    response.Wait();
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        //GET
+        public static Task<HttpResponseMessage> GetCallAuthorization(string url)
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                string apiUrl = baseApiUrl + url;
+                using (HttpClient client = new HttpClient())
+                {
+                    string authorization = Properties.Settings.Default.Token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
+                    client.BaseAddress = new Uri(apiUrl);
+                    client.Timeout = TimeSpan.FromSeconds(900);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.GetAsync(apiUrl);
                     response.Wait();
                     return response;
                 }
