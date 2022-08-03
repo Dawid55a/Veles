@@ -22,6 +22,7 @@ namespace Veles_Application.ViewModels
 
         //public BaseViewModel groupModel = new GroupViewModel();
         public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
+        public BaseViewModel leftViewModel = new GroupViewModel();
 
         public BaseViewModel MidViewModel
         {
@@ -30,6 +31,16 @@ namespace Veles_Application.ViewModels
             {
                 midViewModel = value;
                 OnPropertyChanged(nameof(MidViewModel));
+            }
+        }
+
+        public BaseViewModel LeftViewModel
+        {
+            get { return leftViewModel; }
+            set
+            {
+                leftViewModel = value;
+                OnPropertyChanged(nameof(leftViewModel));
             }
         }
 
@@ -43,7 +54,11 @@ namespace Veles_Application.ViewModels
 
             ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
+
+            EventsAggregator.OnMessageTransmitted += OnMessageRecived;
         }
+
+        
 
         private async void ExecutePanelChange(object parameter)
         {
@@ -62,6 +77,12 @@ namespace Veles_Application.ViewModels
             }
             //else if (parameter.ToString() == "Options") needs implementation
 
+        }
+        private void OnMessageRecived(object obj)
+        {
+            ChatViewModel chatView = new ChatViewModel(obj as Group);
+            chatView.OpenConnectionAsync();
+            MidViewModel = chatView;
         }
 
         private void ExecuteChangeGroup(object parameter)

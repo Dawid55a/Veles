@@ -32,6 +32,7 @@
             </Grid>
             
             <!--Group List-->
+            <!--
             <ListView x:Name="GroupList" Grid.Row="1" ItemsSource="{Binding GroupList}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -45,6 +46,9 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListView>
+            -->
+
+            <ContentControl Grid.Row="1" Content="{Binding LeftViewModel}"/>
         </Grid>
         
         <!--HomeView or ChatView-->

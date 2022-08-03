@@ -68,10 +68,13 @@ namespace Veles_Application.ViewModels
                 await connection.StartAsync();
             };
 
+            
+            
             //OpenConnectionAsync();
 
         }
 
+        
         private async void ExecuteSend(object obj)
         {
             //messageList.Add(new NewMessageDto("Def", userMessage));
