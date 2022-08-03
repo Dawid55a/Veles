@@ -18,7 +18,6 @@ namespace Veles_Application.ViewModels
     public class MainViewModel : BaseViewModel
     {
         private string userName = Properties.Settings.Default.Username;
-        public ObservableCollection<Group> GroupList { get; set; }
 
         //public BaseViewModel groupModel = new GroupViewModel();
         public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
@@ -50,15 +49,11 @@ namespace Veles_Application.ViewModels
         //Constructor
         public MainViewModel()
         {
-            GroupList = GetGroupsAsync().Result;
-
             ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
 
             EventsAggregator.OnMessageTransmitted += OnMessageRecived;
         }
-
-        
 
         private async void ExecutePanelChange(object parameter)
         {
@@ -79,35 +74,14 @@ namespace Veles_Application.ViewModels
 
         }
         private void OnMessageRecived(object obj)
-        {
-            ChatViewModel chatView = new ChatViewModel(obj as Group);
-            chatView.OpenConnectionAsync();
-            MidViewModel = chatView;
+        {   
+            ExecutePanelChange(obj);
         }
 
         private void ExecuteChangeGroup(object parameter)
         {
             //System.Diagnostics.Debug.WriteLine(ListBoxItem.Content.ToString());
 
-        }
-
-        private async Task<ObservableCollection<Group>> GetGroupsAsync()
-        {
-            ObservableCollection<Group> groups;
-
-            var result = RestApiMethods.GetCallAuthorization("Groups/User/"+userName);
-
-            if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
-                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
-                return groups;
-            }
-            else
-            {
-                MessageBox.Show("connection interrupted");
-                return groups = new ObservableCollection<Group>();
-            }
         }
     }
 }
