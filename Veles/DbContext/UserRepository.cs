@@ -28,6 +28,15 @@ public class UserRepository : IUserRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
+    public async Task AddUserToGroup(User user, Group group)
+    {
+        var ug = new UserGroup() {User = user, Group = group, UserGroupNick = user.UserName};
+        var userNew = await _context.Users.Include(u => u.UserGroups).Where(u => u.Equals(user)).FirstAsync();
+        var groupNew = await _context.Groups.Include(g => g.UserGroups).Where(g => g.Equals(group)).FirstAsync();
+        userNew.UserGroups.Add(ug);
+        groupNew.UserGroups.Add(ug);
+    }
+
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
         return await _context.Users.ToListAsync();
@@ -35,7 +44,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
-        return await _context.Users.FirstAsync(u => u.Id == id);
+        return await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)
@@ -43,11 +52,13 @@ public class UserRepository : IUserRepository
         return await _context.Users.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
     }
 
-    public async Task<IEnumerable<User>> GetUsersForGroupName(string groupName)
+    public async Task<IEnumerable<User>?> GetUsersForGroupName(string groupName)
     {
-        return await _context.Users
-            .Where(u => u.Groups
-                .Any(g => g.Name == groupName))
-            .ToListAsync();
+        var groupWithUser = await _context.Groups
+            .Include(g => g.UserGroups)
+            .ThenInclude(ug => ug.User)
+            .FirstOrDefaultAsync(g => g.Name == groupName);
+        var users = groupWithUser?.UserGroups.Select(ug => ug.User);
+        return users;
     }
 }

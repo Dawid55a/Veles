@@ -120,7 +120,7 @@ public class GroupsController : BaseApiController
         }
         var group = new Group
         {
-            Name = createGroupDto.Name, Connections = null, Users = null,
+            Name = createGroupDto.Name, Connections = null, UserGroups = null,
         };
 
         await _groupRepository.AddGroupAsync(group);
@@ -137,18 +137,18 @@ public class GroupsController : BaseApiController
     /*[HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGroup(int id)
     {
-        if (_context.Groups == null)
+        if (_context.UserGroups == null)
         {
             return NotFound();
         }
 
-        var group = await _context.Groups.FindAsync(id);
+        var group = await _context.UserGroups.FindAsync(id);
         if (group == null)
         {
             return NotFound();
         }
 
-        _context.Groups.Remove(group);
+        _context.UserGroups.Remove(group);
         await _context.SaveChangesAsync();
 
         return NoContent();

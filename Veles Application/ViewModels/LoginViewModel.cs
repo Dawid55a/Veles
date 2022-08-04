@@ -128,10 +128,10 @@ namespace Veles_Application.ViewModels
             {
                 //Read json
                 string jsonResult = result.Content.ReadAsStringAsync().Result;
-                UserDto userDto = JsonConvert.DeserializeObject<UserDto>(jsonResult);
+                TokenDto tokenDto = JsonConvert.DeserializeObject<TokenDto>(jsonResult);
 
                 //checking if the API returned correct data
-                if (userDto == null)
+                if (tokenDto == null)
                 {
                     MessageBox.Show("Server return empty object", "Login error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
@@ -139,8 +139,8 @@ namespace Veles_Application.ViewModels
                 else
                 {
                     //Save to setting
-                    Properties.Settings.Default.Username = userDto.UserName;
-                    Properties.Settings.Default.Token = userDto.Token;
+                    Properties.Settings.Default.Username = tokenDto.UserName;
+                    Properties.Settings.Default.Token = tokenDto.Token;
                 }
  
                 //Close window
@@ -172,10 +172,10 @@ namespace Veles_Application.ViewModels
             {
                 //Read json
                 string jsonResult = result.Content.ReadAsStringAsync().Result;
-                UserDto userDto = JsonConvert.DeserializeObject<UserDto>(jsonResult);
+                TokenDto tokenDto = JsonConvert.DeserializeObject<TokenDto>(jsonResult);
 
                 //checking if the API returned correct data
-                if (userDto == null)
+                if (tokenDto == null)
                 {
                     MessageBox.Show("Server return empty object", "Login error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
@@ -183,8 +183,8 @@ namespace Veles_Application.ViewModels
                 else
                 {
                     //Save to setting
-                    Properties.Settings.Default.Username = userDto.UserName;
-                    Properties.Settings.Default.Token = userDto.Token;
+                    Properties.Settings.Default.Username = tokenDto.UserName;
+                    Properties.Settings.Default.Token = tokenDto.Token;
                 }
 
                 //Close window

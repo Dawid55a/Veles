@@ -95,18 +95,18 @@ public class UsersController : BaseApiController
     /*[HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        if (_context.Users == null)
+        if (_context.UserGroups == null)
         {
             return NotFound();
         }
 
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.UserGroups.FindAsync(id);
         if (user == null)
         {
             return NotFound();
         }
 
-        _context.Users.Remove(user);
+        _context.UserGroups.Remove(user);
         await _context.SaveChangesAsync();
 
         return NoContent();

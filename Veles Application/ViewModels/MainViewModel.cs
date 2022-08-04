@@ -74,7 +74,7 @@ namespace Veles_Application.ViewModels
         {
             ObservableCollection<Group> groups;
 
-            var result = RestApiMethods.GetCall("Groups/User/"+userName);
+            var result = RestApiMethods.GetCall("UserGroups/User/"+userName);
 
             if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {

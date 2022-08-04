@@ -25,7 +25,7 @@ public class AccountController : BaseApiController
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<TokenDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.UserName))
         {
@@ -53,13 +53,13 @@ public class AccountController : BaseApiController
         }
 
         return CreatedAtAction(nameof(Register),
-            new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
+            new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(loginDto.UserName);
         if (user == null)
@@ -82,7 +82,7 @@ public class AccountController : BaseApiController
             }
         }
 
-        return Ok(new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
+        return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [Authorize]
@@ -90,7 +90,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("add_to_group")]
-    public async Task<ActionResult<UserDto>> AddToGroup(AddToGroupDto addToGroupDto)
+    public async Task<ActionResult<TokenDto>> AddToGroup(AddToGroupDto addToGroupDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(addToGroupDto.UserName);
         if (user == null)
@@ -111,8 +111,7 @@ public class AccountController : BaseApiController
                 Message = "Group does not exist",
             });
         }
-
-        user.Groups.Add(group);
+        await _userRepository.AddUserToGroup(user, group);
         _userRepository.Update(user);
         var result = await _userRepository.SaveAllAsync();
         if (!result)

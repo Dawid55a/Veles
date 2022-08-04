@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Runtime.CompilerServices;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
@@ -26,37 +27,34 @@ public class ChatRepository : IChatRepository
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserIdAsync(int userId)
     {
-        var userWithGroups = await _context.Users.Include(u => u.Groups).Where(u => u.Id == userId).ToListAsync();
-        return userWithGroups[0].Groups;
+        var userWithGroups = await _context.Users
+            .Where(u => u.Id == userId)
+            .Include(u => u.UserGroups)
+            .ThenInclude(ug => ug.Group)
+            .FirstOrDefaultAsync();
+        return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserNameAsync(string username)
     {
-        var user = await _context!.Users!.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
-        if (user == null)
-        {
-            return null;
-        }
-
-        return await _context.Groups
-            .Where(g => g.Users
-                .Any(u => u.Id == user.Id))
-            .ToListAsync();
+        var userWithGroups = await _context.Users
+            .Where(u => u.UserName == username)
+            .Include(u => u.UserGroups)
+            .ThenInclude(ug => ug.Group)
+            .FirstOrDefaultAsync();
+        return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserIdIncludingConnectionsAsync(int id)
     {
-        var user = await _context!.Users!.SingleOrDefaultAsync(x => x.Id == id);
-        if (user == null)
-        {
-            return null;
-        }
-
-        return await _context.Groups
-            .Include(g => g.Connections)
-            .Where(g => g.Users
-                .Any(u => u.Id == user.Id))
-            .ToListAsync();
+        //TODO: Check if works
+        var userWithGroups = await _context.Users
+            .Include(u => u.UserGroups)
+            .ThenInclude(ug => ug.Group)
+            .ThenInclude(g => g.Connections)
+            .Where(u => u.Id == id)
+            .FirstOrDefaultAsync();
+        return userWithGroups?.UserGroups.Select(ug => ug.Group); ;
     }
 
     public async Task<IEnumerable<Message>?> GetMessageThreadAsync(Group g)
@@ -64,6 +62,7 @@ public class ChatRepository : IChatRepository
         return await _context.Messages
             .Include(m => m.User)
             .Where(m => m.Group.Id == g.Id)
+            .OrderBy(m => m.CreatedDate)
             .ToListAsync();
     }
 
