@@ -126,6 +126,50 @@ public class AccountController : BaseApiController
         return Ok();
     }
 
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("change_password")]
+    public async Task<ActionResult<TokenDto>> ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        if (changePasswordDto.OldPassword == changePasswordDto.NewPassword)
+        {
+            Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "New password is identical to current password" });
+        }
+        var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
+        if (user == null)
+        {
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = "User does not exist",
+            });
+        }
+        using var hmac = new HMACSHA512(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.OldPassword));
+
+        for (var i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "Invalid password" });
+            }
+        }
+
+        using var hmacNew = new HMACSHA512();
+        user.Password = changePasswordDto.NewPassword;
+        user.PasswordHash = hmacNew.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
+        user.PasswordSalt = hmacNew.Key;
+
+        _userRepository.Update(user);
+        if (!(await _userRepository.SaveAllAsync()))
+        {
+            return Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "Error in changing password" });
+        }
+        return Ok(new TokenDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) });
+
+    }
     private async Task<bool> UserExists(string username)
     {
         var result = await _userRepository.GetUserByUsernameAsync(username);
