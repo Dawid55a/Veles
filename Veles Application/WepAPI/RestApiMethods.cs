@@ -15,7 +15,7 @@ namespace Veles_Application.WepAPI
         private static string baseApiUrl = Properties.Settings.Default.ApiBaseUrl;
 
         //GET
-        public static Task<HttpResponseMessage> GetCallAuthoraized(string url)
+        public static Task<HttpResponseMessage> GetCall(string url)
         {
             try
             {
