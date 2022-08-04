@@ -26,12 +26,14 @@ namespace Veles_Application.ViewModels
             ChangeGroupCommand = new ViewModelCommand(ExecuteGroupChange);
         }
 
+        //Trigger event in MainViewModel when group has changed
         private void ExecuteGroupChange(object obj)
         {
             EventsAggregator.BroadCast(obj);
         }
-
-        private async Task<ObservableCollection<Group>> GetGroupsAsync()
+        
+        //Get group list from api
+        public async Task<ObservableCollection<Group>> GetGroupsAsync()
         {
             ObservableCollection<Group> groups = new ObservableCollection<Group>(); ;
 

@@ -8,7 +8,7 @@
         xmlns:command="clr-namespace:Veles_Application.Commands" 
         xmlns:components="clr-namespace:Veles_Application.Components"
         mc:Ignorable="d"
-        Title="LoginView" Height="450" Width="800">
+        Title="Login" Height="450" Width="800">
 
     <!-- Add view model -->
     <Window.DataContext>

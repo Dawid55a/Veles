@@ -45,14 +45,30 @@ namespace Veles_Application.ViewModels
 
         public ICommand ListBoxSelectedCommand { get; }
         public ICommand ChangePanelCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
 
         //Constructor
         public MainViewModel()
         {
             ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
+            OpenSettingsCommand = new ViewModelCommand(ExecuteOpenSettings);
 
             EventsAggregator.OnMessageTransmitted += OnMessageRecived;
+        }
+
+        private void ExecuteOpenSettings(object parameter)
+        {
+            SettingsViewModel settings = new SettingsViewModel();
+            var win = new Window()
+            {
+                DataContext = settings,
+                Height = 300,
+                Width = 300,
+                ResizeMode = ResizeMode.NoResize,
+            };
+            win.Show();
+
         }
 
         private async void ExecutePanelChange(object parameter)
@@ -61,21 +77,24 @@ namespace Veles_Application.ViewModels
                 return;
             else if (parameter.ToString() == "Home")
                 MidViewModel = new HomeViewModel();
+            else if (parameter.ToString() == "Settings")
+                MidViewModel = new SettingsViewModel();
             else if (parameter != null)
             {
                 ChatViewModel chatView = new ChatViewModel(parameter as Group);
                 chatView.OpenConnectionAsync();
                 MidViewModel = chatView;
-                //MidViewModel = new ChatViewModel(parameter as Group);
-                
-                
+                //MidViewModel = new ChatViewModel(parameter as Group)
             }
             //else if (parameter.ToString() == "Options") needs implementation
 
         }
+
+        //Handle event from GroupViewModel
         private void OnMessageRecived(object obj)
         {   
-            ExecutePanelChange(obj);
+            if(obj is Group)
+                ExecutePanelChange(obj);
         }
 
         private void ExecuteChangeGroup(object parameter)

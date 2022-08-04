@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Veles_Application.Views"
         mc:Ignorable="d"
-        Title="tmp" Height="450" Width="800">
+        Title="Veles" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -28,7 +28,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Content="Home" Command="{Binding ChangePanelCommand}" CommandParameter="Home"/>
-                <Button Grid.Column="1" Content="Options"/>
+                <Button Grid.Column="1" Content="Options" Command="{Binding ChangePanelCommand}" CommandParameter="Settings"/>
             </Grid>
             
             <!--Group List-->
