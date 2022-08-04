@@ -8,7 +8,7 @@ public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
-        CreateMap<User, UserDto>();
+        CreateMap<User, TokenDto>();
         CreateMap<Message, NewMessageDto>()
             .ForMember(dest => dest.User,
                 opt => opt
@@ -16,5 +16,6 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.Group,
                 opt => opt
                     .MapFrom(src => src.Group.Name));
+        CreateMap<User, UserDto>();
     }
 }

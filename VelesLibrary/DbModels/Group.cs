@@ -1,4 +1,7 @@
-﻿namespace VelesLibrary.DbModels;
+﻿using System.Text.Json.Serialization;
+
+namespace VelesLibrary.DbModels;
+
 
 public class Group
 {
@@ -7,7 +10,8 @@ public class Group
     public string Name { get; set; } = null!;
 
     // Relation
-    public ICollection<User> Users { get; set; } = null!;
+    [JsonIgnore]
+    public virtual ICollection<UserGroup> UserGroups { get; set; } = null!;
 
     public ICollection<Connection> Connections { get; set; } = null!;
 }

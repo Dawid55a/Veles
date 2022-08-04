@@ -25,7 +25,7 @@ public class AccountController : BaseApiController
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<TokenDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.UserName))
         {
@@ -53,13 +53,13 @@ public class AccountController : BaseApiController
         }
 
         return CreatedAtAction(nameof(Register),
-            new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
+            new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(loginDto.UserName);
         if (user == null)
@@ -82,7 +82,7 @@ public class AccountController : BaseApiController
             }
         }
 
-        return Ok(new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
+        return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [Authorize]
@@ -90,7 +90,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("add_to_group")]
-    public async Task<ActionResult<UserDto>> AddToGroup(AddToGroupDto addToGroupDto)
+    public async Task<ActionResult<TokenDto>> AddToGroup(AddToGroupDto addToGroupDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(addToGroupDto.UserName);
         if (user == null)
@@ -111,8 +111,7 @@ public class AccountController : BaseApiController
                 Message = "Group does not exist",
             });
         }
-
-        user.Groups.Add(group);
+        await _userRepository.AddUserToGroup(user, group);
         _userRepository.Update(user);
         var result = await _userRepository.SaveAllAsync();
         if (!result)
@@ -127,6 +126,50 @@ public class AccountController : BaseApiController
         return Ok();
     }
 
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("change_password")]
+    public async Task<ActionResult<TokenDto>> ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        if (changePasswordDto.OldPassword == changePasswordDto.NewPassword)
+        {
+            Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "New password is identical to current password" });
+        }
+        var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
+        if (user == null)
+        {
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = "User does not exist",
+            });
+        }
+        using var hmac = new HMACSHA512(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.OldPassword));
+
+        for (var i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "Invalid password" });
+            }
+        }
+
+        using var hmacNew = new HMACSHA512();
+        user.Password = changePasswordDto.NewPassword;
+        user.PasswordHash = hmacNew.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
+        user.PasswordSalt = hmacNew.Key;
+
+        _userRepository.Update(user);
+        if (!(await _userRepository.SaveAllAsync()))
+        {
+            return Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "Error in changing password" });
+        }
+        return Ok(new TokenDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) });
+
+    }
     private async Task<bool> UserExists(string username)
     {
         var result = await _userRepository.GetUserByUsernameAsync(username);

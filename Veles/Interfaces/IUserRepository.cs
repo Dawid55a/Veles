@@ -24,6 +24,13 @@ public interface IUserRepository
     Task<bool> SaveAllAsync();
 
     /// <summary>
+    /// Adding User to Group with group username set as user username
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="group"></param>
+    Task AddUserToGroup(User user, Group group);
+
+    /// <summary>
     ///     Get all users asynchronously
     /// </summary>
     /// <returns>IEnumerable of User</returns>
@@ -42,10 +49,11 @@ public interface IUserRepository
     /// <param name="username">User UserName</param>
     /// <returns>User or null if not found</returns>
     Task<User?> GetUserByUsernameAsync(string username);
+
     /// <summary>
-    /// Get Users in group with specified group name
+    /// Get UserGroups in group with specified group name
     /// </summary>
     /// <param name="groupName">Name of group</param>
     /// <returns>List of users</returns>
-    Task<IEnumerable<User>> GetUsersForGroupName(string groupName);
+    Task<IEnumerable<User>?> GetUsersForGroupName(string groupName);
 }

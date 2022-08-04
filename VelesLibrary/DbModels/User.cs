@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace VelesLibrary.DbModels;
 
@@ -19,5 +20,6 @@ public class User
     public string? Avatar { get; set; }
 
     // Relation
-    public ICollection<Group> Groups { get; set; } = null!;
+    [JsonIgnore]
+    public ICollection<UserGroup> UserGroups { get; set; } = null!;
 }

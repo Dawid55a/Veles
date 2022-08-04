@@ -102,5 +102,24 @@ namespace Veles_Application.ViewModels
             //System.Diagnostics.Debug.WriteLine(ListBoxItem.Content.ToString());
 
         }
+
+        private async Task<ObservableCollection<Group>> GetGroupsAsync()
+        {
+            ObservableCollection<Group> groups;
+
+            var result = RestApiMethods.GetCall("UserGroups/User/"+userName);
+
+            if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
+                return groups;
+            }
+            else
+            {
+                MessageBox.Show("connection interrupted");
+                return groups = new ObservableCollection<Group>();
+            }
+        }
     }
 }
