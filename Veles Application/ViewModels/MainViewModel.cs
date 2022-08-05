@@ -172,11 +172,12 @@ namespace Veles_Application.ViewModels
                 groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
                 return groups;
             }
-            else
+            else if(IsViewVisible)
             {
                 MessageBox.Show("connection interrupted");
-                return groups = new ObservableCollection<Group>();
+                
             }
+            return groups = new ObservableCollection<Group>();
         }
     }
 }

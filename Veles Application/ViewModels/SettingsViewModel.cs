@@ -9,6 +9,9 @@ using System.Windows.Input;
 using Veles_Application.Commands;
 using Veles_Application.Models;
 using System.Drawing;
+using Veles_Application.WepAPI;
+using VelesLibrary.DTOs;
+using Newtonsoft.Json;
 
 namespace Veles_Application.ViewModels
 {
@@ -108,6 +111,8 @@ namespace Veles_Application.ViewModels
         public ICommand ChangePasswordCommand { get; }
         public ICommand ChangeNickCommand { get; }
 
+        public ICommand DeleteUserCommand { get; }
+
         public SettingsViewModel()
         {
             GroupViewModel group = new GroupViewModel();
@@ -116,45 +121,111 @@ namespace Veles_Application.ViewModels
 
             ChangePasswordCommand = new ViewModelCommand(ExecuteChangePassword);
             ChangeNickCommand = new ViewModelCommand(ExecuteChangeNick);
+            DeleteUserCommand = new ViewModelCommand(ExecuteDeleteUser);
 
         }
 
         private async void ExecuteChangePassword(object parameter)
         {
-            if (OldPassword == NewPassword)
+            var Result = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (Result == MessageBoxResult.Yes)
             {
-                MessageBox.Show("the new password cannot be the same as the old one", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-               
+                if (OldPassword == NewPassword)
+                {
+                    MessageBox.Show("the new password cannot be the same as the old one", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+
+                }
+                else if (OldPassword == "" || NewPassword == "")
+                {
+                    MessageBox.Show("password cannot be empty", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+
+                }
+                else
+                {
+                    ChangePasswordDto changePasswordDto = new ChangePasswordDto()
+                    {
+                        OldPassword = OldPassword,
+                        NewPassword = NewPassword,
+                        UserName = Properties.Settings.Default.Username
+                    };
+
+                    var result = RestApiMethods.PostCallAutorization("Account/change_password", changePasswordDto);
+
+                    //successfully changed the password
+                    if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                        TokenDto token = JsonConvert.DeserializeObject<TokenDto>(jsonResult);
+
+                        if (token != null)
+                        {
+                            Properties.Settings.Default.Username = token.UserName;
+                            Properties.Settings.Default.Token = token.Token;
+
+                            MessageBox.Show("successfully changed the password", "Success",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    else
+                    {
+                        string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                        ResponseDto response = JsonConvert.DeserializeObject<ResponseDto>(jsonResult);
+
+                        try
+                        {
+                            MessageBox.Show(response.Message, "Success",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        catch(ArgumentNullException)
+                        {
+                            MessageBox.Show("Somethig goes wrong", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
             }
-            else if (OldPassword == "" || NewPassword == "")
-            {
-                MessageBox.Show("password cannot be empty", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                
-            }
-            else
-            {
-                //connection
-            }
+            
         }
 
         private async void ExecuteChangeNick(object parameter)
         {
-            if(NewNick == "")
+            var Result = MessageBox.Show("Are you sure you want to change your nick?", "Are you sure?",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (Result == MessageBoxResult.Yes)
             {
-                MessageBox.Show("nick cannot be empty", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                if (NewNick == "")
+                {
+                    MessageBox.Show("nick cannot be empty", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if (SelectedGroup == null)
+                {
+                    MessageBox.Show("please select a group", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    //connection
+                }
             }
-            else if(SelectedGroup == null)
+            
+        }
+
+        private async void ExecuteDeleteUser(object parameter)
+        {
+            var Result = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?", 
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (Result == MessageBoxResult.Yes)
             {
-                MessageBox.Show("please select a group", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                //communication
             }
-            else
-            {
-                //connection
-            }
+            
         }
     }
 }
