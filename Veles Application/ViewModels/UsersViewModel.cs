@@ -19,6 +19,7 @@ namespace Veles_Application.ViewModels
             UsersList.Add(new Users() { Name = "Adam" });
         }
 
+        
 
     }
 }

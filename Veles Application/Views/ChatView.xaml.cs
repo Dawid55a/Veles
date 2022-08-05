@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -23,6 +24,16 @@ namespace Veles_Application.Views
         public ChatView()
         {
             InitializeComponent();
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Selector selector = sender as Selector;
+            if (selector is ListView)
+            {
+                (selector as ListView).ScrollIntoView(selector.SelectedItem);
+            }
+            selector.SelectedItem = null;
         }
     }
 }
