@@ -76,6 +76,9 @@
         
         <!--HomeView or ChatView-->
         <ContentControl Grid.Column="1" Content="{Binding MidViewModel}"/>
-        
+
+        <!--UsersView-->
+        <ContentControl Grid.Column="2" Content="{Binding RightViewModel}"/>
+
     </Grid>
 </Window>

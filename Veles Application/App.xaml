@@ -29,5 +29,9 @@
         <DataTemplate DataType="{x:Type viewmodels:CreateGroupViewModel}">
             <views:CreateGroupView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
+            <views:UsersView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

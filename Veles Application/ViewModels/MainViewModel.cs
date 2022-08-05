@@ -26,8 +26,9 @@ namespace Veles_Application.ViewModels
         private bool isCreateClicked = false;
 
         //public BaseViewModel groupModel = new GroupViewModel();
-        public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
-        public BaseViewModel leftViewModel = new GroupViewModel();
+        private BaseViewModel midViewModel = new HomeViewModel();//set mid panel
+        private BaseViewModel leftViewModel = new GroupViewModel();
+        private BaseViewModel? rightViewModel;
 
         public bool IsViewVisible
         {
@@ -56,6 +57,16 @@ namespace Veles_Application.ViewModels
             {
                 leftViewModel = value;
                 OnPropertyChanged(nameof(leftViewModel));
+            }
+        }
+
+        public BaseViewModel RightViewModel
+        {
+            get { return rightViewModel; }
+            set
+            {
+                rightViewModel = value;
+                OnPropertyChanged(nameof (RightViewModel));
             }
         }
 
@@ -103,12 +114,19 @@ namespace Veles_Application.ViewModels
 
             }  
             else if (parameter.ToString() == "Settings")
+            {
                 MidViewModel = new SettingsViewModel();
+                RightViewModel = null;
+            }   
             else if (parameter != null)
             {
                 ChatViewModel chatView = new ChatViewModel(parameter as Group);
                 chatView.OpenConnectionAsync();
                 MidViewModel = chatView;
+
+                RightViewModel = new UsersViewModel();
+
+
                 //MidViewModel = new ChatViewModel(parameter as Group)
             }
             //else if (parameter.ToString() == "Options") needs implementation
