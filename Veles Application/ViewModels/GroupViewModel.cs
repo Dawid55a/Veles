@@ -23,6 +23,7 @@ namespace Veles_Application.ViewModels
         {
             GroupList = GetGroupsAsync().Result;
 
+
             ChangeGroupCommand = new ViewModelCommand(ExecuteGroupChange);
         }
 

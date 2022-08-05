@@ -19,8 +19,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="9*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+            <!--Settings-->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -49,6 +51,16 @@
             -->
 
             <ContentControl Grid.Row="1" Content="{Binding LeftViewModel}"/>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Search" Command="{Binding ChangeLeftPanelCommand}" CommandParameter="Search"/>
+                <Button Grid.Column="1" Content="Create" Command="{Binding ChangeLeftPanelCommand}" CommandParameter="Create"/>
+            </Grid>
         </Grid>
         
         <!--HomeView or ChatView-->

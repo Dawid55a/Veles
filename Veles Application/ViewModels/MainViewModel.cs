@@ -19,6 +19,9 @@ namespace Veles_Application.ViewModels
     {
         private string userName = Properties.Settings.Default.Username;
 
+        private bool isSearchClicked = false;
+        private bool isCreateClicked = false;
+
         //public BaseViewModel groupModel = new GroupViewModel();
         public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
         public BaseViewModel leftViewModel = new GroupViewModel();
@@ -46,12 +49,14 @@ namespace Veles_Application.ViewModels
         public ICommand ListBoxSelectedCommand { get; }
         public ICommand ChangePanelCommand { get; }
         public ICommand OpenSettingsCommand { get; }
+        public ICommand ChangeLeftPanelCommand { get; }
 
         //Constructor
         public MainViewModel()
         {
             ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
+            ChangeLeftPanelCommand = new ViewModelCommand(ExecuteLeftPanelChange);
             OpenSettingsCommand = new ViewModelCommand(ExecuteOpenSettings);
 
             EventsAggregator.OnMessageTransmitted += OnMessageRecived;
@@ -88,6 +93,24 @@ namespace Veles_Application.ViewModels
             }
             //else if (parameter.ToString() == "Options") needs implementation
 
+        }
+
+        private async void ExecuteLeftPanelChange(object parameter)
+        {
+            if(parameter.ToString() == "Search")
+            {
+                if(!isSearchClicked)
+                {
+                    LeftViewModel = new SearchGroupViewModel();
+                    isSearchClicked = true;
+                    isCreateClicked = false;
+                }
+                else
+                {
+                    LeftViewModel = new GroupViewModel();
+                    isSearchClicked = false;
+                }
+            }
         }
 
         //Handle event from GroupViewModel

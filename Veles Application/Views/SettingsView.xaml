@@ -121,6 +121,7 @@
                         </ItemContainerTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                
                 <Label HorizontalAlignment="Left" Margin="0,0,10,0"
                        DataContext="{Binding ElementName=GroupComboBox,Path=SelectedItem}" Content="select a group">
                     <Label.Style>
@@ -136,7 +137,6 @@
                                     <Setter Property="VerticalContentAlignment" Value="Top"/>
                                     <Setter Property="FontSize" Value="12"></Setter>
                                 </DataTrigger>
-
                             </Style.Triggers>
                         </Style>
                     </Label.Style>
