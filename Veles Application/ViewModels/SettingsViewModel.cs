@@ -173,18 +173,7 @@ namespace Veles_Application.ViewModels
                     else
                     {
                         string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
-                        ResponseDto response = JsonConvert.DeserializeObject<ResponseDto>(jsonResult);
-
-                        try
-                        {
-                            MessageBox.Show(response.Message, "Success",
-                                  MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                        catch(ArgumentNullException)
-                        {
-                            MessageBox.Show("Somethig goes wrong", "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+                        Methods.Messages.BadRequest(jsonResult);
                     }
                 }
             }

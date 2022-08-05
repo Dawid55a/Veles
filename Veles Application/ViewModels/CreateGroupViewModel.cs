@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Veles_Application.Commands;
+using Veles_Application.WepAPI;
+using VelesLibrary.DTOs;
 
 namespace Veles_Application.ViewModels
 {
@@ -32,8 +34,25 @@ namespace Veles_Application.ViewModels
 
         private void ExecuteCreateGroup(object parameter)
         {
-            //communication
-            MessageBox.Show("The group " + CreateGroupName + " was created");
+            CreateGroupDto createGroup = new CreateGroupDto()
+            {
+                Name = CreateGroupName
+            };
+
+            var result = RestApiMethods.PostCallAutorization("Groups", createGroup);
+
+            if(result.Result.StatusCode == System.Net.HttpStatusCode.OK || result.Result.StatusCode == System.Net.HttpStatusCode.Created)
+            {
+                MessageBox.Show("The group " + CreateGroupName + " was created", "Succes",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                Methods.Messages.BadRequest(jsonResult);
+            }
+
+            
         }
     }
 }
