@@ -33,7 +33,7 @@ namespace Veles_Application.ViewModels
         private void ExecuteCreateGroup(object parameter)
         {
             //communication
-            MessageBox.Show("the group " + CreateGroupName + " was created");
+            MessageBox.Show("The group " + CreateGroupName + " was created");
         }
     }
 }

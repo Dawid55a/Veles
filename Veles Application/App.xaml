@@ -25,5 +25,9 @@
         <DataTemplate DataType="{x:Type viewmodels:SearchGroupViewModel}">
             <views:SearchGroupView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:CreateGroupViewModel}">
+            <views:CreateGroupView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

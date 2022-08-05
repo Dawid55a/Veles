@@ -111,6 +111,20 @@ namespace Veles_Application.ViewModels
                     isSearchClicked = false;
                 }
             }
+            else if(parameter.ToString() == "Create")
+            {
+                if (!isCreateClicked)
+                {
+                    LeftViewModel = new CreateGroupViewModel();
+                    isSearchClicked = false;
+                    isCreateClicked = true;
+                }
+                else
+                {
+                    LeftViewModel = new GroupViewModel();
+                    isCreateClicked = false;
+                }
+            }
         }
 
         //Handle event from GroupViewModel
