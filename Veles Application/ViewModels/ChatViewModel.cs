@@ -13,6 +13,7 @@ using Veles_Application.Commands;
 using Veles_Application.Models;
 using Veles_Application.WepAPI;
 using VelesLibrary.DTOs;
+using System.Windows.Data;
 
 namespace Veles_Application.ViewModels
 {
@@ -22,6 +23,7 @@ namespace Veles_Application.ViewModels
 
         private ObservableCollection<NewMessageDto> messageList;
         private string userMessage = "";
+        private NewMessageDto selectedMessage;
 
         public ObservableCollection<NewMessageDto> MessageList
         {
@@ -43,6 +45,16 @@ namespace Veles_Application.ViewModels
             }
         }
 
+        public NewMessageDto SelectedMessage
+        {
+            get { return selectedMessage; }
+            set
+            {
+                selectedMessage = value;
+                OnPropertyChanged(nameof(SelectedMessage));
+            }
+        }
+
         //RelayCommand
         public ICommand SendMessageCommand { get; }
 
@@ -52,6 +64,8 @@ namespace Veles_Application.ViewModels
         {
             this.group = group;
             MessageList = GetMessageListAsync().Result;
+            //SelectedMessage = MessageList.LastOrDefault();
+            CollectionViewSource.GetDefaultView(messageList).MoveCurrentTo(MessageList.LastOrDefault());
 
             SendMessageCommand = new ViewModelCommand(ExecuteSend);
 
@@ -62,21 +76,23 @@ namespace Veles_Application.ViewModels
                 })
                 .Build();
 
-            string t = null;
-
             connection.Closed += async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
                 await connection.StartAsync();
             };
 
+            
+            
             //OpenConnectionAsync();
 
         }
 
+        
         private async void ExecuteSend(object obj)
         {
             //messageList.Add(new NewMessageDto("Def", userMessage));
+            if(obj != null)UserMessage = obj.ToString();
             try
             {
                 var createMessageDto = new CreateMessageDto()
@@ -105,7 +121,7 @@ namespace Veles_Application.ViewModels
         {
             ObservableCollection<NewMessageDto> messages = new ObservableCollection<NewMessageDto>();
 
-            var result = RestApiMethods.GetCall("Messages/Group/"+group.Name);
+            var result = RestApiMethods.GetCallAuthorization("Messages/Group/"+group.Name);
 
             if(result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -125,7 +141,9 @@ namespace Veles_Application.ViewModels
                 {
                     if (newMessageDto.Group == group.Name)
                     {
-                        messageList.Add(newMessageDto);
+                        MessageList.Add(newMessageDto);
+                        //SelectedMessage = newMessageDto;
+                        CollectionViewSource.GetDefaultView(messageList).MoveCurrentTo(newMessageDto);
                     }
                     
                 });

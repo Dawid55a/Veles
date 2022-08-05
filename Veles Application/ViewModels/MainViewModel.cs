@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -18,10 +19,26 @@ namespace Veles_Application.ViewModels
     public class MainViewModel : BaseViewModel
     {
         private string userName = Properties.Settings.Default.Username;
-        public ObservableCollection<Group> GroupList { get; set; }
+
+        private bool _isViewVisible = true;
+
+        private bool isSearchClicked = false;
+        private bool isCreateClicked = false;
 
         //public BaseViewModel groupModel = new GroupViewModel();
-        public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
+        private BaseViewModel midViewModel = new HomeViewModel();//set mid panel
+        private BaseViewModel leftViewModel = new GroupViewModel();
+        private BaseViewModel? rightViewModel;
+
+        public bool IsViewVisible
+        {
+            get { return _isViewVisible; }
+            set
+            {
+                _isViewVisible = value;
+                OnPropertyChanged(nameof(IsViewVisible));
+            }
+        }
 
         public BaseViewModel MidViewModel
         {
@@ -33,35 +50,126 @@ namespace Veles_Application.ViewModels
             }
         }
 
+        public BaseViewModel LeftViewModel
+        {
+            get { return leftViewModel; }
+            set
+            {
+                leftViewModel = value;
+                OnPropertyChanged(nameof(leftViewModel));
+            }
+        }
+
+        public BaseViewModel RightViewModel
+        {
+            get { return rightViewModel; }
+            set
+            {
+                rightViewModel = value;
+                OnPropertyChanged(nameof (RightViewModel));
+            }
+        }
+
         public ICommand ListBoxSelectedCommand { get; }
         public ICommand ChangePanelCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
+        public ICommand ChangeLeftPanelCommand { get; }
 
         //Constructor
         public MainViewModel()
         {
-            GroupList = GetGroupsAsync().Result;
-
             ListBoxSelectedCommand = new ViewModelCommand(ExecuteChangeGroup);
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
+            ChangeLeftPanelCommand = new ViewModelCommand(ExecuteLeftPanelChange);
+            OpenSettingsCommand = new ViewModelCommand(ExecuteOpenSettings);
+
+            EventsAggregator.OnMessageTransmitted += OnMessageRecived;
+        }
+
+        private void ExecuteOpenSettings(object parameter)
+        {
+            SettingsViewModel settings = new SettingsViewModel();
+            var win = new Window()
+            {
+                DataContext = settings,
+                Height = 300,
+                Width = 300,
+                ResizeMode = ResizeMode.NoResize,
+            };
+            win.Show();
+
         }
 
         private async void ExecutePanelChange(object parameter)
         {
             if (parameter == null)
                 return;
-            else if (parameter.ToString() == "Home")
-                MidViewModel = new HomeViewModel();
+            else if (parameter.ToString() == "Logout")
+            {
+                //MidViewModel = new HomeViewModel();
+                //IsViewVisible = false;
+                var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
+                Process.Start(currentExecutablePath);
+                Application.Current.Shutdown();
+
+            }  
+            else if (parameter.ToString() == "Settings")
+            {
+                MidViewModel = new SettingsViewModel();
+                RightViewModel = null;
+            }   
             else if (parameter != null)
             {
                 ChatViewModel chatView = new ChatViewModel(parameter as Group);
                 chatView.OpenConnectionAsync();
                 MidViewModel = chatView;
-                //MidViewModel = new ChatViewModel(parameter as Group);
-                
-                
+
+                RightViewModel = new UsersViewModel();
+
+
+                //MidViewModel = new ChatViewModel(parameter as Group)
             }
             //else if (parameter.ToString() == "Options") needs implementation
 
+        }
+
+        private async void ExecuteLeftPanelChange(object parameter)
+        {
+            if(parameter.ToString() == "Search")
+            {
+                if(!isSearchClicked)
+                {
+                    LeftViewModel = new SearchGroupViewModel();
+                    isSearchClicked = true;
+                    isCreateClicked = false;
+                }
+                else
+                {
+                    LeftViewModel = new GroupViewModel();
+                    isSearchClicked = false;
+                }
+            }
+            else if(parameter.ToString() == "Create")
+            {
+                if (!isCreateClicked)
+                {
+                    LeftViewModel = new CreateGroupViewModel();
+                    isSearchClicked = false;
+                    isCreateClicked = true;
+                }
+                else
+                {
+                    LeftViewModel = new GroupViewModel();
+                    isCreateClicked = false;
+                }
+            }
+        }
+
+        //Handle event from GroupViewModel
+        private void OnMessageRecived(object obj)
+        {   
+            if(obj is Group)
+                ExecutePanelChange(obj);
         }
 
         private void ExecuteChangeGroup(object parameter)
@@ -74,7 +182,7 @@ namespace Veles_Application.ViewModels
         {
             ObservableCollection<Group> groups;
 
-            var result = RestApiMethods.GetCall("UserGroups/User/"+userName);
+            var result = RestApiMethods.GetCallAuthorization("UserGroups/User/"+userName);
 
             if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -82,11 +190,12 @@ namespace Veles_Application.ViewModels
                 groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
                 return groups;
             }
-            else
+            else if(IsViewVisible)
             {
                 MessageBox.Show("connection interrupted");
-                return groups = new ObservableCollection<Group>();
+                
             }
+            return groups = new ObservableCollection<Group>();
         }
     }
 }

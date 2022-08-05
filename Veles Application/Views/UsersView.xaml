@@ -1,29 +1,25 @@
-﻿<UserControl x:Class="Veles_Application.Views.GroupView"
+﻿<UserControl x:Class="Veles_Application.Views.UsersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:local="clr-namespace:Veles_Application.Views"
+             xmlns:local="clr-namespace:Veles_Application.Views" 
              xmlns:viewModel="clr-namespace:Veles_Application.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
-        <viewModel:GroupViewModel/>
+        <viewModel:UsersViewModel/>
     </UserControl.DataContext>
     <Grid>
-        <ListView x:Name="GroupList" ItemsSource="{Binding GroupList}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="GroupList" ItemsSource="{Binding UsersList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Path=Name}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
-
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{Binding ChangeGroupCommand}" CommandParameter="{Binding ElementName=GroupList,Path=SelectedItem}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-         </ListView>
+        </ListView>
     </Grid>
 </UserControl>

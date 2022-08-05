@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -17,23 +16,13 @@ using System.Windows.Shapes;
 namespace Veles_Application.Views
 {
     /// <summary>
-    /// Interaction logic for ChatView.xaml
+    /// Interaction logic for CreateGroupView.xaml
     /// </summary>
-    public partial class ChatView : UserControl
+    public partial class CreateGroupView : UserControl
     {
-        public ChatView()
+        public CreateGroupView()
         {
             InitializeComponent();
-        }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Selector selector = sender as Selector;
-            if (selector is ListView)
-            {
-                (selector as ListView).ScrollIntoView(selector.SelectedItem);
-            }
-            selector.SelectedItem = null;
         }
     }
 }

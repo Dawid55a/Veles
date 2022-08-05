@@ -145,6 +145,7 @@ namespace Veles_Application.ViewModels
  
                 //Close window
                 IsViewVisible = false;
+                
             }
             else
             {
