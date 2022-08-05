@@ -102,6 +102,7 @@ public class AccountController : BaseApiController
             });
         }
 
+        
         var group = await _groupRepository.GetGroupWithNameAsync(addToGroupDto.GroupName);
         if (group == null)
         {
@@ -137,6 +138,7 @@ public class AccountController : BaseApiController
         {
             Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "New password is identical to current password" });
         }
+
         var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
         if (user == null)
         {
@@ -146,6 +148,7 @@ public class AccountController : BaseApiController
                 Message = "User does not exist",
             });
         }
+
         using var hmac = new HMACSHA512(user.PasswordSalt);
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.OldPassword));
 

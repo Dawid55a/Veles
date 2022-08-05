@@ -56,4 +56,6 @@ public interface IUserRepository
     /// <param name="groupName">Name of group</param>
     /// <returns>List of users</returns>
     Task<IEnumerable<User>?> GetUsersForGroupName(string groupName);
+
+    Task ChangeNickInUserGroup(int userId, int groupId, string nick);
 }

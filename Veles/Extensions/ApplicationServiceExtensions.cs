@@ -24,8 +24,8 @@ public static class ApplicationServiceExtensions
         services.AddDbContext<ChatDataContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("ChatDb"));
-            //options.EnableDetailedErrors();
-            //options.EnableSensitiveDataLogging();
+            options.EnableDetailedErrors();
+            options.EnableSensitiveDataLogging();
         });
 
         return services;

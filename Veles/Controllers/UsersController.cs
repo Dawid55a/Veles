@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
+using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace VelesAPI.Controllers;
 
@@ -61,6 +63,14 @@ public class UsersController : BaseApiController
         return Ok(users.ToList());
     }
 
+    [Authorize]
+    [HttpPut("change_nick")]
+    public async Task<ActionResult> ChangeUserNameInGroup(ChangeNickInGroupDto changeNickInGroupDto)
+    {
+        var userId = User.GetUserId();
+        await _userRepository.ChangeNickInUserGroup(userId, changeNickInGroupDto.GroupId, changeNickInGroupDto.Nick);
+        return Ok();
+    }
     // NOT IMPLEMENTED
     // PUT: api/Users/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
