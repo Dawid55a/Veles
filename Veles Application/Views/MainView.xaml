@@ -7,6 +7,17 @@
         xmlns:local="clr-namespace:Veles_Application.Views"
         mc:Ignorable="d"
         Title="Veles" Height="450" Width="800">
+    
+    <!-- Dodaje widocznosc potrzebne aby "zamknac okno" -->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityBool" />
+    </Window.Resources>
+
+    <!-- Zmieniamy widocznosc okna -->
+    <Window.Visibility>
+        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource VisibilityBool}"/>
+    </Window.Visibility>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -29,7 +40,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="Home" Command="{Binding ChangePanelCommand}" CommandParameter="Home"/>
+                <Button Grid.Column="0" Content="Logout" Command="{Binding ChangePanelCommand}" CommandParameter="Logout"/>
                 <Button Grid.Column="1" Content="Options" Command="{Binding ChangePanelCommand}" CommandParameter="Settings"/>
             </Grid>
             

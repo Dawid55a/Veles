@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,12 +20,24 @@ namespace Veles_Application.ViewModels
     {
         private string userName = Properties.Settings.Default.Username;
 
+        private bool _isViewVisible = true;
+
         private bool isSearchClicked = false;
         private bool isCreateClicked = false;
 
         //public BaseViewModel groupModel = new GroupViewModel();
         public BaseViewModel midViewModel = new HomeViewModel();//set mid panel
         public BaseViewModel leftViewModel = new GroupViewModel();
+
+        public bool IsViewVisible
+        {
+            get { return _isViewVisible; }
+            set
+            {
+                _isViewVisible = value;
+                OnPropertyChanged(nameof(IsViewVisible));
+            }
+        }
 
         public BaseViewModel MidViewModel
         {
@@ -80,8 +93,15 @@ namespace Veles_Application.ViewModels
         {
             if (parameter == null)
                 return;
-            else if (parameter.ToString() == "Home")
-                MidViewModel = new HomeViewModel();
+            else if (parameter.ToString() == "Logout")
+            {
+                //MidViewModel = new HomeViewModel();
+                //IsViewVisible = false;
+                var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
+                Process.Start(currentExecutablePath);
+                Application.Current.Shutdown();
+
+            }  
             else if (parameter.ToString() == "Settings")
                 MidViewModel = new SettingsViewModel();
             else if (parameter != null)

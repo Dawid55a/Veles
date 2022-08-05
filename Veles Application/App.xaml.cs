@@ -20,6 +20,7 @@ namespace Veles_Application
         protected void Main(object sender, StartupEventArgs e)//Main
         {
             var loginView = new LoginView();
+            
             loginView.Show();//Show LoginView window
             loginView.IsVisibleChanged += (s, ev) =>
             {
