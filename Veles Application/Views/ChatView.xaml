@@ -18,7 +18,9 @@
 
         <ListView IsSynchronizedWithCurrentItem="True" SelectionChanged="ListView_SelectionChanged" ScrollViewer.CanContentScroll="False" 
                   Grid.Row="0" ItemsSource="{Binding MessageList}" 
-                  SelectedItem="{Binding SelectedMessage}">
+                  SelectedItem="{Binding SelectedMessage}"
+                  HorizontalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -27,9 +29,9 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    <StackPanel >
                         <TextBlock  Text="{Binding Path=User}" FontWeight="Bold"/>
-                        <TextBlock  Text="{Binding Path=Text}"/>
+                        <TextBlock  Text="{Binding Path=Text}" TextWrapping="WrapWithOverflow" />
                         <TextBlock  Text="{Binding Path=CreatedDate}"/>
                     </StackPanel>
                 </DataTemplate>
@@ -42,7 +44,7 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding UserMessage}">
+            <TextBox Grid.Column="0" Text="{Binding UserMessage}" TextWrapping="Wrap" >
                 <TextBox.InputBindings>
                     <KeyBinding  Key="Enter" Command="{Binding SendMessageCommand}" CommandParameter="{Binding Path=Text, RelativeSource={RelativeSource AncestorType={x:Type TextBox}}}" />
                 </TextBox.InputBindings>
