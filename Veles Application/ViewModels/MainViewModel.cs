@@ -124,7 +124,7 @@ namespace Veles_Application.ViewModels
                 chatView.OpenConnectionAsync();
                 MidViewModel = chatView;
 
-                RightViewModel = new UsersViewModel();
+                RightViewModel = new UsersViewModel(parameter as Group);
 
 
                 //MidViewModel = new ChatViewModel(parameter as Group)

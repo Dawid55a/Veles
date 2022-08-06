@@ -30,7 +30,7 @@ namespace Veles_Application.ViewModels
         //Trigger event in MainViewModel when group has changed
         private void ExecuteGroupChange(object obj)
         {
-            EventsAggregator.BroadCast(obj);
+            EventsAggregator.SendGroup(obj);
         }
         
         //Get group list from api

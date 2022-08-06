@@ -8,7 +8,7 @@ namespace Veles_Application
 {
     public static class EventsAggregator
     {
-        public static void BroadCast(object message)
+        public static void SendGroup(object message)
         {
             if (OnMessageTransmitted != null)
                 OnMessageTransmitted(message);
