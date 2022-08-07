@@ -17,8 +17,7 @@ public class User
 
     [EmailAddress] [Required] public string Email { get; set; } = null!;
 
-    public string? Avatar { get; set; }
-
+    public bool Removed { get; set; } = false;
     // Relation
     [JsonIgnore]
     public ICollection<UserGroup> UserGroups { get; set; } = null!;

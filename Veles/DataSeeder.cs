@@ -98,7 +98,6 @@ public static class DataSeeder
             Password = "1234",
             PasswordHash = BitConverter.GetBytes(1234),
             PasswordSalt = BitConverter.GetBytes(1234),
-            Avatar = "https://www.karol.ma/avatar",
             UserGroups = new List<UserGroup>()
         };
         
@@ -114,7 +113,6 @@ public static class DataSeeder
             Password = "1234",
             PasswordHash = BitConverter.GetBytes(1234),
             PasswordSalt = BitConverter.GetBytes(1234),
-            Avatar = "https://www.karol.ma/avatar",
             UserGroups = new List<UserGroup>()
         };
         using var hmac2 = new HMACSHA512();

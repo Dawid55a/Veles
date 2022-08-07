@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 using VelesLibrary.DTOs;
@@ -11,15 +12,17 @@ namespace VelesAPI.Controllers;
 public class AccountController : BaseApiController
 {
     private readonly IGroupRepository _groupRepository;
+    private readonly IChatRepository _chatRepository;
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
 
     public AccountController(IUserRepository userRepository, ITokenService tokenService,
-        IGroupRepository groupRepository)
+        IGroupRepository groupRepository, IChatRepository chatRepository)
     {
         _userRepository = userRepository;
         _tokenService = tokenService;
         _groupRepository = groupRepository;
+        _chatRepository = chatRepository;
     }
 
     [HttpPost("register")]
@@ -41,7 +44,6 @@ public class AccountController : BaseApiController
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
             Email = registerDto.Email.ToLower(),
-            Avatar = registerDto.Avatar
         };
 
         await _userRepository.AddUserAsync(user);

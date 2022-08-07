@@ -10,5 +10,4 @@ public class RegisterDto
 
     [Required] public string Email { get; set; } = null!;
 
-    public string? Avatar { get; set; }
 }
