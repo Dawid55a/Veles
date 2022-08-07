@@ -70,7 +70,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await _context.Users.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
+        return await _context.Users.SingleOrDefaultAsync(x => x.UserName == username);
     }
 
     public async Task<IEnumerable<User>?> GetUsersForGroupName(string groupName)

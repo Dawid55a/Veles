@@ -32,6 +32,6 @@ public class ChatDataContext : Microsoft.EntityFrameworkCore.DbContext
             .HasMany(g => g.UserGroups)
             .WithOne(ug => ug.Group)
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.UseSerialColumns();
+        modelBuilder.UseIdentityColumns();
     }
 }
