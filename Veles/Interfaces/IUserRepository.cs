@@ -28,7 +28,8 @@ public interface IUserRepository
     /// </summary>
     /// <param name="user"></param>
     /// <param name="group"></param>
-    Task AddUserToGroup(User user, Group group);
+    /// <param name="role"></param>
+    Task AddUserToGroup(User user, Group group, string role);
 
     /// <summary>
     ///     Get all users asynchronously

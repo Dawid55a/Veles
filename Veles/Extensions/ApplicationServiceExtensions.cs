@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using VelesAPI.DbContext;
 using VelesAPI.Helpers;
 using VelesAPI.Interfaces;
@@ -26,6 +27,7 @@ public static class ApplicationServiceExtensions
             options.UseNpgsql(configuration.GetConnectionString("ChatDb"));
             options.EnableDetailedErrors();
             options.EnableSensitiveDataLogging();
+            //options.ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
         });
 
         return services;

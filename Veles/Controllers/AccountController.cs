@@ -114,7 +114,7 @@ public class AccountController : BaseApiController
                 Message = "Group does not exist",
             });
         }
-        await _userRepository.AddUserToGroup(user, group);
+        await _userRepository.AddUserToGroup(user, group, Roles.Member);
         _userRepository.Update(user);
         var result = await _userRepository.SaveAllAsync();
         if (!result)

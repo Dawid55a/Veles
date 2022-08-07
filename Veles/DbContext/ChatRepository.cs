@@ -41,6 +41,7 @@ public class ChatRepository : IChatRepository
             .Where(u => u.UserName == username)
             .Include(u => u.UserGroups)
             .ThenInclude(ug => ug.Group)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
         return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
@@ -53,8 +54,9 @@ public class ChatRepository : IChatRepository
             .ThenInclude(ug => ug.Group)
             .ThenInclude(g => g.Connections)
             .Where(u => u.Id == id)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
-        return userWithGroups?.UserGroups.Select(ug => ug.Group); ;
+        return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
 
     public async Task<IEnumerable<Message>?> GetMessageThreadAsync(Group g)
