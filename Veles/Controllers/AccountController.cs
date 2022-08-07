@@ -39,7 +39,7 @@ public class AccountController : BaseApiController
 
         var user = new User
         {
-            UserName = registerDto.UserName.ToLower(),
+            UserName = registerDto.UserName,
             Password = registerDto.Password,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
@@ -180,7 +180,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPost("remove_account")]
+    [HttpDelete("remove_account")]
     public async Task<ActionResult> RemoveAccount()
     {
         //TODO: remove groups he is owner of
