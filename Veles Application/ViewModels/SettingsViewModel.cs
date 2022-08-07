@@ -205,7 +205,7 @@ namespace Veles_Application.ViewModels
             
         }
 
-        private async void ExecuteDeleteUser(object parameter)
+        private async void ExecuteDeleteAccount(object parameter)
         {
             var Result = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?", 
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
