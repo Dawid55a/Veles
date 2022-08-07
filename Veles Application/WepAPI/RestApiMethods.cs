@@ -89,7 +89,7 @@ namespace Veles_Application.WepAPI
             }
         }
 
-        public static Task<HttpResponseMessage> PostCallAutorization<T>(string url, T model) where T : class
+        public static Task<HttpResponseMessage> PostCallAuthorization<T>(string url, T model) where T : class
         {
             try
             {

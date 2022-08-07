@@ -12,6 +12,7 @@ using System.Drawing;
 using Veles_Application.WepAPI;
 using VelesLibrary.DTOs;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Veles_Application.ViewModels
 {
@@ -127,10 +128,10 @@ namespace Veles_Application.ViewModels
 
         private async void ExecuteChangePassword(object parameter)
         {
-            var Result = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?",
+            var ResultYesNo = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (Result == MessageBoxResult.Yes)
+            if (ResultYesNo == MessageBoxResult.Yes)
             {
                 if (OldPassword == NewPassword)
                 {
@@ -153,7 +154,7 @@ namespace Veles_Application.ViewModels
                         UserName = Properties.Settings.Default.Username
                     };
 
-                    var result = RestApiMethods.PostCallAutorization("Account/change_password", changePasswordDto);
+                    var result = RestApiMethods.PostCallAuthorization("Account/change_password", changePasswordDto);
 
                     //successfully changed the password
                     if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -182,10 +183,10 @@ namespace Veles_Application.ViewModels
 
         private async void ExecuteChangeNick(object parameter)
         {
-            var Result = MessageBox.Show("Are you sure you want to change your nick?", "Are you sure?",
+            var ResultYesNo = MessageBox.Show("Are you sure you want to change your nick?", "Are you sure?",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (Result == MessageBoxResult.Yes)
+            if (ResultYesNo == MessageBoxResult.Yes)
             {
                 if (NewNick == "")
                 {
@@ -199,7 +200,7 @@ namespace Veles_Application.ViewModels
                 }
                 else
                 {
-                    //connection
+                    var result = RestApiMethods.DeleteCallAuthorization("Account/change_password");
                 }
             }
             
@@ -207,14 +208,27 @@ namespace Veles_Application.ViewModels
 
         private async void ExecuteDeleteAccount(object parameter)
         {
-            var Result = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?", 
+            var ResultYesNo = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?", 
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (Result == MessageBoxResult.Yes)
+            if (ResultYesNo == MessageBoxResult.Yes)
             {
-                //communication
+                var result = RestApiMethods.DeleteCallAuthorization("Account/remove_account");
+
+                if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    MessageBox.Show("Your account has been deleted", "Succes",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
+                    Process.Start(currentExecutablePath);
+                    Application.Current.Shutdown();
+                }
+                else
+                {
+                    Methods.Messages.BadRequest(result.Result.ReasonPhrase.ToString());
+                }
             }
-            
         }
     }
 }

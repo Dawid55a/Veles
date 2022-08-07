@@ -60,7 +60,7 @@ namespace Veles_Application.ViewModels
                     GroupName = parameter.ToString(),
                     UserName = Properties.Settings.Default.Username
                 };
-                var result = RestApiMethods.PostCallAutorization("Account/add_to_group", addToGroup);
+                var result = RestApiMethods.PostCallAuthorization("Account/add_to_group", addToGroup);
 
                 if(result.Result.StatusCode == System.Net.HttpStatusCode.OK)
                 {

@@ -169,7 +169,7 @@ namespace Veles_Application.ViewModels
             registerDto.Email = RegistrationEmail;
 
             var result = await Task.Run(() => RestApiMethods.PostCall("Account/Register", registerDto));
-            if(result.StatusCode == HttpStatusCode.OK)
+            if(result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Created)
             {
                 //Read json
                 string jsonResult = result.Content.ReadAsStringAsync().Result;
@@ -193,7 +193,7 @@ namespace Veles_Application.ViewModels
             }
             else
             {
-                MessageBox.Show("Incorrect username or password\n Status code: " + result.StatusCode.ToString(), "Registration error",
+                MessageBox.Show("Incorrect username or password\n", "Registration error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

@@ -39,7 +39,7 @@ namespace Veles_Application.ViewModels
                 Name = CreateGroupName
             };
 
-            var result = RestApiMethods.PostCallAutorization("Groups", createGroup);
+            var result = RestApiMethods.PostCallAuthorization("Groups", createGroup);
 
             if(result.Result.StatusCode == System.Net.HttpStatusCode.OK || result.Result.StatusCode == System.Net.HttpStatusCode.Created)
             {
