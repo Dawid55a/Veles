@@ -59,4 +59,6 @@ public interface IUserRepository
     Task<IEnumerable<User>?> GetUsersForGroupName(string groupName);
 
     Task ChangeNickInUserGroup(int userId, int groupId, string nick);
+
+    Task<bool?> UserIsRemoved(int userId);
 }

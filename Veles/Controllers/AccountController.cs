@@ -64,12 +64,21 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(loginDto.UserName);
+
         if (user == null)
         {
             return Unauthorized(new ResponseDto
             {
                 Status = ResponseStatus.Error,
                 Message = "User does not exist",
+            });
+        }
+        if (user.Removed)
+        {
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error,
+                Message = "Account is removed",
             });
         }
 

@@ -58,6 +58,12 @@ public class UserRepository : IUserRepository
         _context.UserGroups.Update(nickOld);
     }
 
+    public async Task<bool?> UserIsRemoved(int userId)
+    {
+        var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+        return user?.Removed;
+    }
+
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
         return await _context.Users.ToListAsync();
