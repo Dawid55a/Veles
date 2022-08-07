@@ -141,24 +141,25 @@ public class GroupsController : BaseApiController
     }
 
     // DELETE: api/Groups/5
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGroup(int id)
     {
-        if (_context.UserGroups == null)
-        {
-            return NotFound();
-        }
-
-        var group = await _context.UserGroups.FindAsync(id);
+        //TODO: check if user is an owner of this group
+        var group = await _groupRepository.GetGroupWithIdAsync(id);
         if (group == null)
         {
             return NotFound();
         }
 
-        _context.UserGroups.Remove(group);
-        await _context.SaveChangesAsync();
+        _groupRepository.RemoveGroup(group);
 
-        return NoContent();
+        if (await _groupRepository.SaveAllAsync())
+        {
+            return Ok();
+        }
+
+        return BadRequest("Group was not removed");
     }
 
     private bool GroupExists(int id)
