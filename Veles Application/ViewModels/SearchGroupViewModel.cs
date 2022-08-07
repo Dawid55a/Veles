@@ -30,7 +30,7 @@ namespace Veles_Application.ViewModels
         }
 
         public ObservableCollection<Group> GroupList { get; set; }
-        public ObservableCollection<Group> AllGroupList { get; set; }
+        public ObservableCollection<Group> OwnGroupList { get; set; }
 
         public ICommand SearchGroupCommand { get; }
         public ICommand JoinToGroupCommand { get; }
@@ -41,15 +41,17 @@ namespace Veles_Application.ViewModels
 
             GroupList = new ObservableCollection<Group>();
             GroupViewModel group = new GroupViewModel();
-            AllGroupList = group.GetGroupsAsync().Result;
+            OwnGroupList = group.GetGroupsAsync().Result;
         }
 
         private async void ExecuteSearchGroup(object parameter)
         {   
             ObservableCollection<Group> groups = GetGroupLikeAsync().Result;
             GroupList.Clear();
-            
-            foreach (Group group in groups)
+
+            var groupsWithoutOwned = groups.Where(g => !OwnGroupList.Any(o => g.Name == o.Name));
+
+            foreach (Group group in groupsWithoutOwned)
             {
                 GroupList.Add(group);
             }
@@ -81,7 +83,8 @@ namespace Veles_Application.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Something goes wrong", "Feiled", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Something goes wrong", "Feiled", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
             
@@ -101,11 +104,14 @@ namespace Veles_Application.ViewModels
                 groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
                 return groups;
             }
-            else
+            else if(result.Result.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                MessageBox.Show("connection interrupted");
+                MessageBox.Show("Not found", "Not found", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return groups;
             }
+            
+            return groups;
         }
     }
 }
