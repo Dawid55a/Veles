@@ -111,7 +111,7 @@ namespace Veles_Application.ViewModels
         public ICommand ChangePasswordCommand { get; }
         public ICommand ChangeNickCommand { get; }
 
-        public ICommand DeleteUserCommand { get; }
+        public ICommand DeleteAccountCommand { get; }
 
         public SettingsViewModel()
         {
@@ -121,7 +121,7 @@ namespace Veles_Application.ViewModels
 
             ChangePasswordCommand = new ViewModelCommand(ExecuteChangePassword);
             ChangeNickCommand = new ViewModelCommand(ExecuteChangeNick);
-            DeleteUserCommand = new ViewModelCommand(ExecuteDeleteUser);
+            DeleteAccountCommand = new ViewModelCommand(ExecuteDeleteAccount);
 
         }
 
