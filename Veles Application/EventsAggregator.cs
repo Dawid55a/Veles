@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Veles_Application.ViewModels;
 
 namespace Veles_Application
 {
@@ -14,6 +15,14 @@ namespace Veles_Application
                 OnMessageTransmitted(message);
         }
 
+        public static void SwitchPage(BaseViewModel message)
+        {
+            if (OnPageTransmitted != null)
+                OnPageTransmitted(message);
+        }
+
         public static Action<object> OnMessageTransmitted = null!;
+        public static Action<BaseViewModel> OnPageTransmitted = null!;
+
     }
 }

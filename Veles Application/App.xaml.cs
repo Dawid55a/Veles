@@ -19,28 +19,8 @@ namespace Veles_Application
     {
         protected void Main(object sender, StartupEventArgs e)//Main
         {
-            var loginView = new LoginView();
-            
-            loginView.Show();//Show LoginView window
-            
-            
-                loginView.IsVisibleChanged += (s, ev) =>
-                {
-                    if(loginView.IsLoaded)
-                    {
-                        var mainView = new MainView();
-                        mainView.Show();//Show MainView window
-                    }
-                    try
-                    {
-                        loginView.Close();//Close LoginView window
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        Application.Current.Shutdown();
-                    }
-
-                };
+            var Window = new WindowView();
+            Window.Show();
             
             //var mainView = new MainView();
             //mainView.Show();

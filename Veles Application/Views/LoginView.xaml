@@ -1,36 +1,17 @@
-﻿<Window x:Class="Veles_Application.Views.LoginView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Veles_Application.Views"
-        xmlns:viewModel="clr-namespace:Veles_Application.ViewModels" 
-        xmlns:command="clr-namespace:Veles_Application.Commands" 
-        xmlns:components="clr-namespace:Veles_Application.Components"
-        mc:Ignorable="d"
-        Title="Login" Height="450" Width="800">
-
-    <!-- Add view model -->
-    <Window.DataContext>
-        <viewModel:LoginViewModel/>
-    </Window.DataContext>
-
-    <!-- Dodaje widocznosc potrzebne aby "zamknac okno" -->
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="VisibilityBool" />
-    </Window.Resources>
-
-    <!-- Zmieniamy widocznosc okna -->
-    <Window.Visibility>
-        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource VisibilityBool}"/>
-    </Window.Visibility>
-
+﻿<UserControl x:Class="Veles_Application.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Veles_Application.Views" xmlns:components="clr-namespace:Veles_Application.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <!--Login-->
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -124,4 +105,4 @@
             <Button Command="{Binding RegistrationCommand}" Content="Registration" Grid.Row="4"/>
         </Grid>
     </Grid>
-</Window>
+</UserControl>

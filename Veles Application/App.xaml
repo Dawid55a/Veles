@@ -33,5 +33,13 @@
         <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
             <views:UsersView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
+            <views:LoginView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:MainViewModel}">
+            <views:MainView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

@@ -10,21 +10,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Veles_Application.ViewModels;
 
 namespace Veles_Application.Views
 {
     /// <summary>
-    /// Interaction logic for MainView.xaml
+    /// Interaction logic for WindowView.xaml
     /// </summary>
-    public partial class MainView : UserControl
+    public partial class WindowView : Window
     {
-        public MainView()
+        public WindowView()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+
+            DataContext = new WindowViewModel();
         }
     }
 }

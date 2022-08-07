@@ -1,30 +1,18 @@
-﻿<Window x:Class="Veles_Application.Views.MainView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:local="clr-namespace:Veles_Application.Views"
-        mc:Ignorable="d"
-        Title="Veles" Height="450" Width="800">
-    
-    <!-- Dodaje widocznosc potrzebne aby "zamknac okno" -->
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="VisibilityBool" />
-    </Window.Resources>
-
-    <!-- Zmieniamy widocznosc okna -->
-    <Window.Visibility>
-        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource VisibilityBool}"/>
-    </Window.Visibility>
-    
+﻿<UserControl x:Class="Veles_Application.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Veles_Application.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -43,7 +31,7 @@
                 <Button Grid.Column="0" Content="Logout" Command="{Binding ChangePanelCommand}" CommandParameter="Logout"/>
                 <Button Grid.Column="1" Content="Options" Command="{Binding ChangePanelCommand}" CommandParameter="Settings"/>
             </Grid>
-            
+
             <!--Group List-->
             <!--
             <ListView x:Name="GroupList" Grid.Row="1" ItemsSource="{Binding GroupList}">
@@ -73,7 +61,7 @@
                 <Button Grid.Column="1" Content="Create" Command="{Binding ChangeLeftPanelCommand}" CommandParameter="Create"/>
             </Grid>
         </Grid>
-        
+
         <!--HomeView or ChatView-->
         <ContentControl Grid.Column="1" Content="{Binding MidViewModel}"/>
 
@@ -81,4 +69,4 @@
         <ContentControl Grid.Column="2" Content="{Binding RightViewModel}"/>
 
     </Grid>
-</Window>
+</UserControl>

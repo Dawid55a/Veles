@@ -142,10 +142,10 @@ namespace Veles_Application.ViewModels
                     Properties.Settings.Default.Username = tokenDto.UserName;
                     Properties.Settings.Default.Token = tokenDto.Token;
                 }
- 
+
                 //Close window
-                IsViewVisible = false;
-                
+                EventsAggregator.SwitchPage(new MainViewModel());
+
             }
             else
             {
@@ -189,7 +189,7 @@ namespace Veles_Application.ViewModels
                 }
 
                 //Close window
-                IsViewVisible = false;
+                EventsAggregator.SwitchPage(new MainViewModel());
             }
             else
             {

@@ -241,9 +241,7 @@ namespace Veles_Application.ViewModels
                     MessageBox.Show("Your account has been deleted", "Succes",
                         MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
-                    Process.Start(currentExecutablePath);
-                    Application.Current.Shutdown();
+                    EventsAggregator.SwitchPage(new LoginViewModel());
                 }
                 else
                 {

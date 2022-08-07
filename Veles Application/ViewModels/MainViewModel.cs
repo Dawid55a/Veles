@@ -108,9 +108,7 @@ namespace Veles_Application.ViewModels
             {
                 //MidViewModel = new HomeViewModel();
                 //IsViewVisible = false;
-                var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
-                Process.Start(currentExecutablePath);
-                Application.Current.Shutdown();
+                EventsAggregator.SwitchPage(new LoginViewModel());
 
             }  
             else if (parameter.ToString() == "Settings")
