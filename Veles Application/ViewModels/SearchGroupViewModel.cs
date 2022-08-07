@@ -17,6 +17,7 @@ namespace Veles_Application.ViewModels
     public class SearchGroupViewModel : BaseViewModel
     {
         private string _searchName = "";
+        
 
         public string SearchName
         {
@@ -29,6 +30,7 @@ namespace Veles_Application.ViewModels
         }
 
         public ObservableCollection<Group> GroupList { get; set; }
+        public ObservableCollection<Group> AllGroupList { get; set; }
 
         public ICommand SearchGroupCommand { get; }
         public ICommand JoinToGroupCommand { get; }
@@ -38,7 +40,8 @@ namespace Veles_Application.ViewModels
             JoinToGroupCommand = new ViewModelCommand(ExecuteJoinToGroup);
 
             GroupList = new ObservableCollection<Group>();
-            
+            GroupViewModel group = new GroupViewModel();
+            AllGroupList = group.GetGroupsAsync().Result;
         }
 
         private async void ExecuteSearchGroup(object parameter)

@@ -126,9 +126,10 @@ namespace Veles_Application.ViewModels
 
         }
 
+        //Change password
         private async void ExecuteChangePassword(object parameter)
         {
-            var ResultYesNo = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?",
+            var ResultYesNo = MessageBox.Show("Are you sure you want to change your password?", "Are you sure?",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (ResultYesNo == MessageBoxResult.Yes)
@@ -181,6 +182,7 @@ namespace Veles_Application.ViewModels
             
         }
 
+        //Change nick in group
         private async void ExecuteChangeNick(object parameter)
         {
             var ResultYesNo = MessageBox.Show("Are you sure you want to change your nick?", "Are you sure?",
@@ -200,12 +202,31 @@ namespace Veles_Application.ViewModels
                 }
                 else
                 {
-                    var result = RestApiMethods.DeleteCallAuthorization("Account/change_password");
+                    ChangeNickInGroupDto changeNick = new ChangeNickInGroupDto()
+                    {
+                        GroupId = SelectedGroup.Id,
+                        Nick = Properties.Settings.Default.Username
+                    };
+
+                    var result = RestApiMethods.PutCallAuthorization("Users/change_nick", changeNick);
+
+                    //successfully changed the nick
+                    if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        MessageBox.Show("successfully changed the nick in " + SelectedGroup.Name, "Success",
+                            MessageBoxButton.OK, MessageBoxImage.Information);  
+                    }
+                    else
+                    {
+                        string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                        Methods.Messages.BadRequest(jsonResult);
+                    }
                 }
             }
             
         }
 
+        //Delete account
         private async void ExecuteDeleteAccount(object parameter)
         {
             var ResultYesNo = MessageBox.Show("Are you sure you want to delete your account?", "Are you sure?", 
@@ -226,7 +247,7 @@ namespace Veles_Application.ViewModels
                 }
                 else
                 {
-                    Methods.Messages.BadRequest(result.Result.ReasonPhrase.ToString());
+                    Methods.Messages.BadRequest(result.Result.StatusCode.ToString());
                 }
             }
         }

@@ -115,7 +115,7 @@ namespace Veles_Application.WepAPI
             }
         }
 
-        public static Task<HttpResponseMessage> PutCallAutorization<T>(string url, T model) where T : class
+        public static Task<HttpResponseMessage> PutCallAuthorization<T>(string url, T model) where T : class
         {
             try
             {
