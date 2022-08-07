@@ -180,15 +180,11 @@ public class AccountController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPost("remove_account/{id}")]
-    public async Task<ActionResult> RemoveAccount(int id)
+    [HttpPost("remove_account")]
+    public async Task<ActionResult> RemoveAccount()
     {
-        if (User.GetUserId() != id)
-        {
-            return Unauthorized("You can not remove other accounts");
-        }
-
-        var user = await _userRepository.GetUserByIdAsync(id);
+        //TODO: remove groups he is owner of
+        var user = await _userRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null)
         {
             return Unauthorized("User does not exist");
