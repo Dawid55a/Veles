@@ -175,6 +175,45 @@ public class AccountController : BaseApiController
         return Ok(new TokenDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) });
 
     }
+
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("remove_account/{id}")]
+    public async Task<ActionResult> RemoveAccount(int id)
+    {
+        if (User.GetUserId() != id)
+        {
+            return Unauthorized("You can not remove other accounts");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(id);
+        if (user == null)
+        {
+            return Unauthorized("User does not exist");
+        }
+        user.Removed = true;
+        _userRepository.Update(user);
+        var groups = await _chatRepository.GetGroupsForUserIdAsync(user.Id);
+        if (groups == null)
+        {
+            return Ok();
+        }
+
+        foreach (var group in groups)
+        {
+            await _userRepository.ChangeNickInUserGroup(user.Id, group.Id, "Removed");
+        }
+
+        if (await _userRepository.SaveAllAsync())
+        {
+            return Ok("Account removed");
+        }
+
+        return Unauthorized("Changes was not saved");
+    }
+
     private async Task<bool> UserExists(string username)
     {
         var result = await _userRepository.GetUserByUsernameAsync(username);
