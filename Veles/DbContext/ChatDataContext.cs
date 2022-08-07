@@ -28,6 +28,10 @@ public class ChatDataContext : Microsoft.EntityFrameworkCore.DbContext
             .HasOne(ug => ug.Group)
             .WithMany(g => g.UserGroups)
             .HasForeignKey(ug => ug.GroupId);
+        modelBuilder.Entity<Group>()
+            .HasMany(g => g.UserGroups)
+            .WithOne(ug => ug.Group)
+            .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.UseSerialColumns();
     }
 }

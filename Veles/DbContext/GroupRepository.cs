@@ -35,7 +35,11 @@ public class GroupRepository : IGroupRepository
 
     public async Task<Group?> GetGroupWithNameAsync(string groupName)
     {
-        return await _context.Groups.Include(g => g.Connections).FirstOrDefaultAsync(g => g.Name == groupName);
+        return await _context.Groups
+            .Include(g => g.UserGroups)
+            .Include(g => g.Connections)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(g => g.Name == groupName);
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsWithNameLikeAsync(string namePattern)

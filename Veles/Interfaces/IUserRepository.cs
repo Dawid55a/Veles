@@ -28,7 +28,8 @@ public interface IUserRepository
     /// </summary>
     /// <param name="user"></param>
     /// <param name="group"></param>
-    Task AddUserToGroup(User user, Group group);
+    /// <param name="role"></param>
+    Task AddUserToGroup(User user, Group group, string role);
 
     /// <summary>
     ///     Get all users asynchronously
@@ -56,4 +57,6 @@ public interface IUserRepository
     /// <param name="groupName">Name of group</param>
     /// <returns>List of users</returns>
     Task<IEnumerable<User>?> GetUsersForGroupName(string groupName);
+
+    Task ChangeNickInUserGroup(int userId, int groupId, string nick);
 }

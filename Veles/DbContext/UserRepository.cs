@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace VelesAPI.DbContext;
 
@@ -28,13 +29,33 @@ public class UserRepository : IUserRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task AddUserToGroup(User user, Group group)
+    public async Task AddUserToGroup(User user, Group group, string role)
     {
-        var ug = new UserGroup() {User = user, Group = group, UserGroupNick = user.UserName};
+        if (!(role == Roles.Member || role == Roles.Owner))
+        {
+            throw new ArgumentException("This role doesn't exist, check Roles class for correct roles");
+        }
+        var ug = new UserGroup() {User = user, Group = group, UserGroupNick = user.UserName, Role = role};
+        var userGroup = await _context.UserGroups.FirstOrDefaultAsync(ug1 => ug1.User.Equals(user) && ug1.Group.Equals(group));
+        if (userGroup != null)
+        {
+            return;
+        }
         var userNew = await _context.Users.Include(u => u.UserGroups).Where(u => u.Equals(user)).FirstAsync();
-        var groupNew = await _context.Groups.Include(g => g.UserGroups).Where(g => g.Equals(group)).FirstAsync();
+        //var groupNew = await _context.Groups.Include(g => g.UserGroups).Where(g => g.Equals(group)).FirstAsync();
         userNew.UserGroups.Add(ug);
-        groupNew.UserGroups.Add(ug);
+        group.UserGroups.Add(ug);
+         
+
+    }
+
+    public async Task ChangeNickInUserGroup(int userId, int groupId, string nick)
+    {
+        var userNew = await _context.Users.Include(u => u.UserGroups).Where(u => u.Id == userId).FirstOrDefaultAsync();
+        var groupNew = await _context.Groups.Where(g => g.Id == groupId).FirstOrDefaultAsync();
+        var nickOld = userNew?.UserGroups.FirstOrDefault(ug => ug.Group.Equals(groupNew));
+        nickOld.UserGroupNick = nick;
+        _context.UserGroups.Update(nickOld);
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync()

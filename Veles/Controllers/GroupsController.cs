@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
+using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 using VelesLibrary.DTOs;
@@ -13,12 +14,14 @@ public class GroupsController : BaseApiController
     private readonly IChatRepository _chatRepository;
     private readonly ChatDataContext _context;
     private readonly IGroupRepository _groupRepository;
+    private readonly IUserRepository _userRepository;
 
-    public GroupsController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository)
+    public GroupsController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository, IUserRepository userRepository)
     {
         _context = context;
         _chatRepository = chatRepository;
         _groupRepository = groupRepository;
+        _userRepository = userRepository;
     }
 
     // GET: api/Groups
@@ -120,39 +123,44 @@ public class GroupsController : BaseApiController
         }
         var group = new Group
         {
-            Name = createGroupDto.Name, Connections = null, UserGroups = null,
+            Name = createGroupDto.Name, Connections = new List<Connection>(), UserGroups = new List<UserGroup>(),
         };
 
         await _groupRepository.AddGroupAsync(group);
+
+        var user = await  _userRepository.GetUserByIdAsync(User.GetUserId());
+
+        await _userRepository.AddUserToGroup(user!, group, Roles.Owner);
 
         if (await _groupRepository.SaveAllAsync())
         {
             return CreatedAtAction(nameof(GetGroup), new { id = group.Id }, group);
         }
 
-        return Problem("Group was not created");
+        return Problem("Owner was not properly added to group");
     }
 
     // DELETE: api/Groups/5
-    /*[HttpDelete("{id}")]
+    [Authorize]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGroup(int id)
     {
-        if (_context.UserGroups == null)
-        {
-            return NotFound();
-        }
-
-        var group = await _context.UserGroups.FindAsync(id);
+        //TODO: check if user is an owner of this group
+        var group = await _groupRepository.GetGroupWithIdAsync(id);
         if (group == null)
         {
             return NotFound();
         }
 
-        _context.UserGroups.Remove(group);
-        await _context.SaveChangesAsync();
+        _groupRepository.RemoveGroup(group);
 
-        return NoContent();
-    }*/
+        if (await _groupRepository.SaveAllAsync())
+        {
+            return Ok();
+        }
+
+        return BadRequest("Group was not removed");
+    }
 
     private bool GroupExists(int id)
     {

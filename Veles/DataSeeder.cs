@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
 using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace VelesAPI;
 
@@ -98,7 +99,6 @@ public static class DataSeeder
             Password = "1234",
             PasswordHash = BitConverter.GetBytes(1234),
             PasswordSalt = BitConverter.GetBytes(1234),
-            Avatar = "https://www.karol.ma/avatar",
             UserGroups = new List<UserGroup>()
         };
         
@@ -114,7 +114,6 @@ public static class DataSeeder
             Password = "1234",
             PasswordHash = BitConverter.GetBytes(1234),
             PasswordSalt = BitConverter.GetBytes(1234),
-            Avatar = "https://www.karol.ma/avatar",
             UserGroups = new List<UserGroup>()
         };
         using var hmac2 = new HMACSHA512();
@@ -131,7 +130,8 @@ public static class DataSeeder
             UserId = user1.Id,
             Group = group1,
             GroupId = group1.Id,
-            UserGroupNick = user1.UserName
+            UserGroupNick = user1.UserName,
+            Role = Roles.Owner
         };
         var user1group2 = new UserGroup()
         {
@@ -139,7 +139,8 @@ public static class DataSeeder
             UserId = user1.Id,
             Group = group2,
             GroupId = group2.Id,
-            UserGroupNick = user1.UserName
+            UserGroupNick = user1.UserName,
+            Role = Roles.Member
         };
         var user2group2 = new UserGroup()
         {
@@ -147,7 +148,8 @@ public static class DataSeeder
             UserId = user2.Id,
             Group = group2,
             GroupId = group2.Id,
-            UserGroupNick = user2.UserName
+            UserGroupNick = user2.UserName,
+            Role = Roles.Owner
         };
 
         var messages = new List<Message>

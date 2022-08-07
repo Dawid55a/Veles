@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 using VelesLibrary.DTOs;
@@ -11,15 +12,17 @@ namespace VelesAPI.Controllers;
 public class AccountController : BaseApiController
 {
     private readonly IGroupRepository _groupRepository;
+    private readonly IChatRepository _chatRepository;
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
 
     public AccountController(IUserRepository userRepository, ITokenService tokenService,
-        IGroupRepository groupRepository)
+        IGroupRepository groupRepository, IChatRepository chatRepository)
     {
         _userRepository = userRepository;
         _tokenService = tokenService;
         _groupRepository = groupRepository;
+        _chatRepository = chatRepository;
     }
 
     [HttpPost("register")]
@@ -41,7 +44,6 @@ public class AccountController : BaseApiController
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
             Email = registerDto.Email.ToLower(),
-            Avatar = registerDto.Avatar
         };
 
         await _userRepository.AddUserAsync(user);
@@ -102,6 +104,7 @@ public class AccountController : BaseApiController
             });
         }
 
+        
         var group = await _groupRepository.GetGroupWithNameAsync(addToGroupDto.GroupName);
         if (group == null)
         {
@@ -111,7 +114,7 @@ public class AccountController : BaseApiController
                 Message = "Group does not exist",
             });
         }
-        await _userRepository.AddUserToGroup(user, group);
+        await _userRepository.AddUserToGroup(user, group, Roles.Member);
         _userRepository.Update(user);
         var result = await _userRepository.SaveAllAsync();
         if (!result)
@@ -137,6 +140,7 @@ public class AccountController : BaseApiController
         {
             Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "New password is identical to current password" });
         }
+
         var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
         if (user == null)
         {
@@ -146,6 +150,7 @@ public class AccountController : BaseApiController
                 Message = "User does not exist",
             });
         }
+
         using var hmac = new HMACSHA512(user.PasswordSalt);
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.OldPassword));
 
@@ -170,6 +175,45 @@ public class AccountController : BaseApiController
         return Ok(new TokenDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) });
 
     }
+
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("remove_account/{id}")]
+    public async Task<ActionResult> RemoveAccount(int id)
+    {
+        if (User.GetUserId() != id)
+        {
+            return Unauthorized("You can not remove other accounts");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(id);
+        if (user == null)
+        {
+            return Unauthorized("User does not exist");
+        }
+        user.Removed = true;
+        _userRepository.Update(user);
+        var groups = await _chatRepository.GetGroupsForUserIdAsync(user.Id);
+        if (groups == null)
+        {
+            return Ok();
+        }
+
+        foreach (var group in groups)
+        {
+            await _userRepository.ChangeNickInUserGroup(user.Id, group.Id, "Removed");
+        }
+
+        if (await _userRepository.SaveAllAsync())
+        {
+            return Ok("Account removed");
+        }
+
+        return Unauthorized("Changes was not saved");
+    }
+
     private async Task<bool> UserExists(string username)
     {
         var result = await _userRepository.GetUserByUsernameAsync(username);
