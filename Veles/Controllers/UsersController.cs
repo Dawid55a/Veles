@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
@@ -13,11 +14,13 @@ public class UsersController : BaseApiController
 {
     private readonly ChatDataContext _context;
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public UsersController(ChatDataContext context, IUserRepository userRepository)
+    public UsersController(ChatDataContext context, IUserRepository userRepository, IMapper mapper)
     {
         _context = context;
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
     // GET: api/Users
@@ -31,7 +34,7 @@ public class UsersController : BaseApiController
             return NotFound();
         }
 
-        return Ok(users.ToList());
+        return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
     }
 
     // GET: api/Users/5
@@ -47,7 +50,7 @@ public class UsersController : BaseApiController
             return NotFound();
         }
 
-        return Ok(user);
+        return Ok(_mapper.Map<UserDto>(user));
     }
     // GET: api/Users/Group/Karols
     [Authorize]
@@ -60,7 +63,7 @@ public class UsersController : BaseApiController
             return NotFound();
         }
 
-        return Ok(users.ToList());
+        return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
     }
 
     [Authorize]
