@@ -1,4 +1,5 @@
 ﻿using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace VelesAPI.Interfaces;
 
@@ -59,4 +60,8 @@ public interface IUserRepository
     Task<IEnumerable<User>?> GetUsersForGroupName(string groupName);
 
     Task ChangeNickInUserGroup(int userId, int groupId, string nick);
+
+    Task<bool?> UserIsRemoved(int userId);
+
+    Task<string?> GetUserRoleInGroup(int userId, int groupId);
 }

@@ -65,6 +65,7 @@ public class ChatRepository : IChatRepository
             .Include(m => m.User)
             .Where(m => m.Group.Id == g.Id)
             .OrderBy(m => m.CreatedDate)
+            .AsSplitQuery()
             .ToListAsync();
     }
 
