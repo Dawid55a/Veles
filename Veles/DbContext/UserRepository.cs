@@ -64,6 +64,16 @@ public class UserRepository : IUserRepository
         return user?.Removed;
     }
 
+    public async Task<string?> GetUserRoleInGroup(int userId, int groupId)
+    {
+        var result = await _context.UserGroups.FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GroupId == groupId);
+        if (result == null)
+        {
+            throw new NullReferenceException("User role is null or group/user does not exist");
+        }
+        return result.Role;
+    }
+
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
         return await _context.Users.ToListAsync();
@@ -71,7 +81,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
-        return await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
+        return await _context.Users.Include(u=> u.UserGroups).SingleOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

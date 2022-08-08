@@ -192,18 +192,28 @@ public class AccountController : BaseApiController
     [HttpDelete("remove_account")]
     public async Task<ActionResult> RemoveAccount()
     {
-        //TODO: remove groups he is owner of
-        var user = await _userRepository.GetUserByIdAsync(User.GetUserId());
+        var contextUserId = User.GetUserId();
+        var user = await _userRepository.GetUserByIdAsync(contextUserId);
         if (user == null)
         {
             return Unauthorized("User does not exist");
         }
+
         user.Removed = true;
         _userRepository.Update(user);
+
         var groups = await _chatRepository.GetGroupsForUserIdAsync(user.Id);
         if (groups == null)
         {
             return Ok();
+        }
+        foreach (var group in groups)
+        {
+            var role = await _userRepository.GetUserRoleInGroup(user.Id, group.Id);
+            if (role!.Equals(Roles.Owner))
+            {
+                _groupRepository.RemoveGroup(group);
+            }
         }
 
         foreach (var group in groups)
