@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using VelesAPI.Extensions;
 using VelesLibrary.DbModels;
 using VelesLibrary.DTOs;
 
@@ -21,6 +22,10 @@ public class AutoMapperProfiles : Profile
                     .MapFrom(src =>
                         src.User.UserGroups.FirstOrDefault(ug =>
                             ug.UserId == src.User.Id && ug.GroupId == src.Group.Id)!.UserGroupNick));
-        CreateMap<User, UserDto>();
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Nicks,
+            opt => opt
+                .MapFrom(src => src.GetUserNicks()));
+
     }
 }
