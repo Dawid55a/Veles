@@ -15,7 +15,12 @@ public class AutoMapperProfiles : Profile
                     .MapFrom(src => src.User.UserName))
             .ForMember(dest => dest.Group,
                 opt => opt
-                    .MapFrom(src => src.Group.Name));
+                    .MapFrom(src => src.Group.Name))
+            .ForMember(dest => dest.Nick,
+                opt => opt
+                    .MapFrom(src =>
+                        src.User.UserGroups.FirstOrDefault(ug =>
+                            ug.UserId == src.User.Id && ug.GroupId == src.Group.Id)!.UserGroupNick));
         CreateMap<User, UserDto>();
     }
 }

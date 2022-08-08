@@ -44,6 +44,10 @@ public class MessagesController : BaseApiController
     public async Task<ActionResult<IEnumerable<Message>>> GetMessagesForGroup(string groupName)
     {
         var group = await _groupRepository.GetGroupWithNameAsync(groupName);
+        if (group == null)
+        {
+            return BadRequest("Group does not exist");
+        }
         var messages = await _chatRepository.GetMessageThreadAsync(group);
         if (messages == null)
         {
