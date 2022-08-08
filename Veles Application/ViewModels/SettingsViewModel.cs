@@ -242,6 +242,7 @@ namespace Veles_Application.ViewModels
                         MessageBoxButton.OK, MessageBoxImage.Information);
 
                     EventsAggregator.SwitchPage(new LoginViewModel());
+                    Properties.Settings.Default.Token = "";
                 }
                 else
                 {
