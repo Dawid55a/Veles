@@ -14,12 +14,14 @@ public class UsersController : BaseApiController
 {
     private readonly ChatDataContext _context;
     private readonly IUserRepository _userRepository;
+    private readonly IGroupRepository _groupRepository;
     private readonly IMapper _mapper;
 
-    public UsersController(ChatDataContext context, IUserRepository userRepository, IMapper mapper)
+    public UsersController(ChatDataContext context, IUserRepository userRepository, IGroupRepository groupRepository, IMapper mapper)
     {
         _context = context;
         _userRepository = userRepository;
+        _groupRepository = groupRepository;
         _mapper = mapper;
     }
 
@@ -55,15 +57,23 @@ public class UsersController : BaseApiController
     // GET: api/Users/Group/Karols
     [Authorize]
     [HttpGet("Group/{groupName}")]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsersForGroupName(string groupName)
+    public async Task<ActionResult<IEnumerable<string>>> GetUsersForGroupName(string groupName)
     {
         var users = await _userRepository.GetUsersForGroupName(groupName);
+        var group = await _groupRepository.GetGroupWithNameAsync(groupName);
         if (users == null)
         {
             return NotFound();
         }
 
-        return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
+        var nicks = new List<string>();
+
+        foreach (var user in users)
+        {
+            var nick = user.UserGroups.Where(ug => ug.GroupId == group.Id && ug.UserId == user.Id).Select(ug => ug.UserGroupNick);
+            nicks.Add(nick.First());
+        }
+        return Ok(nicks);
     }
 
     [Authorize]
@@ -72,6 +82,10 @@ public class UsersController : BaseApiController
     {
         var userId = User.GetUserId();
         await _userRepository.ChangeNickInUserGroup(userId, changeNickInGroupDto.GroupId, changeNickInGroupDto.Nick);
+        if (!(await _userRepository.SaveAllAsync()))
+        {
+            return BadRequest("Did not saved");
+        }
         return Ok();
     }
     // NOT IMPLEMENTED

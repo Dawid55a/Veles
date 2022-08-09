@@ -45,15 +45,15 @@ public class UserRepository : IUserRepository
         //var groupNew = await _context.Groups.Include(g => g.UserGroups).Where(g => g.Equals(group)).FirstAsync();
         userNew.UserGroups.Add(ug);
         group.UserGroups.Add(ug);
-         
-
     }
 
     public async Task ChangeNickInUserGroup(int userId, int groupId, string nick)
     {
-        var userNew = await _context.Users.Include(u => u.UserGroups).Where(u => u.Id == userId).FirstOrDefaultAsync();
-        var groupNew = await _context.Groups.Where(g => g.Id == groupId).FirstOrDefaultAsync();
-        var nickOld = userNew?.UserGroups.FirstOrDefault(ug => ug.Group.Equals(groupNew));
+        var nickOld = await _context.UserGroups.FirstOrDefaultAsync(ug => ug.GroupId == groupId && ug.UserId == userId);
+        if (nickOld == null)
+        {
+            throw new NullReferenceException("UserGroup relation does not exist");
+        }
         nickOld.UserGroupNick = nick;
         _context.UserGroups.Update(nickOld);
     }
