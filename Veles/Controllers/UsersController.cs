@@ -82,6 +82,10 @@ public class UsersController : BaseApiController
     {
         var userId = User.GetUserId();
         await _userRepository.ChangeNickInUserGroup(userId, changeNickInGroupDto.GroupId, changeNickInGroupDto.Nick);
+        if (!(await _userRepository.SaveAllAsync()))
+        {
+            return BadRequest("Did not saved");
+        }
         return Ok();
     }
     // NOT IMPLEMENTED
