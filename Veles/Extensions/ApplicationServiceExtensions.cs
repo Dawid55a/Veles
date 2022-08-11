@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using VelesAPI.DbContext;
 using VelesAPI.Helpers;
 using VelesAPI.Interfaces;

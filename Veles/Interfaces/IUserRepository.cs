@@ -1,5 +1,4 @@
 ﻿using VelesLibrary.DbModels;
-using VelesLibrary.DTOs;
 
 namespace VelesAPI.Interfaces;
 
@@ -25,7 +24,7 @@ public interface IUserRepository
     Task<bool> SaveAllAsync();
 
     /// <summary>
-    /// Adding User to Group with group username set as user username
+    ///     Adding User to Group with group username set as user username
     /// </summary>
     /// <param name="user"></param>
     /// <param name="group"></param>
@@ -53,7 +52,7 @@ public interface IUserRepository
     Task<User?> GetUserByUsernameAsync(string username);
 
     /// <summary>
-    /// Get UserGroups in group with specified group name
+    ///     Get UserGroups in group with specified group name
     /// </summary>
     /// <param name="groupName">Name of group</param>
     /// <returns>List of users</returns>

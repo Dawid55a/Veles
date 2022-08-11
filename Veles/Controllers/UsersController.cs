@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
 using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
@@ -13,11 +12,12 @@ namespace VelesAPI.Controllers;
 public class UsersController : BaseApiController
 {
     private readonly ChatDataContext _context;
-    private readonly IUserRepository _userRepository;
     private readonly IGroupRepository _groupRepository;
     private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
 
-    public UsersController(ChatDataContext context, IUserRepository userRepository, IGroupRepository groupRepository, IMapper mapper)
+    public UsersController(ChatDataContext context, IUserRepository userRepository, IGroupRepository groupRepository,
+        IMapper mapper)
     {
         _context = context;
         _userRepository = userRepository;
@@ -44,7 +44,6 @@ public class UsersController : BaseApiController
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-
         var user = await _userRepository.GetUserByIdAsync(id);
 
         if (user == null)
@@ -54,6 +53,7 @@ public class UsersController : BaseApiController
 
         return Ok(_mapper.Map<UserDto>(user));
     }
+
     // GET: api/Users/Group/Karols
     [Authorize]
     [HttpGet("Group/{groupName}")]
@@ -70,9 +70,11 @@ public class UsersController : BaseApiController
 
         foreach (var user in users)
         {
-            var nick = user.UserGroups.Where(ug => ug.GroupId == group.Id && ug.UserId == user.Id).Select(ug => ug.UserGroupNick);
+            var nick = user.UserGroups.Where(ug => ug.GroupId == group.Id && ug.UserId == user.Id)
+                .Select(ug => ug.UserGroupNick);
             nicks.Add(nick.First());
         }
+
         return Ok(nicks);
     }
 
@@ -82,10 +84,11 @@ public class UsersController : BaseApiController
     {
         var userId = User.GetUserId();
         await _userRepository.ChangeNickInUserGroup(userId, changeNickInGroupDto.GroupId, changeNickInGroupDto.Nick);
-        if (!(await _userRepository.SaveAllAsync()))
+        if (!await _userRepository.SaveAllAsync())
         {
             return BadRequest("Did not saved");
         }
+
         return Ok();
     }
     // NOT IMPLEMENTED

@@ -44,7 +44,7 @@ public static class DataSeeder
             return;
         }
 
-        var user1 = new User()
+        var user1 = new User
         {
             UserName = "Karol",
             Email = "a@da.m",
@@ -53,13 +53,13 @@ public static class DataSeeder
             PasswordSalt = BitConverter.GetBytes(1234),
             UserGroups = new List<UserGroup>()
         };
-        
+
         using var hmac1 = new HMACSHA512();
 
         user1.UserName = user1.UserName;
         user1.PasswordSalt = hmac1.Key;
         user1.PasswordHash = hmac1.ComputeHash(Encoding.UTF8.GetBytes("1234"));
-        var user2 = new User()
+        var user2 = new User
         {
             UserName = "Adam",
             Email = "a@da.m",
@@ -73,10 +73,10 @@ public static class DataSeeder
         user2.UserName = user2.UserName;
         user2.PasswordSalt = hmac2.Key;
         user2.PasswordHash = hmac2.ComputeHash(Encoding.UTF8.GetBytes("1234"));
-        var group1 = new Group() {Name = "Users1", UserGroups = new List<UserGroup>()};
-        var group2 = new Group() { Name = "Users2", UserGroups = new List<UserGroup>()};
+        var group1 = new Group {Name = "Users1", UserGroups = new List<UserGroup>()};
+        var group2 = new Group {Name = "Users2", UserGroups = new List<UserGroup>()};
 
-        var user1group1 = new UserGroup()
+        var user1group1 = new UserGroup
         {
             User = user1,
             UserId = user1.Id,
@@ -85,7 +85,7 @@ public static class DataSeeder
             UserGroupNick = user1.UserName,
             Role = Roles.Owner
         };
-        var user1group2 = new UserGroup()
+        var user1group2 = new UserGroup
         {
             User = user1,
             UserId = user1.Id,
@@ -94,7 +94,7 @@ public static class DataSeeder
             UserGroupNick = user1.UserName,
             Role = Roles.Member
         };
-        var user2group2 = new UserGroup()
+        var user2group2 = new UserGroup
         {
             User = user2,
             UserId = user2.Id,

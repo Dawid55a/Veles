@@ -10,7 +10,7 @@ public class ChatDataContext : Microsoft.EntityFrameworkCore.DbContext
     {
     }
 
-    public DbSet<User > Users { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<UserGroup> UserGroups { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Message> Messages { get; set; }
