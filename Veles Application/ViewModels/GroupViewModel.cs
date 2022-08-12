@@ -16,7 +16,7 @@ namespace Veles_Application.ViewModels
 {
     public class GroupViewModel : BaseViewModel
     {
-        public ObservableCollection<Group> GroupList { get; set; }
+        public ObservableCollection<GroupDto> GroupList { get; set; }
 
         public ICommand ChangeGroupCommand { get; }
         public GroupViewModel()
@@ -30,13 +30,13 @@ namespace Veles_Application.ViewModels
         //Trigger event in MainViewModel when group has changed
         private void ExecuteGroupChange(object obj)
         {
-            EventsAggregator.SendGroup(obj);
+            EventsAggregator.SendMessage(obj);
         }
         
         //Get group list from api
-        public async Task<ObservableCollection<Group>> GetGroupsAsync()
+        public async Task<ObservableCollection<GroupDto>> GetGroupsAsync()
         {
-            ObservableCollection<Group> groups = new ObservableCollection<Group>(); ;
+            ObservableCollection<GroupDto> groups = new ObservableCollection<GroupDto>(); ;
 
             var result = RestApiMethods.GetCallAuthorization("Groups/User/" + Properties.Settings.Default.Username);
 
@@ -44,7 +44,7 @@ namespace Veles_Application.ViewModels
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
                 
-                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
+                groups = JsonConvert.DeserializeObject<ObservableCollection<GroupDto>>(jsonResult);
                 return groups;
             }
             else

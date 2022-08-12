@@ -19,7 +19,7 @@ namespace Veles_Application.ViewModels
 {
     public class ChatViewModel : BaseViewModel
     {
-        public Group group { get; set; }
+        public GroupDto group { get; set; }
 
         private ObservableCollection<NewMessageDto> messageList;
         private string userMessage = "";
@@ -60,7 +60,7 @@ namespace Veles_Application.ViewModels
 
         //Constructor
         HubConnection connection;
-        public ChatViewModel(Group group)
+        public ChatViewModel(GroupDto group)
         {
             this.group = group;
             MessageList = GetMessageListAsync().Result;

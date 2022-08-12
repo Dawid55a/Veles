@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Veles_Application.ViewModels
@@ -27,7 +28,10 @@ namespace Veles_Application.ViewModels
 
         private void OnPageRecived(BaseViewModel page)
         {
-            if(page != null)PageViewModel = page;
+            Task.Run(() =>
+            {
+                if (page != null) PageViewModel = page;
+            });
         }
     }
 }

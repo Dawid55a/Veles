@@ -13,6 +13,7 @@ using System.Windows.Input;
 using Veles_Application.Commands;
 using Veles_Application.Models;
 using Veles_Application.WepAPI;
+using VelesLibrary.DTOs;
 
 namespace Veles_Application.ViewModels
 {
@@ -74,6 +75,7 @@ namespace Veles_Application.ViewModels
         public ICommand ChangePanelCommand { get; }
         public ICommand OpenSettingsCommand { get; }
         public ICommand ChangeLeftPanelCommand { get; }
+        public object DispacherOperation { get; private set; }
 
         //Constructor
         public MainViewModel()
@@ -82,6 +84,11 @@ namespace Veles_Application.ViewModels
             ChangePanelCommand = new ViewModelCommand(ExecutePanelChange);
             ChangeLeftPanelCommand = new ViewModelCommand(ExecuteLeftPanelChange);
             OpenSettingsCommand = new ViewModelCommand(ExecuteOpenSettings);
+
+            Task.Factory.StartNew(() => 
+            {
+                FirstGroupOrDefoultAsync();
+            });
 
             EventsAggregator.OnMessageTransmitted += OnMessageRecived;
         }
@@ -118,11 +125,11 @@ namespace Veles_Application.ViewModels
             }   
             else if (parameter != null)
             {
-                ChatViewModel chatView = new ChatViewModel(parameter as Group);
+                ChatViewModel chatView = new ChatViewModel(parameter as GroupDto);
                 chatView.OpenConnectionAsync();
                 MidViewModel = chatView;
 
-                RightViewModel = new UsersViewModel(parameter as Group);
+                RightViewModel = new UsersViewModel(parameter as GroupDto);
 
 
                 //MidViewModel = new ChatViewModel(parameter as Group)
@@ -166,8 +173,13 @@ namespace Veles_Application.ViewModels
         //Handle event from GroupViewModel
         private void OnMessageRecived(object obj)
         {   
-            if(obj is Group)
+            if(obj is GroupDto)
                 ExecutePanelChange(obj);
+            else
+            {
+                FirstGroupOrDefoultAsync();
+            }
+                
         }
 
         private void ExecuteChangeGroup(object parameter)
@@ -176,16 +188,16 @@ namespace Veles_Application.ViewModels
 
         }
 
-        private async Task<ObservableCollection<Group>> GetGroupsAsync()
+        private async Task<ObservableCollection<GroupDto>> GetGroupsAsync()
         {
-            ObservableCollection<Group> groups;
+            ObservableCollection<GroupDto> groups;
 
-            var result = RestApiMethods.GetCallAuthorization("UserGroups/User/"+userName);
+            var result = RestApiMethods.GetCallAuthorization("Groups/User/"+userName);
 
             if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
-                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
+                groups = JsonConvert.DeserializeObject<ObservableCollection<GroupDto>>(jsonResult);
                 return groups;
             }
             else if(IsViewVisible)
@@ -193,7 +205,25 @@ namespace Veles_Application.ViewModels
                 MessageBox.Show("connection interrupted");
                 
             }
-            return groups = new ObservableCollection<Group>();
+            return groups = new ObservableCollection<GroupDto>();
+        }
+
+        private async void FirstGroupOrDefoultAsync()
+        {
+            ObservableCollection<GroupDto> groups;
+            await Task.Run(() =>
+            {
+                 groups = GetGroupsAsync().Result;
+                 var item = groups.FirstOrDefault();
+                if (item != null)
+                    ExecutePanelChange((GroupDto)item);
+                else
+                    MidViewModel = new HomeViewModel();
+
+            });
+
+            LeftViewModel = new GroupViewModel();
+
         }
     }
 }

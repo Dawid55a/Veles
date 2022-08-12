@@ -29,8 +29,8 @@ namespace Veles_Application.ViewModels
             }
         }
 
-        public ObservableCollection<Group> GroupList { get; set; }
-        public ObservableCollection<Group> OwnGroupList { get; set; }
+        public ObservableCollection<GroupDto> GroupList { get; set; }
+        public ObservableCollection<GroupDto> OwnGroupList { get; set; }
 
         public ICommand SearchGroupCommand { get; }
         public ICommand JoinToGroupCommand { get; }
@@ -39,19 +39,19 @@ namespace Veles_Application.ViewModels
             SearchGroupCommand = new ViewModelCommand(ExecuteSearchGroup);
             JoinToGroupCommand = new ViewModelCommand(ExecuteJoinToGroup);
 
-            GroupList = new ObservableCollection<Group>();
+            GroupList = new ObservableCollection<GroupDto>();
             GroupViewModel group = new GroupViewModel();
             OwnGroupList = group.GetGroupsAsync().Result;
         }
 
         private async void ExecuteSearchGroup(object parameter)
         {   
-            ObservableCollection<Group> groups = GetGroupLikeAsync().Result;
+            ObservableCollection<GroupDto> groups = GetGroupLikeAsync().Result;
             GroupList.Clear();
 
             var groupsWithoutOwned = groups.Where(g => !OwnGroupList.Any(o => g.Name == o.Name));
 
-            foreach (Group group in groupsWithoutOwned)
+            foreach (GroupDto group in groupsWithoutOwned)
             {
                 GroupList.Add(group);
             }
@@ -91,9 +91,9 @@ namespace Veles_Application.ViewModels
 
             
         }
-        public async Task<ObservableCollection<Group>> GetGroupLikeAsync()
+        public async Task<ObservableCollection<GroupDto>> GetGroupLikeAsync()
         {
-            ObservableCollection<Group> groups = new ObservableCollection<Group>(); ;
+            ObservableCollection<GroupDto> groups = new ObservableCollection<GroupDto>(); ;
 
             var result = RestApiMethods.GetCallAuthorization("Groups/Name/" + SearchName);
 
@@ -101,7 +101,7 @@ namespace Veles_Application.ViewModels
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
 
-                groups = JsonConvert.DeserializeObject<ObservableCollection<Group>>(jsonResult);
+                groups = JsonConvert.DeserializeObject<ObservableCollection<GroupDto>>(jsonResult);
                 return groups;
             }
             else if(result.Result.StatusCode == System.Net.HttpStatusCode.NotFound)

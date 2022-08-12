@@ -9,7 +9,7 @@ namespace Veles_Application
 {
     public static class EventsAggregator
     {
-        public static void SendGroup(object message)
+        public static void SendMessage(object message)
         {
             if (OnMessageTransmitted != null)
                 OnMessageTransmitted(message);
@@ -21,8 +21,11 @@ namespace Veles_Application
                 OnPageTransmitted(message);
         }
 
+        
+
         public static Action<object> OnMessageTransmitted = null!;
         public static Action<BaseViewModel> OnPageTransmitted = null!;
+       
 
     }
 }

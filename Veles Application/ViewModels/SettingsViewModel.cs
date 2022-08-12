@@ -29,7 +29,7 @@ namespace Veles_Application.ViewModels
 
         //Change nick
         private string _newNick = "";
-        private Group? _selectedGroup = null;
+        private GroupDto? _selectedGroup = null;
 
 
         public string OldPassword
@@ -97,7 +97,7 @@ namespace Veles_Application.ViewModels
             }
         }
 
-        public Group SelectedGroup
+        public GroupDto SelectedGroup
         {
             get { return _selectedGroup; }
             set
@@ -107,7 +107,7 @@ namespace Veles_Application.ViewModels
             }
         }
 
-        public ObservableCollection<Group> GroupList { get; set; }
+        public ObservableCollection<GroupDto> GroupList { get; set; }
 
         public ICommand ChangePasswordCommand { get; }
         public ICommand ChangeNickCommand { get; }
