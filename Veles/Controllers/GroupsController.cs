@@ -121,7 +121,13 @@ public class GroupsController : BaseApiController
         {
             return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "Group already exists"});
         }
-
+        switch (createGroupDto.Name.Length)
+        {
+            case > 20:
+                return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "Group name too long" });
+            case < 3:
+                return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "Group name too short" });
+        }
         var group = new Group
         {
             Name = createGroupDto.Name, Connections = new List<Connection>(), UserGroups = new List<UserGroup>()
