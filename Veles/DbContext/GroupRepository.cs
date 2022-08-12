@@ -13,7 +13,7 @@ public class GroupRepository : IGroupRepository
         _context = context;
     }
 
-    public async void AddGroupAsync(Group group)
+    public async Task AddGroupAsync(Group group)
     {
         await _context.Groups.AddAsync(group);
     }
@@ -28,14 +28,18 @@ public class GroupRepository : IGroupRepository
         _context.Entry(group).State = EntityState.Modified;
     }
 
-    public async void AddConnection(Connection connection)
+    public async Task AddConnectionAsync(Connection connection)
     {
         await _context.Connections.AddAsync(connection);
     }
 
     public async Task<Group?> GetGroupWithNameAsync(string groupName)
     {
-        return await _context.Groups.FirstAsync(g => g.Name == groupName);
+        return await _context.Groups
+            .Include(g => g.UserGroups)
+            .Include(g => g.Connections)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(g => g.Name == groupName);
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsWithNameLikeAsync(string namePattern)
@@ -47,6 +51,19 @@ public class GroupRepository : IGroupRepository
     public async Task<Group?> GetGroupWithIdAsync(int groupId)
     {
         return await _context.Groups.Include(g => g.Connections).FirstOrDefaultAsync(g => g.Id == groupId);
+    }
+
+    public async Task<IEnumerable<Connection>> GetConnectionsAsync(string connectionString)
+    {
+        return await _context.Connections
+            .Include(c => c.Group)
+            .Where(c => c.ConnectionString == connectionString)
+            .ToListAsync();
+    }
+
+    public void RemoveConnections(IEnumerable<Connection> connections)
+    {
+        _context.Connections.RemoveRange(connections);
     }
 
     public async Task<bool> SaveAllAsync()

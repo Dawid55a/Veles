@@ -128,10 +128,10 @@ namespace Veles_Application.ViewModels
             {
                 //Read json
                 string jsonResult = result.Content.ReadAsStringAsync().Result;
-                UserDto userDto = JsonConvert.DeserializeObject<UserDto>(jsonResult);
+                TokenDto tokenDto = JsonConvert.DeserializeObject<TokenDto>(jsonResult);
 
                 //checking if the API returned correct data
-                if (userDto == null)
+                if (tokenDto == null)
                 {
                     MessageBox.Show("Server return empty object", "Login error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
@@ -139,12 +139,13 @@ namespace Veles_Application.ViewModels
                 else
                 {
                     //Save to setting
-                    Properties.Settings.Default.Username = userDto.UserName;
-                    Properties.Settings.Default.Token = userDto.Token;
+                    Properties.Settings.Default.Username = tokenDto.UserName;
+                    Properties.Settings.Default.Token = tokenDto.Token;
                 }
- 
+
                 //Close window
-                IsViewVisible = false;
+                EventsAggregator.SwitchPage(new MainViewModel());
+
             }
             else
             {
@@ -168,14 +169,14 @@ namespace Veles_Application.ViewModels
             registerDto.Email = RegistrationEmail;
 
             var result = await Task.Run(() => RestApiMethods.PostCall("Account/Register", registerDto));
-            if(result.StatusCode == HttpStatusCode.OK)
+            if(result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Created)
             {
                 //Read json
                 string jsonResult = result.Content.ReadAsStringAsync().Result;
-                UserDto userDto = JsonConvert.DeserializeObject<UserDto>(jsonResult);
+                TokenDto tokenDto = JsonConvert.DeserializeObject<TokenDto>(jsonResult);
 
                 //checking if the API returned correct data
-                if (userDto == null)
+                if (tokenDto == null)
                 {
                     MessageBox.Show("Server return empty object", "Login error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
@@ -183,16 +184,16 @@ namespace Veles_Application.ViewModels
                 else
                 {
                     //Save to setting
-                    Properties.Settings.Default.Username = userDto.UserName;
-                    Properties.Settings.Default.Token = userDto.Token;
+                    Properties.Settings.Default.Username = tokenDto.UserName;
+                    Properties.Settings.Default.Token = tokenDto.Token;
                 }
 
                 //Close window
-                IsViewVisible = false;
+                EventsAggregator.SwitchPage(new MainViewModel());
             }
             else
             {
-                MessageBox.Show("Incorrect username or password\n Status code: " + result.StatusCode.ToString(), "Registration error",
+                MessageBox.Show("Incorrect username or password\n", "Registration error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

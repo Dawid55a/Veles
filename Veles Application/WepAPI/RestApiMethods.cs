@@ -62,5 +62,109 @@ namespace Veles_Application.WepAPI
                 throw;
             }
         }
+
+        //GET
+        public static Task<HttpResponseMessage> GetCallAuthorization(string url)
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                string apiUrl = baseApiUrl + url;
+                using (HttpClient client = new HttpClient())
+                {
+                    string authorization = Properties.Settings.Default.Token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
+                    client.BaseAddress = new Uri(apiUrl);
+                    client.Timeout = TimeSpan.FromSeconds(900);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.GetAsync(apiUrl);
+                    response.Wait();
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Task<HttpResponseMessage> PostCallAuthorization<T>(string url, T model) where T : class
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                string apiUrl = baseApiUrl + url;
+
+                using (HttpClient client = new HttpClient())
+                {
+                    string authorization = Properties.Settings.Default.Token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
+                    client.BaseAddress = new Uri(apiUrl);
+                    client.Timeout = TimeSpan.FromSeconds(900);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.PostAsJsonAsync(apiUrl, model);
+                    response.Wait();
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Task<HttpResponseMessage> PutCallAuthorization<T>(string url, T model) where T : class
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                string apiUrl = baseApiUrl + url;
+
+                using (HttpClient client = new HttpClient())
+                {
+                    string authorization = Properties.Settings.Default.Token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
+                    client.BaseAddress = new Uri(apiUrl);
+                    client.Timeout = TimeSpan.FromSeconds(900);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.PutAsJsonAsync(apiUrl, model);
+                    response.Wait();
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Task<HttpResponseMessage> DeleteCallAuthorization(string url)
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                string apiUrl = baseApiUrl + url;
+                using (HttpClient client = new HttpClient())
+                {
+                    string authorization = Properties.Settings.Default.Token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
+                    client.BaseAddress = new Uri(apiUrl);
+                    client.Timeout = TimeSpan.FromSeconds(900);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.DeleteAsync(apiUrl);
+                    response.Wait();
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }

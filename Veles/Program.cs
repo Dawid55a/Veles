@@ -4,22 +4,11 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        // Build server instance from configuration in startup.cs
         var app = CreateHostBuilder(args).Build();
-
-        /*var cs = "Host=localhost;Username=postgres;Password=postgres;Database=postgres";
-
-        using var con = new NpgsqlConnection(cs);
-        con.Open();
-
-        var sql = "SELECT version()";
-
-        using var cmd = new NpgsqlCommand(sql, con);
-
-        var version = cmd.ExecuteScalar()!.ToString();
-        Debug.WriteLine($"PostgreSQL version: {version}");*/
-
-        await app.Seed(); //runs function Seed() from DataSeeder 
-
+        // Seeding database
+        await app.Seed();
+        // Running server
         await app.RunAsync();
     }
 

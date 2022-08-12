@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using VelesAPI.DbContext;
 using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
@@ -12,18 +10,15 @@ namespace VelesAPI.Hubs;
 
 public class ChatHub : Hub
 {
-    private readonly ChatDataContext _dataContext;
     private readonly IChatRepository _chatRepository;
     private readonly IGroupRepository _groupRepository;
-    private readonly IUserRepository _userRepository;
 
     private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
 
-    //private readonly IMapper _mapper;
-
-    public ChatHub(ChatDataContext dataContext, IChatRepository chatRepository, IGroupRepository groupRepository, IUserRepository userRepository, IMapper mapper)
+    public ChatHub(IChatRepository chatRepository, IGroupRepository groupRepository, IUserRepository userRepository,
+        IMapper mapper)
     {
-        _dataContext = dataContext;
         _chatRepository = chatRepository;
         _groupRepository = groupRepository;
         _userRepository = userRepository;
@@ -67,7 +62,13 @@ public class ChatHub : Hub
             throw new HubException("Group doesn't exist");
         }
 
-        var message = new Message {User = sender, Group = connectionGroup, CreatedDate = createMessageDto.Created, Text = createMessageDto.Content};
+        var message = new Message
+        {
+            User = sender,
+            Group = connectionGroup,
+            CreatedDate = createMessageDto.Created,
+            Text = createMessageDto.Content
+        };
         await _chatRepository.AddMessage(message);
 
         var result = await _chatRepository.SaveAllAsync();
@@ -76,20 +77,17 @@ public class ChatHub : Hub
             throw new HubException("Message wasn't saved");
         }
 
+        //TODO: check what is returned by mapping
         await Clients.Group(connectionGroup.Name).SendAsync("NewMessage", _mapper.Map<NewMessageDto>(message));
     }
 
     private async Task AddToMessageGroup(Group group)
     {
-
-        //var group = await _userRepository.GetGroupByNameAsync(groupName);
         var connection = new Connection(Context.ConnectionId, group);
-        await _dataContext.Connections.AddAsync(connection);
-        //_groupRepository.UpdateGroup(group);
-        
-        //_groupRepository.AddConnection(connection);
-        
-        if (await _dataContext.SaveChangesAsync() > 0)
+
+        await _groupRepository.AddConnectionAsync(connection);
+
+        if (await _groupRepository.SaveAllAsync())
         {
             return;
         }
@@ -99,20 +97,21 @@ public class ChatHub : Hub
 
     private async Task RemoveFromMessageGroup(string connectionString)
     {
-        var groupr = await _dataContext.Connections
-            .Include(c => c.Group)
-            .Where(c => c.ConnectionString == connectionString)
-            .ToListAsync();
+        var connections = await _groupRepository.GetConnectionsAsync(connectionString);
+        if (connections == null)
+        {
+            throw new HubException("No connections to remove");
+        }
 
         // Remove connection of user from connected groups from SignalR groups
-        foreach (var connection in groupr)
+        foreach (var connection in connections)
         {
             await Groups.RemoveFromGroupAsync(connectionString, connection.Group.Name);
         }
-        //_chatRepository.RemoveConnection(connection);
-        _dataContext.Connections.RemoveRange(groupr);
-        
-        if (await _dataContext.SaveChangesAsync() > 0)
+
+        _groupRepository.RemoveConnections(connections);
+
+        if (await _groupRepository.SaveAllAsync())
         {
             return;
         }

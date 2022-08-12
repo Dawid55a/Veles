@@ -9,13 +9,37 @@
         <DataTemplate DataType="{x:Type viewmodels:GroupViewModel}">
             <views:GroupView/>
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type viewmodels:ChatViewModel}">
             <views:ChatView/>
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
             <views:HomeView/>
         </DataTemplate>
 
-        
+        <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}">
+            <views:SettingsView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:SearchGroupViewModel}">
+            <views:SearchGroupView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:CreateGroupViewModel}">
+            <views:CreateGroupView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
+            <views:UsersView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
+            <views:LoginView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:MainViewModel}">
+            <views:MainView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

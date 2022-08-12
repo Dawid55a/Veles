@@ -1,33 +1,58 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using Veles_Application.Commands;
 using Veles_Application.Models;
+using Veles_Application.WepAPI;
 using VelesLibrary.DTOs;
 
 namespace Veles_Application.ViewModels
 {
     public class GroupViewModel : BaseViewModel
     {
-        public ObservableCollection<Group> GroupList { get; set; }
-        public ObservableCollection<NewMessageDto> MessageList { get; set; }
+        public ObservableCollection<GroupDto> GroupList { get; set; }
 
+        public ICommand ChangeGroupCommand { get; }
         public GroupViewModel()
         {
-            /*
-            GroupList = new ObservableCollection<Group>();
-            GroupList.Add(new Group("Jaga"));
-            GroupList.Add(new Group("Perun"));
-            GroupList.Add(new Group("Bies"));
+            GroupList = GetGroupsAsync().Result;
 
-            MessageList = new ObservableCollection<Message>();
-            MessageList.Add(new Message("Adam111", "Test"));
-            MessageList.Add(new Message("PolskiHusarz2011", "polska GUROM"));
-            MessageList.Add(new Message("Adam111", "?"));
-            */
+
+            ChangeGroupCommand = new ViewModelCommand(ExecuteGroupChange);
+        }
+
+        //Trigger event in MainViewModel when group has changed
+        private void ExecuteGroupChange(object obj)
+        {
+            EventsAggregator.SendMessage(obj);
         }
         
+        //Get group list from api
+        public async Task<ObservableCollection<GroupDto>> GetGroupsAsync()
+        {
+            ObservableCollection<GroupDto> groups = new ObservableCollection<GroupDto>(); ;
+
+            var result = RestApiMethods.GetCallAuthorization("Groups/User/" + Properties.Settings.Default.Username);
+
+            if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
+                
+                groups = JsonConvert.DeserializeObject<ObservableCollection<GroupDto>>(jsonResult);
+                return groups;
+            }
+            else
+            {
+                MessageBox.Show("connection interrupted");
+                return groups;
+            }
+        }
+
     }
 }

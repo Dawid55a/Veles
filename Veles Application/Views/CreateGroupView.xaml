@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Veles_Application.Views.CreateGroupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Veles_Application.Views" 
+             xmlns:viewModel="clr-namespace:Veles_Application.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="200">
+    
+    <UserControl.DataContext>
+        <viewModel:CreateGroupViewModel/>
+    </UserControl.DataContext>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MaxHeight="25"/>
+            <RowDefinition Height="*" MaxHeight="25"/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Create group" FontSize="15" FontWeight="Bold" 
+                   VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="0"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Create name-->
+            <TextBox Grid.Column="0" Text="{Binding CreateGroupName}" 
+                     Margin="5,0,5,5" MinWidth="50" MaxWidth="300"
+                     />
+
+            <Button Content="Create" Grid.Column="1"
+                    Width="40" Height="20"
+                    VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,5"
+                    Command="{Binding CreateGroupCommand}"/>
+        </Grid>
+    </Grid>
+</UserControl>

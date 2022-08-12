@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 using VelesLibrary.DTOs;
@@ -10,61 +11,68 @@ namespace VelesAPI.Controllers;
 
 public class AccountController : BaseApiController
 {
+    private readonly IChatRepository _chatRepository;
     private readonly IGroupRepository _groupRepository;
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
 
     public AccountController(IUserRepository userRepository, ITokenService tokenService,
-        IGroupRepository groupRepository)
+        IGroupRepository groupRepository, IChatRepository chatRepository)
     {
         _userRepository = userRepository;
         _tokenService = tokenService;
         _groupRepository = groupRepository;
+        _chatRepository = chatRepository;
     }
 
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<TokenDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.UserName))
         {
-            return BadRequest(new {Response = "Username is taken"});
+            return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "User already exists"});
         }
 
         using var hmac = new HMACSHA512();
 
         var user = new User
         {
-            UserName = registerDto.UserName.ToLower(),
+            UserName = registerDto.UserName,
             Password = registerDto.Password,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
-            Email = registerDto.Email.ToLower(),
-            Avatar = registerDto.Avatar
+            Email = registerDto.Email.ToLower()
         };
 
-        _userRepository.AddUserAsync(user);
+        await _userRepository.AddUserAsync(user);
 
         var result = await _userRepository.SaveAllAsync();
         if (!result)
         {
-            return BadRequest(new {Response = "User didn't saved"});
+            return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "User did not saved"});
         }
 
         return CreatedAtAction(nameof(Register),
-            new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
+            new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(loginDto.UserName);
+
         if (user == null)
         {
-            return Unauthorized(new {Response = "User does not exist"});
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
+        }
+
+        if (user.Removed)
+        {
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "Account is removed"});
         }
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
@@ -78,7 +86,7 @@ public class AccountController : BaseApiController
             }
         }
 
-        return new UserDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)};
+        return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [Authorize]
@@ -86,29 +94,127 @@ public class AccountController : BaseApiController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("add_to_group")]
-    public async Task<ActionResult<UserDto>> AddToGroup(AddToGroupDto addToGroupDto)
+    public async Task<ActionResult<TokenDto>> AddToGroup(AddToGroupDto addToGroupDto)
     {
         var user = await _userRepository.GetUserByUsernameAsync(addToGroupDto.UserName);
         if (user == null)
         {
-            return Unauthorized(new {Response = "User does not exist"});
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
         }
+
 
         var group = await _groupRepository.GetGroupWithNameAsync(addToGroupDto.GroupName);
         if (group == null)
         {
-            return Unauthorized(new {Response = "Group does not exist"});
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "Group does not exist"});
         }
 
-        user.Groups.Add(group);
+        await _userRepository.AddUserToGroup(user, group, Roles.Member);
         _userRepository.Update(user);
         var result = await _userRepository.SaveAllAsync();
         if (!result)
         {
-            return BadRequest(new {Response = $"Group {group.Name} wasn't added to User {user.UserName}"});
+            return BadRequest(new ResponseDto
+            {
+                Status = ResponseStatus.Error, Message = $"Group {group.Name} wasn't added to User {user.UserName}"
+            });
         }
 
         return Ok();
+    }
+
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("change_password")]
+    public async Task<ActionResult<TokenDto>> ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        if (changePasswordDto.OldPassword == changePasswordDto.NewPassword)
+        {
+            Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error, Message = "New password is identical to current password"
+            });
+        }
+
+        var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
+        if (user == null)
+        {
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
+        }
+
+        using var hmac = new HMACSHA512(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.OldPassword));
+
+        for (var i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "Invalid password"});
+            }
+        }
+
+        using var hmacNew = new HMACSHA512();
+        user.Password = changePasswordDto.NewPassword;
+        user.PasswordHash = hmacNew.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
+        user.PasswordSalt = hmacNew.Key;
+
+        _userRepository.Update(user);
+        if (!await _userRepository.SaveAllAsync())
+        {
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error, Message = "Error in changing password"
+            });
+        }
+
+        return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
+    }
+
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpDelete("remove_account")]
+    public async Task<ActionResult> RemoveAccount()
+    {
+        var contextUserId = User.GetUserId();
+        var user = await _userRepository.GetUserByIdAsync(contextUserId);
+        if (user == null)
+        {
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
+        }
+
+        user.Removed = true;
+        _userRepository.Update(user);
+
+        var groups = await _chatRepository.GetGroupsForUserIdAsync(user.Id);
+        if (groups == null)
+        {
+            return Ok();
+        }
+
+        foreach (var group in groups)
+        {
+            var role = await _userRepository.GetUserRoleInGroup(user.Id, group.Id);
+            if (role!.Equals(Roles.Owner))
+            {
+                _groupRepository.RemoveGroup(group);
+            }
+        }
+
+        foreach (var group in groups)
+        {
+            await _userRepository.ChangeNickInUserGroup(user.Id, group.Id, "Removed");
+        }
+
+        if (await _userRepository.SaveAllAsync())
+        {
+            return Ok(new ResponseDto {Status = ResponseStatus.Success, Message = "Account removed"});
+        }
+
+        return Unauthorized("Changes was not saved");
     }
 
     private async Task<bool> UserExists(string username)

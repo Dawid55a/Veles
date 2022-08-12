@@ -4,32 +4,39 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Veles_Application.Views"
-             xmlns:viewModel="clr-namespace:Veles_Application.ViewModels"
+             xmlns:viewModel="clr-namespace:Veles_Application.ViewModels" xmlns:custome="clr-namespace:Veles_Application.Components" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition MaxHeight="100" MinHeight="50"/>
         </Grid.RowDefinitions>
 
         <!--MESSAGE LIST-->
-        <ListView Grid.Row="0" ItemsSource="{Binding MessageList}" >
-            <ListBox.ItemsPanel>
+
+        <ListView IsSynchronizedWithCurrentItem="True" SelectionChanged="ListView_SelectionChanged" ScrollViewer.CanContentScroll="False" 
+                  Grid.Row="0" ItemsSource="{Binding MessageList}" 
+                  SelectedItem="{Binding SelectedMessage}"
+                  HorizontalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            
+            <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel VerticalAlignment="Bottom"/>
                 </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <TextBlock  Text="{Binding Path=User.UserName}" FontWeight="Bold"/>
-                        <TextBlock  Text="{Binding Path=Text}"/>
+                    <StackPanel >
+                        <TextBlock  Text="{Binding Path=Nick}" FontWeight="Bold"/>
+                        <TextBlock  Text="{Binding Path=Text}" TextWrapping="WrapWithOverflow" />
                         <TextBlock  Text="{Binding Path=CreatedDate}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
+           
         </ListView>
 
         <Grid Grid.Row="1">
@@ -37,7 +44,11 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding UserMessage}"/>
+            <TextBox Grid.Column="0" Text="{Binding UserMessage}" TextWrapping="Wrap" >
+                <TextBox.InputBindings>
+                    <KeyBinding  Key="Enter" Command="{Binding SendMessageCommand}" CommandParameter="{Binding Path=Text, RelativeSource={RelativeSource AncestorType={x:Type TextBox}}}" />
+                </TextBox.InputBindings>
+            </TextBox>
             <Button Grid.Column="1" Content="Send" Command="{Binding SendMessageCommand}"/>
         </Grid>
     </Grid>

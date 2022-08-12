@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 
@@ -8,7 +7,6 @@ namespace VelesAPI.DbContext;
 public class ChatRepository : IChatRepository
 {
     private readonly ChatDataContext _context;
-    private readonly IMapper _mapper;
 
     public ChatRepository(ChatDataContext context)
     {
@@ -25,74 +23,48 @@ public class ChatRepository : IChatRepository
         _context.Messages.Remove(message);
     }
 
-    public async Task<Group?> GetGroupForUserIdAsync(int id)
+    public async Task<IEnumerable<Group>?> GetGroupsForUserIdAsync(int userId)
     {
-        // TODO: Returns only first group
-        var user = await _context.Users.FindAsync(id);
-        var groups = await (from g in _context.Groups where g.Users.Any(u => u.Id == id) select g).ToListAsync();
-        return groups[0];
-    }
-
-    public async Task<IEnumerable<Group>?> GetGroupsForUserAsync(User user)
-    {
-        return await _context.Groups.Where(g => g.Users.Any(u => u.Id == user.Id)).ToListAsync();
+        var userWithGroups = await _context.Users
+            .Where(u => u.Id == userId)
+            .Include(u => u.UserGroups)
+            .ThenInclude(ug => ug.Group)
+            .FirstOrDefaultAsync();
+        return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserNameAsync(string username)
     {
-        var user = await _context!.Users!.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
-        if (user == null)
-        {
-            return null;
-        }
-
-        return await _context.Groups
-            .Where(g => g.Users
-                .Any(u => u.Id == user.Id))
-            .ToListAsync();
+        var userWithGroups = await _context.Users
+            .Where(u => u.UserName == username)
+            .Include(u => u.UserGroups)
+            .ThenInclude(ug => ug.Group)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
+        return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserIdIncludingConnectionsAsync(int id)
     {
-        var user = await _context!.Users!.SingleOrDefaultAsync(x => x.Id == id);
-        if (user == null)
-        {
-            return null;
-        }
-
-        return await _context.Groups
-            .Include(g => g.Connections)
-            .Where(g => g.Users
-                .Any(u => u.Id == user.Id))
-            .ToListAsync(); ;
+        //TODO: Check if works
+        var userWithGroups = await _context.Users
+            .Include(u => u.UserGroups)
+            .ThenInclude(ug => ug.Group)
+            .ThenInclude(g => g.Connections)
+            .Where(u => u.Id == id)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
+        return userWithGroups?.UserGroups.Select(ug => ug.Group);
     }
 
     public async Task<IEnumerable<Message>?> GetMessageThreadAsync(Group g)
     {
-        var messages = await _context.Messages
+        return await _context.Messages
+            .Include(m => m.User)
             .Where(m => m.Group.Id == g.Id)
+            .OrderBy(m => m.CreatedDate)
+            .AsSplitQuery()
             .ToListAsync();
-        return messages;
-    }
-
-    public async Task<Group?> GetGroupForConnectionAsync(string connection)
-    {
-
-        var q = await _context.Connections
-            .Include(c=>c.Group)
-            .Where(c => c.ConnectionString == connection)
-            .ToListAsync();
-        /*if (query.Count > 1)
-        {
-            throw new ArgumentOutOfRangeException("Returned more than one group! Should be one");
-        }*/
-
-        return q[0].Group;
-    }
-
-    public void RemoveConnection(Connection connection)
-    {
-        _context.Connections.Remove(connection);
     }
 
     public async Task<bool> SaveAllAsync()

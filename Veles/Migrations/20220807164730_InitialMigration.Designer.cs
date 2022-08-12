@@ -12,7 +12,7 @@ using VelesAPI.DbContext;
 namespace VelesAPI.Migrations
 {
     [DbContext(typeof(ChatDataContext))]
-    [Migration("20220730143517_InitialMigration")]
+    [Migration("20220807164730_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,22 +22,7 @@ namespace VelesAPI.Migrations
                 .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
-
-            modelBuilder.Entity("GroupUser", b =>
-                {
-                    b.Property<int>("GroupsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("GroupsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("GroupUser");
-                });
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("VelesLibrary.DbModels.Connection", b =>
                 {
@@ -45,7 +30,7 @@ namespace VelesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConnectionString")
                         .IsRequired()
@@ -67,7 +52,7 @@ namespace VelesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -84,7 +69,7 @@ namespace VelesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -113,10 +98,7 @@ namespace VelesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -134,6 +116,9 @@ namespace VelesAPI.Migrations
                         .IsRequired()
                         .HasColumnType("bytea");
 
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -143,19 +128,29 @@ namespace VelesAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("GroupUser", b =>
+            modelBuilder.Entity("VelesLibrary.DbModels.UserGroup", b =>
                 {
-                    b.HasOne("VelesLibrary.DbModels.Group", null)
-                        .WithMany()
-                        .HasForeignKey("GroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
 
-                    b.HasOne("VelesLibrary.DbModels.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserGroupNick")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("UserGroups");
                 });
 
             modelBuilder.Entity("VelesLibrary.DbModels.Connection", b =>
@@ -188,9 +183,35 @@ namespace VelesAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VelesLibrary.DbModels.UserGroup", b =>
+                {
+                    b.HasOne("VelesLibrary.DbModels.Group", "Group")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VelesLibrary.DbModels.User", "User")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VelesLibrary.DbModels.Group", b =>
                 {
                     b.Navigation("Connections");
+
+                    b.Navigation("UserGroups");
+                });
+
+            modelBuilder.Entity("VelesLibrary.DbModels.User", b =>
+                {
+                    b.Navigation("UserGroups");
                 });
 #pragma warning restore 612, 618
         }

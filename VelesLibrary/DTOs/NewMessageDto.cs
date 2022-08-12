@@ -1,13 +1,11 @@
-﻿using VelesLibrary.DbModels;
+﻿namespace VelesLibrary.DTOs;
 
-namespace VelesLibrary.DTOs
+public class NewMessageDto
 {
-    public class NewMessageDto
-    {
-        public int Id { get; set; }
-        public string? Text { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string User { get; set; } = null!;
-        public string Group { get; set; } = null!;
-    }
+    public int Id { get; set; }
+    public string? Text { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public string User { get; set; } = null!;
+    public string Nick { get; set; } = null!;
+    public string Group { get; set; } = null!;
 }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Veles_Application.WepAPI
+namespace Veles_Application.Models
 {
-    public class ApiMethods
+    public class Users
     {
-
+        public string? Name { get; set; }
     }
 }
