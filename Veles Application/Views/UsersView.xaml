@@ -11,6 +11,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition MaxHeight="100" MinHeight="50"/>
+        </Grid.RowDefinitions>
         <ListView x:Name="GroupList" ItemsSource="{Binding UsersList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -18,5 +22,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Button Grid.Row="1" Content="Delete group"/>
     </Grid>
 </UserControl>
