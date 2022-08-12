@@ -9,8 +9,6 @@ public class User
 
     [Required] public string UserName { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
-
     [Required] public byte[] PasswordHash { get; set; } = null!;
 
     [Required] public byte[] PasswordSalt { get; set; } = null!;

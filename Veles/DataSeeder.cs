@@ -48,7 +48,6 @@ public static class DataSeeder
         {
             UserName = "Karol",
             Email = "a@da.m",
-            Password = "1234",
             PasswordHash = BitConverter.GetBytes(1234),
             PasswordSalt = BitConverter.GetBytes(1234),
             UserGroups = new List<UserGroup>()
@@ -63,7 +62,6 @@ public static class DataSeeder
         {
             UserName = "Adam",
             Email = "a@da.m",
-            Password = "1234",
             PasswordHash = BitConverter.GetBytes(1234),
             PasswordSalt = BitConverter.GetBytes(1234),
             UserGroups = new List<UserGroup>()

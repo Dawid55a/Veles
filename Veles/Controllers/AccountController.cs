@@ -40,7 +40,6 @@ public class AccountController : BaseApiController
         var user = new User
         {
             UserName = registerDto.UserName,
-            Password = registerDto.Password,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
             Email = registerDto.Email.ToLower()
@@ -156,7 +155,6 @@ public class AccountController : BaseApiController
         }
 
         using var hmacNew = new HMACSHA512();
-        user.Password = changePasswordDto.NewPassword;
         user.PasswordHash = hmacNew.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
         user.PasswordSalt = hmacNew.Key;
 
