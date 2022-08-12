@@ -25,17 +25,18 @@ public class GroupsController : BaseApiController
     }
 
     // GET: api/Groups
-    /*[Authorize]
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
     {
-        if (_context.Groups == null)
+        var groups = await _groupRepository.GetGroups();
+        if (groups == null)
         {
             return NotFound();
         }
 
-        return await _context.Groups.ToListAsync();
-    }*/
+        return Ok(_mapper.Map<IEnumerable<GroupDto>>(groups));
+    }
 
     // GET: api/Groups/Name/Karo
     [Authorize]

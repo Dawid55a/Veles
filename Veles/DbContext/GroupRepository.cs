@@ -13,6 +13,12 @@ public class GroupRepository : IGroupRepository
         _context = context;
     }
 
+
+    public async Task<IEnumerable<Group>> GetGroups()
+    {
+        return await _context.Groups.ToListAsync();
+    }
+
     public async Task AddGroupAsync(Group group)
     {
         await _context.Groups.AddAsync(group);

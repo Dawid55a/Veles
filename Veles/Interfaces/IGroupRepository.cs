@@ -4,6 +4,7 @@ namespace VelesAPI.Interfaces;
 
 public interface IGroupRepository
 {
+    Task<IEnumerable<Group>> GetGroups();
     Task AddGroupAsync(Group group);
     void RemoveGroup(Group group);
     void UpdateGroup(Group group);
