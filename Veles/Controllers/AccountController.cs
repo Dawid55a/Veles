@@ -11,8 +11,8 @@ namespace VelesAPI.Controllers;
 
 public class AccountController : BaseApiController
 {
-    private readonly IGroupRepository _groupRepository;
     private readonly IChatRepository _chatRepository;
+    private readonly IGroupRepository _groupRepository;
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
 
@@ -43,7 +43,7 @@ public class AccountController : BaseApiController
             Password = registerDto.Password,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
-            Email = registerDto.Email.ToLower(),
+            Email = registerDto.Email.ToLower()
         };
 
         await _userRepository.AddUserAsync(user);
@@ -67,19 +67,12 @@ public class AccountController : BaseApiController
 
         if (user == null)
         {
-            return Unauthorized(new ResponseDto
-            {
-                Status = ResponseStatus.Error,
-                Message = "User does not exist",
-            });
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
         }
+
         if (user.Removed)
         {
-            return Unauthorized(new ResponseDto
-            {
-                Status = ResponseStatus.Error,
-                Message = "Account is removed",
-            });
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "Account is removed"});
         }
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
@@ -106,23 +99,16 @@ public class AccountController : BaseApiController
         var user = await _userRepository.GetUserByUsernameAsync(addToGroupDto.UserName);
         if (user == null)
         {
-            return Unauthorized(new ResponseDto
-            {
-                Status = ResponseStatus.Error,
-                Message = "User does not exist",
-            });
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
         }
 
-        
+
         var group = await _groupRepository.GetGroupWithNameAsync(addToGroupDto.GroupName);
         if (group == null)
         {
-            return Unauthorized(new ResponseDto
-            {
-                Status = ResponseStatus.Error,
-                Message = "Group does not exist",
-            });
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "Group does not exist"});
         }
+
         await _userRepository.AddUserToGroup(user, group, Roles.Member);
         _userRepository.Update(user);
         var result = await _userRepository.SaveAllAsync();
@@ -130,8 +116,7 @@ public class AccountController : BaseApiController
         {
             return BadRequest(new ResponseDto
             {
-                Status = ResponseStatus.Error,
-                Message = $"Group {group.Name} wasn't added to User {user.UserName}",
+                Status = ResponseStatus.Error, Message = $"Group {group.Name} wasn't added to User {user.UserName}"
             });
         }
 
@@ -147,17 +132,16 @@ public class AccountController : BaseApiController
     {
         if (changePasswordDto.OldPassword == changePasswordDto.NewPassword)
         {
-            Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "New password is identical to current password" });
+            Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error, Message = "New password is identical to current password"
+            });
         }
 
         var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
         if (user == null)
         {
-            return Unauthorized(new ResponseDto
-            {
-                Status = ResponseStatus.Error,
-                Message = "User does not exist",
-            });
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
         }
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
@@ -167,7 +151,7 @@ public class AccountController : BaseApiController
         {
             if (computedHash[i] != user.PasswordHash[i])
             {
-                return Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "Invalid password" });
+                return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "Invalid password"});
             }
         }
 
@@ -177,12 +161,15 @@ public class AccountController : BaseApiController
         user.PasswordSalt = hmacNew.Key;
 
         _userRepository.Update(user);
-        if (!(await _userRepository.SaveAllAsync()))
+        if (!await _userRepository.SaveAllAsync())
         {
-            return Unauthorized(new ResponseDto { Status = ResponseStatus.Error, Message = "Error in changing password" });
+            return Unauthorized(new ResponseDto
+            {
+                Status = ResponseStatus.Error, Message = "Error in changing password"
+            });
         }
-        return Ok(new TokenDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) });
 
+        return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
     [Authorize]
@@ -196,7 +183,7 @@ public class AccountController : BaseApiController
         var user = await _userRepository.GetUserByIdAsync(contextUserId);
         if (user == null)
         {
-            return Unauthorized("User does not exist");
+            return Unauthorized(new ResponseDto {Status = ResponseStatus.Error, Message = "User does not exist"});
         }
 
         user.Removed = true;
@@ -207,6 +194,7 @@ public class AccountController : BaseApiController
         {
             return Ok();
         }
+
         foreach (var group in groups)
         {
             var role = await _userRepository.GetUserRoleInGroup(user.Id, group.Id);
@@ -223,7 +211,7 @@ public class AccountController : BaseApiController
 
         if (await _userRepository.SaveAllAsync())
         {
-            return Ok("Account removed");
+            return Ok(new ResponseDto {Status = ResponseStatus.Success, Message = "Account removed"});
         }
 
         return Unauthorized("Changes was not saved");

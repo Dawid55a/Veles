@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VelesAPI.DbContext;
 using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
@@ -12,20 +11,21 @@ namespace VelesAPI.Controllers;
 public class GroupsController : BaseApiController
 {
     private readonly IChatRepository _chatRepository;
-    private readonly ChatDataContext _context;
     private readonly IGroupRepository _groupRepository;
+    private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
 
-    public GroupsController(ChatDataContext context, IChatRepository chatRepository, IGroupRepository groupRepository, IUserRepository userRepository)
+    public GroupsController(IChatRepository chatRepository, IGroupRepository groupRepository,
+        IUserRepository userRepository, IMapper mapper)
     {
-        _context = context;
         _chatRepository = chatRepository;
         _groupRepository = groupRepository;
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
     // GET: api/Groups
-    [Authorize]
+    /*[Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
     {
@@ -35,7 +35,7 @@ public class GroupsController : BaseApiController
         }
 
         return await _context.Groups.ToListAsync();
-    }
+    }*/
 
     // GET: api/Groups/Name/Karo
     [Authorize]
@@ -48,7 +48,7 @@ public class GroupsController : BaseApiController
             return NotFound();
         }
 
-        return groups.ToList();
+        return Ok(_mapper.Map<IEnumerable<GroupDto>>(groups));
     }
 
     // GET: api/Groups/User/Karol
@@ -62,7 +62,7 @@ public class GroupsController : BaseApiController
             return NotFound();
         }
 
-        return groups.ToList();
+        return Ok(_mapper.Map<IEnumerable<GroupDto>>(groups));
     }
 
     // GET: api/Groups/5
@@ -70,7 +70,6 @@ public class GroupsController : BaseApiController
     [HttpGet("{id}")]
     public async Task<ActionResult<Group>> GetGroup(int id)
     {
-
         var group = await _groupRepository.GetGroupWithIdAsync(id);
 
         if (group == null)
@@ -119,22 +118,23 @@ public class GroupsController : BaseApiController
         var existingGroup = await _groupRepository.GetGroupWithNameAsync(createGroupDto.Name);
         if (existingGroup != null)
         {
-            return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "Group already exists" });
+            return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "Group already exists"});
         }
+
         var group = new Group
         {
-            Name = createGroupDto.Name, Connections = new List<Connection>(), UserGroups = new List<UserGroup>(),
+            Name = createGroupDto.Name, Connections = new List<Connection>(), UserGroups = new List<UserGroup>()
         };
 
         await _groupRepository.AddGroupAsync(group);
 
-        var user = await  _userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await _userRepository.GetUserByIdAsync(User.GetUserId());
 
         await _userRepository.AddUserToGroup(user!, group, Roles.Owner);
 
         if (await _groupRepository.SaveAllAsync())
         {
-            return CreatedAtAction(nameof(GetGroup), new { id = group.Id }, group);
+            return CreatedAtAction(nameof(GetGroup), new {id = group.Id}, group);
         }
 
         return Problem("Owner was not properly added to group");
@@ -160,10 +160,5 @@ public class GroupsController : BaseApiController
         }
 
         return BadRequest("Group was not removed");
-    }
-
-    private bool GroupExists(int id)
-    {
-        return (_context.Groups?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }

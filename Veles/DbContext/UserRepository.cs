@@ -35,12 +35,15 @@ public class UserRepository : IUserRepository
         {
             throw new ArgumentException("This role doesn't exist, check Roles class for correct roles");
         }
-        var ug = new UserGroup() {User = user, Group = group, UserGroupNick = user.UserName, Role = role};
-        var userGroup = await _context.UserGroups.FirstOrDefaultAsync(ug1 => ug1.User.Equals(user) && ug1.Group.Equals(group));
+
+        var ug = new UserGroup {User = user, Group = group, UserGroupNick = user.UserName, Role = role};
+        var userGroup =
+            await _context.UserGroups.FirstOrDefaultAsync(ug1 => ug1.User.Equals(user) && ug1.Group.Equals(group));
         if (userGroup != null)
         {
             return;
         }
+
         var userNew = await _context.Users.Include(u => u.UserGroups).Where(u => u.Equals(user)).FirstAsync();
         //var groupNew = await _context.Groups.Include(g => g.UserGroups).Where(g => g.Equals(group)).FirstAsync();
         userNew.UserGroups.Add(ug);
@@ -54,6 +57,7 @@ public class UserRepository : IUserRepository
         {
             throw new NullReferenceException("UserGroup relation does not exist");
         }
+
         nickOld.UserGroupNick = nick;
         _context.UserGroups.Update(nickOld);
     }
@@ -71,6 +75,7 @@ public class UserRepository : IUserRepository
         {
             throw new NullReferenceException("User role is null or group/user does not exist");
         }
+
         return result.Role;
     }
 
@@ -81,7 +86,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
-        return await _context.Users.Include(u=> u.UserGroups).SingleOrDefaultAsync(u => u.Id == id);
+        return await _context.Users.Include(u => u.UserGroups).SingleOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

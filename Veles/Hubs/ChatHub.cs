@@ -76,6 +76,7 @@ public class ChatHub : Hub
         {
             throw new HubException("Message wasn't saved");
         }
+
         //TODO: check what is returned by mapping
         await Clients.Group(connectionGroup.Name).SendAsync("NewMessage", _mapper.Map<NewMessageDto>(message));
     }

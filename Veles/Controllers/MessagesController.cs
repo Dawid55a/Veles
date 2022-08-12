@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using VelesAPI.DbContext;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
@@ -48,6 +47,7 @@ public class MessagesController : BaseApiController
         {
             return BadRequest("Group does not exist");
         }
+
         var messages = await _chatRepository.GetMessageThreadAsync(group);
         if (messages == null)
         {

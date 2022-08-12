@@ -24,8 +24,14 @@ public class AutoMapperProfiles : Profile
                             ug.UserId == src.User.Id && ug.GroupId == src.Group.Id)!.UserGroupNick));
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.Nicks,
-            opt => opt
-                .MapFrom(src => src.GetUserNicks()));
-
+                opt => opt
+                    .MapFrom(src => src.GetUserNicks()));
+        CreateMap<Group, GroupDto>()
+            .ForMember(dest => dest.Owner,
+                opt => opt
+                    .MapFrom(
+                        src =>
+                            src.UserGroups.FirstOrDefault(ug => ug.GroupId == src.Id && ug.Role == Roles.Owner)!.User
+                                .UserName));
     }
 }

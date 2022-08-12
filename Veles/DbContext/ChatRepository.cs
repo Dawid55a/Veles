@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
 
