@@ -83,7 +83,7 @@ namespace Veles_Application.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Something goes wrong", "Feiled", 
+                MessageBox.Show("Something goes wrong", "Failed", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }

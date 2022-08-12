@@ -205,7 +205,7 @@ namespace Veles_Application.ViewModels
                     ChangeNickInGroupDto changeNick = new ChangeNickInGroupDto()
                     {
                         GroupId = SelectedGroup.Id,
-                        Nick = Properties.Settings.Default.Username
+                        Nick = _newNick
                     };
 
                     var result = RestApiMethods.PutCallAuthorization("Users/change_nick", changeNick);

@@ -30,7 +30,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel >
-                        <TextBlock  Text="{Binding Path=User}" FontWeight="Bold"/>
+                        <TextBlock  Text="{Binding Path=Nick}" FontWeight="Bold"/>
                         <TextBlock  Text="{Binding Path=Text}" TextWrapping="WrapWithOverflow" />
                         <TextBlock  Text="{Binding Path=CreatedDate}"/>
                     </StackPanel>

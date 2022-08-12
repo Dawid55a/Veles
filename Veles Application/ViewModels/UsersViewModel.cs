@@ -9,6 +9,7 @@ using System.Windows;
 using Veles_Application.Models;
 using Veles_Application.WepAPI;
 using VelesLibrary.DbModels;
+using VelesLibrary.DTOs;
 
 namespace Veles_Application.ViewModels
 {
