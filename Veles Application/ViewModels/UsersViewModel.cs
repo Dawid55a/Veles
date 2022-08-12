@@ -14,7 +14,7 @@ namespace Veles_Application.ViewModels
 {
     public class UsersViewModel : BaseViewModel
     {
-        public ObservableCollection<User> UsersList { get; set; }
+        public ObservableCollection<string> UsersList { get; set; }
 
         public UsersViewModel(Models.Group group)
         {
@@ -22,9 +22,9 @@ namespace Veles_Application.ViewModels
         }
 
 
-        public async Task<ObservableCollection<User>> GetUsersAsync(Models.Group group)
+        public async Task<ObservableCollection<string>> GetUsersAsync(Models.Group group)
         {
-            ObservableCollection<User> users = new ObservableCollection<User>(); ;
+            ObservableCollection<string> users = new ObservableCollection<string>(); ;
 
             var result = RestApiMethods.GetCallAuthorization("Users/Group/" + group.Name);
 
@@ -32,7 +32,7 @@ namespace Veles_Application.ViewModels
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
 
-                users = JsonConvert.DeserializeObject<ObservableCollection<User>>(jsonResult);
+                users = JsonConvert.DeserializeObject<ObservableCollection<string>>(jsonResult);
                 return users;
             }
             else

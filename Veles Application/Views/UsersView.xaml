@@ -18,7 +18,7 @@
         <ListView x:Name="GroupList" ItemsSource="{Binding UsersList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Path=UserName}"/>
+                    <TextBlock Text="{Binding }"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

@@ -11,7 +11,7 @@
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition MaxHeight="100" MinHeight="50"/>
         </Grid.RowDefinitions>
 
         <!--MESSAGE LIST-->
