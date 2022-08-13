@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VelesAPI.DbContext;
 using VelesAPI.Extensions;
 using VelesAPI.Interfaces;
 using VelesLibrary.DbModels;
@@ -11,15 +10,12 @@ namespace VelesAPI.Controllers;
 
 public class UsersController : BaseApiController
 {
-    private readonly ChatDataContext _context;
     private readonly IGroupRepository _groupRepository;
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
 
-    public UsersController(ChatDataContext context, IUserRepository userRepository, IGroupRepository groupRepository,
-        IMapper mapper)
+    public UsersController(IUserRepository userRepository, IGroupRepository groupRepository, IMapper mapper)
     {
-        _context = context;
         _userRepository = userRepository;
         _groupRepository = groupRepository;
         _mapper = mapper;
@@ -83,6 +79,14 @@ public class UsersController : BaseApiController
     public async Task<ActionResult> ChangeUserNameInGroup(ChangeNickInGroupDto changeNickInGroupDto)
     {
         var userId = User.GetUserId();
+        switch (changeNickInGroupDto.Nick.Length)
+        {
+            case > 20:
+                return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "Nick too long"});
+            case < 3:
+                return BadRequest(new ResponseDto {Status = ResponseStatus.Error, Message = "Nick too short"});
+        }
+
         await _userRepository.ChangeNickInUserGroup(userId, changeNickInGroupDto.GroupId, changeNickInGroupDto.Nick);
         if (!await _userRepository.SaveAllAsync())
         {
@@ -141,9 +145,4 @@ public class UsersController : BaseApiController
 
         return NoContent();
     }*/
-
-    private bool UserExists(int id)
-    {
-        return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
-    }
 }

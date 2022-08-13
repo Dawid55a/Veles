@@ -159,7 +159,13 @@ public class AccountController : BaseApiController
                 Status = ResponseStatus.Error, Message = "New password is identical to current password"
             });
         }
-
+        switch (changePasswordDto.NewPassword.Length)
+        {
+            case > 20:
+                return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "Password too long" });
+            case < 6:
+                return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "Password too short" });
+        }
         var user = await _userRepository.GetUserByUsernameAsync(changePasswordDto.UserName);
         if (user == null)
         {
