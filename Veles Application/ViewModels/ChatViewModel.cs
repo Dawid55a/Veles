@@ -95,16 +95,19 @@ namespace Veles_Application.ViewModels
             if(obj != null)UserMessage = obj.ToString();
             try
             {
-                var createMessageDto = new CreateMessageDto()
+                if (userMessage != String.Empty)
                 {
-                    Content = UserMessage,
-                    Sender = Properties.Settings.Default.Username,
-                    Created = DateTime.UtcNow,
-                    GroupName = group.Name
-                };
-                await connection.InvokeAsync("SendMessage", createMessageDto);
+                    var createMessageDto = new CreateMessageDto()
+                    {
+                        Content = UserMessage,
+                        Sender = Properties.Settings.Default.Username,
+                        Created = DateTime.UtcNow,
+                        GroupName = group.Name
+                    };
+                    await connection.InvokeAsync("SendMessage", createMessageDto);
 
-                UserMessage = "";
+                    UserMessage = "";
+                }
             }
             catch (Exception ex)
             {
@@ -137,7 +140,7 @@ namespace Veles_Application.ViewModels
         {
             connection.On<NewMessageDto>("NewMessage", (newMessageDto) =>
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(()=>
                 {
                     if (newMessageDto.Group == group.Name)
                     {

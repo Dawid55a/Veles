@@ -125,16 +125,17 @@ namespace Veles_Application.ViewModels
             }   
             else if (parameter != null)
             {
-                ChatViewModel chatView = new ChatViewModel(parameter as GroupDto);
-                chatView.OpenConnectionAsync();
-                MidViewModel = chatView;
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    ChatViewModel chatView = new ChatViewModel(parameter as GroupDto);
+                    chatView.OpenConnectionAsync();
+                    MidViewModel = chatView;
 
+                });
+                
                 RightViewModel = new UsersViewModel(parameter as GroupDto);
-
-
-                //MidViewModel = new ChatViewModel(parameter as Group)
+                
             }
-            //else if (parameter.ToString() == "Options") needs implementation
 
         }
 
