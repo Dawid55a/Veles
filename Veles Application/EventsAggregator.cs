@@ -22,11 +22,7 @@ namespace Veles_Application
                 OnPageTransmitted(message);
         }
 
-        
-
         public static Action<object> OnMessageTransmitted = null!;
         public static Action<BaseViewModel> OnPageTransmitted = null!;
-       
-
     }
 }

@@ -16,13 +16,35 @@ namespace Veles_Application.ViewModels
 {
     public class GroupViewModel : BaseViewModel
     {
-        public ObservableCollection<GroupDto> GroupList { get; set; }
+        private ObservableCollection<GroupDto> _groupList;
+
+        public ObservableCollection<GroupDto> GroupList 
+        {
+            get { return _groupList; }
+            set 
+            { 
+                _groupList = value; 
+                OnPropertyChanged(nameof(GroupList));
+            }
+        }
 
         public ICommand ChangeGroupCommand { get; }
         public GroupViewModel()
         {
             GroupList = GetGroupsAsync().Result;
             ChangeGroupCommand = new ViewModelCommand(ExecuteGroupChange);
+            EventsAggregator.OnMessageTransmitted += OnMessageRecived;
+        }
+
+        private void OnMessageRecived(object obj)
+        {
+            if(obj != null && obj is string)
+            {
+                if(obj.ToString() == "Delete")
+                {
+                    GroupList = GetGroupsAsync().Result;
+                }
+            }
         }
 
         //Trigger event in MainViewModel when group has changed
