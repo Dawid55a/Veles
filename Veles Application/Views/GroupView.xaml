@@ -12,6 +12,7 @@
         <viewModel:GroupViewModel/>
     </UserControl.DataContext>
     <Grid>
+        <!--Group List-->
         <ListView x:Name="GroupList" ItemsSource="{Binding GroupList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -19,6 +20,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
 
+            <!--Trigger event when user click group-->
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseLeftButtonUp">
                     <i:InvokeCommandAction Command="{Binding ChangeGroupCommand}" CommandParameter="{Binding ElementName=GroupList,Path=SelectedItem}"/>

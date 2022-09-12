@@ -13,7 +13,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -32,23 +31,7 @@
                 <Button Grid.Column="1" Content="Options" Command="{Binding ChangePanelCommand}" CommandParameter="Settings"/>
             </Grid>
 
-            <!--Group List-->
-            <!--
-            <ListView x:Name="GroupList" Grid.Row="1" ItemsSource="{Binding GroupList}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Path=Name}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding ChangePanelCommand}" CommandParameter="{Binding ElementName=GroupList,Path=SelectedItem}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ListView>
-            -->
-
+            <!--Search or create-->
             <ContentControl Grid.Row="1" Content="{Binding LeftViewModel}"/>
 
             <Grid Grid.Row="2">
