@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:Veles_Application.ViewModels"
         xmlns:local="clr-namespace:Veles_Application.Views"
-        mc:Ignorable="d"
-        Title="WindowView" Height="450" Width="800">
+        mc:Ignorable="d" Icon="Icon.ico"
+        Title="Veles" Height="450" Width="800">
     <Grid>
         <ContentControl Content="{Binding PageViewModel}"/>
     </Grid>

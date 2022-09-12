@@ -22,8 +22,8 @@ namespace Veles_Application.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         //For login
-        private string _username = "Karol";
-        private string _password = "1234";
+        private string _username = "";
+        private string _password = "";
         private string _errorMessage;
 
         //For registration
