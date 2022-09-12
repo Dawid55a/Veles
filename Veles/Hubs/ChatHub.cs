@@ -24,7 +24,10 @@ public class ChatHub : Hub
         _userRepository = userRepository;
         _mapper = mapper;
     }
-
+    /// <summary>
+    /// On connecting to hub add connecting user to groupHubs he is member
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     public override async Task OnConnectedAsync()
     {
@@ -40,17 +43,27 @@ public class ChatHub : Hub
             await AddToMessageGroup(group);
         }
     }
-
+    /// <summary>
+    /// Starts OnDisconnect actions
+    /// </summary>
+    /// <param name="exception"></param>
+    /// <returns></returns>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         await RemoveFromMessageGroup(Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
 
+    /// <summary>
+    /// Sends message to other users in group
+    /// </summary>
+    /// <param name="createMessageDto"></param>
+    /// <returns></returns>
+    /// <exception cref="HubException"></exception>
     [Authorize]
     public async Task SendMessage(CreateMessageDto createMessageDto)
     {
-        var sender = await _userRepository.GetUserByIdAsync(Context.User.GetUserId());
+        var sender = await _userRepository.GetUserByIdAsync(Context.User!.GetUserId());
         if (sender == null)
         {
             throw new HubException("User doesn't exist");
@@ -77,10 +90,14 @@ public class ChatHub : Hub
             throw new HubException("Message wasn't saved");
         }
 
-        //TODO: check what is returned by mapping
         await Clients.Group(connectionGroup.Name).SendAsync("NewMessage", _mapper.Map<NewMessageDto>(message));
     }
-
+    /// <summary>
+    /// Adding connected user to hubs groups
+    /// </summary>
+    /// <param name="group"></param>
+    /// <returns></returns>
+    /// <exception cref="HubException"></exception>
     private async Task AddToMessageGroup(Group group)
     {
         var connection = new Connection(Context.ConnectionId, group);
@@ -95,6 +112,12 @@ public class ChatHub : Hub
         throw new HubException("Failed to join group");
     }
 
+    /// <summary>
+    /// Removing connections from database and hubs based on connectionId
+    /// </summary>
+    /// <param name="connectionString"></param>
+    /// <returns></returns>
+    /// <exception cref="HubException"></exception>
     private async Task RemoveFromMessageGroup(string connectionString)
     {
         var connections = await _groupRepository.GetConnectionsAsync(connectionString);

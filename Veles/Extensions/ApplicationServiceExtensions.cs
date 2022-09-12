@@ -17,16 +17,10 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        //builder.Services.AddEndpointsApiExplorer();
-        //builder.Services.AddSwaggerGen();
 
         services.AddDbContext<ChatDataContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("ChatDb"));
-            options.EnableDetailedErrors();
-            options.EnableSensitiveDataLogging();
-            //options.ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
         });
 
         return services;

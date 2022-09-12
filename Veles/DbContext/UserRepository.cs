@@ -45,7 +45,6 @@ public class UserRepository : IUserRepository
         }
 
         var userNew = await _context.Users.Include(u => u.UserGroups).Where(u => u.Equals(user)).FirstAsync();
-        //var groupNew = await _context.Groups.Include(g => g.UserGroups).Where(g => g.Equals(group)).FirstAsync();
         userNew.UserGroups.Add(ug);
         group.UserGroups.Add(ug);
     }

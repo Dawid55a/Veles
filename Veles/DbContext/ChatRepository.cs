@@ -46,7 +46,6 @@ public class ChatRepository : IChatRepository
 
     public async Task<IEnumerable<Group>?> GetGroupsForUserIdIncludingConnectionsAsync(int id)
     {
-        //TODO: Check if works
         var userWithGroups = await _context.Users
             .Include(u => u.UserGroups)
             .ThenInclude(ug => ug.Group)
