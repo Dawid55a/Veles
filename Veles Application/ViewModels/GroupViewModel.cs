@@ -22,8 +22,6 @@ namespace Veles_Application.ViewModels
         public GroupViewModel()
         {
             GroupList = GetGroupsAsync().Result;
-
-
             ChangeGroupCommand = new ViewModelCommand(ExecuteGroupChange);
         }
 
@@ -38,12 +36,11 @@ namespace Veles_Application.ViewModels
         {
             ObservableCollection<GroupDto> groups = new ObservableCollection<GroupDto>(); ;
 
-            var result = RestApiMethods.GetCallAuthorization("Groups/User/" + Properties.Settings.Default.Username);
+            var result = RestApiMethods.GetCallAuthorization("Groups/User/" + Properties.Settings.Default.Username);//connect to api
 
             if (result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
-                
                 groups = JsonConvert.DeserializeObject<ObservableCollection<GroupDto>>(jsonResult);
                 return groups;
             }
@@ -53,6 +50,5 @@ namespace Veles_Application.ViewModels
                 return groups;
             }
         }
-
     }
 }

@@ -15,7 +15,6 @@
         </Grid.RowDefinitions>
 
         <!--MESSAGE LIST-->
-
         <ListView IsSynchronizedWithCurrentItem="True" SelectionChanged="ListView_SelectionChanged" ScrollViewer.CanContentScroll="False" 
                   Grid.Row="0" ItemsSource="{Binding MessageList}" 
                   SelectedItem="{Binding SelectedMessage}"
@@ -39,6 +38,7 @@
            
         </ListView>
 
+        <!--Text editor-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>

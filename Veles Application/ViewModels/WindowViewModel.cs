@@ -23,9 +23,10 @@ namespace Veles_Application.ViewModels
 
         public WindowViewModel()
         {
-            EventsAggregator.OnPageTransmitted += OnPageRecived;
+            EventsAggregator.OnPageTransmitted += OnPageRecived;//recive event
         }
 
+        //change page to another
         private void OnPageRecived(BaseViewModel page)
         {
             Task.Run(() =>

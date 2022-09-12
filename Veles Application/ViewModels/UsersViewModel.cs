@@ -25,14 +25,15 @@ namespace Veles_Application.ViewModels
         public UsersViewModel(GroupDto group)
         {
             this.group = group;
-            if (group != null && group.Owner == Properties.Settings.Default.Username)
+            if (group != null && group.Owner == Properties.Settings.Default.Username)//Allow delete group
                 IsOwner = true;
 
-            UsersList = GetUsersAsync().Result;
+            UsersList = GetUsersAsync().Result;//get users
 
             DeleteGroupCommand = new ViewModelCommand(ExecuteDeleteGroup, CanEcecuteDeleteGroup);
         }
 
+        //Delete group
         private void ExecuteDeleteGroup(object obj)
         {
             var result = RestApiMethods.DeleteCallAuthorization("Groups/" + group.Id);
@@ -52,6 +53,7 @@ namespace Veles_Application.ViewModels
 
         }
 
+        //When IsOwner is equal false turn off button Delete group
         private bool CanEcecuteDeleteGroup(object obj)
         {
             if(group != null && group.Owner == Properties.Settings.Default.Username)

@@ -7,6 +7,7 @@ using Veles_Application.ViewModels;
 
 namespace Veles_Application
 {
+    //Sending evants between views
     public static class EventsAggregator
     {
         public static void SendMessage(object message)

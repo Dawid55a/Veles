@@ -110,7 +110,6 @@ namespace Veles_Application.ViewModels
 
         private bool CanExecuteLoginCommand(object obj)
         {
-            //add validation if need
             return true;
         }
 
@@ -168,7 +167,7 @@ namespace Veles_Application.ViewModels
             registerDto.Password = RegistrationPassword;
             registerDto.Email = RegistrationEmail;
 
-            var result = await Task.Run(() => RestApiMethods.PostCall("Account/Register", registerDto));
+            var result = await Task.Run(() => RestApiMethods.PostCall("Account/Register", registerDto));//connect to api
             if(result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Created)
             {
                 //Read json

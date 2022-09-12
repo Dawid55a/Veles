@@ -63,12 +63,13 @@ namespace Veles_Application.ViewModels
         public ChatViewModel(GroupDto group)
         {
             this.group = group;
-            MessageList = GetMessageListAsync().Result;
-            //SelectedMessage = MessageList.LastOrDefault();
+            MessageList = GetMessageListAsync().Result;//get all message
+     
             CollectionViewSource.GetDefaultView(messageList).MoveCurrentTo(MessageList.LastOrDefault());
 
             SendMessageCommand = new ViewModelCommand(ExecuteSend);
 
+            //establishment connection with server via signalR
             connection = new HubConnectionBuilder()
                 .WithUrl("http://localhost:5152/chathub", options =>
                 {
@@ -76,15 +77,12 @@ namespace Veles_Application.ViewModels
                 })
                 .Build();
 
+            //close connection with server
             connection.Closed += async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
                 await connection.StartAsync();
             };
-
-            
-            
-            //OpenConnectionAsync();
 
         }
 
@@ -95,6 +93,7 @@ namespace Veles_Application.ViewModels
             if(obj != null)UserMessage = obj.ToString();
             try
             {
+                //prevent to send empty message
                 if (userMessage != String.Empty)
                 {
                     var createMessageDto = new CreateMessageDto()
@@ -104,7 +103,7 @@ namespace Veles_Application.ViewModels
                         Created = DateTime.UtcNow,
                         GroupName = group.Name
                     };
-                    await connection.InvokeAsync("SendMessage", createMessageDto);
+                    await connection.InvokeAsync("SendMessage", createMessageDto);//send message
 
                     UserMessage = "";
                 }
@@ -116,7 +115,7 @@ namespace Veles_Application.ViewModels
                 errorNewMessage.CreatedDate = DateTime.Now;
                 messageList.Add(errorNewMessage);
             }
-            //message.User.
+            
         }
         
 
@@ -124,12 +123,12 @@ namespace Veles_Application.ViewModels
         {
             ObservableCollection<NewMessageDto> messages = new ObservableCollection<NewMessageDto>();
 
-            var result = RestApiMethods.GetCallAuthorization("Messages/Group/"+group.Name);
+            var result = RestApiMethods.GetCallAuthorization("Messages/Group/"+group.Name);//recive message from api
 
             if(result.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;
-                messages = JsonConvert.DeserializeObject<ObservableCollection<NewMessageDto>>(jsonResult);
+                string jsonResult = result.Result.Content.ReadAsStringAsync().Result;//read message
+                messages = JsonConvert.DeserializeObject<ObservableCollection<NewMessageDto>>(jsonResult);//covnvert json to ObservableCollection
             }
 
             return messages;
@@ -138,23 +137,24 @@ namespace Veles_Application.ViewModels
         //Receive message from server
         public async void OpenConnectionAsync()
         {
+            //When connection running trying receive message
             connection.On<NewMessageDto>("NewMessage", (newMessageDto) =>
             {
                 Application.Current.Dispatcher.Invoke(()=>
                 {
+                    //If current group is group from new message
+                    //add message to list
                     if (newMessageDto.Group == group.Name)
                     {
                         MessageList.Add(newMessageDto);
-                        //SelectedMessage = newMessageDto;
-                        CollectionViewSource.GetDefaultView(messageList).MoveCurrentTo(newMessageDto);
+                        CollectionViewSource.GetDefaultView(messageList).MoveCurrentTo(newMessageDto);                   
                     }
-                    
                 });
             });
 
             try
             {
-                await connection.StartAsync();
+                await connection.StartAsync();//start connection with server
                 
             }
             catch (Exception ex)
@@ -162,9 +162,8 @@ namespace Veles_Application.ViewModels
                 NewMessageDto newMessageDto = new NewMessageDto();
                 newMessageDto.Text = ex.Message;
                 newMessageDto.CreatedDate = DateTime.Now;
-                messageList.Add(newMessageDto);
+                messageList.Add(newMessageDto);//add error message
             }
         }
-        //public ChatViewModel
     }
 }

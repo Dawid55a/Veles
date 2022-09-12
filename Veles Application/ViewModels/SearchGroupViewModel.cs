@@ -18,7 +18,6 @@ namespace Veles_Application.ViewModels
     {
         private string _searchName = "";
         
-
         public string SearchName
         {
             get { return _searchName; }
@@ -91,6 +90,8 @@ namespace Veles_Application.ViewModels
 
             
         }
+
+        //Search group with similar names
         public async Task<ObservableCollection<GroupDto>> GetGroupLikeAsync()
         {
             ObservableCollection<GroupDto> groups = new ObservableCollection<GroupDto>(); ;

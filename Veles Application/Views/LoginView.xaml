@@ -47,11 +47,7 @@
 
             </Grid>
 
-
-
             <Button Command="{Binding LoginCommand}" Content="Login" Grid.Row="3"/>
-
-
         </Grid>
 
         <!--Registration-->
@@ -87,7 +83,6 @@
                 <TextBlock Text="Password" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
                 <components:BindablePasswordBox  Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" 
                                              Password="{Binding RegistrationPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-
             </Grid>
 
             <!--Email-->
@@ -100,7 +95,6 @@
                 <TextBlock  Text="Email" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"/>
                 <TextBox Text="{Binding RegistrationEmail, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="100" Height="25" HorizontalAlignment="Left" VerticalAlignment="Center" />
             </Grid>
-
 
             <Button Command="{Binding RegistrationCommand}" Content="Registration" Grid.Row="4"/>
         </Grid>

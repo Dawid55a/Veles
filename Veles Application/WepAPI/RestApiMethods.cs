@@ -63,7 +63,7 @@ namespace Veles_Application.WepAPI
             }
         }
 
-        //GET
+        //GET with Authorization
         public static Task<HttpResponseMessage> GetCallAuthorization(string url)
         {
             try
@@ -89,6 +89,7 @@ namespace Veles_Application.WepAPI
             }
         }
 
+        //Post with Authorization
         public static Task<HttpResponseMessage> PostCallAuthorization<T>(string url, T model) where T : class
         {
             try
@@ -115,6 +116,7 @@ namespace Veles_Application.WepAPI
             }
         }
 
+        //Put with authorization
         public static Task<HttpResponseMessage> PutCallAuthorization<T>(string url, T model) where T : class
         {
             try
@@ -141,6 +143,7 @@ namespace Veles_Application.WepAPI
             }
         }
 
+        //Delete with Authorization
         public static Task<HttpResponseMessage> DeleteCallAuthorization(string url)
         {
             try

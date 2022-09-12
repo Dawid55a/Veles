@@ -5,6 +5,7 @@ using VelesLibrary.DTOs;
 
 namespace Veles_Application.Methods
 {
+    //display alerts
     public class Messages
     {
         public static void BadRequest(string jsonResult)

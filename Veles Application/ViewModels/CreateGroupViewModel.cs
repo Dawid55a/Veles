@@ -39,7 +39,7 @@ namespace Veles_Application.ViewModels
                 Name = CreateGroupName
             };
 
-            var result = RestApiMethods.PostCallAuthorization("Groups", createGroup);
+            var result = RestApiMethods.PostCallAuthorization("Groups", createGroup);//connect to api
 
             if(result.Result.StatusCode == System.Net.HttpStatusCode.OK || result.Result.StatusCode == System.Net.HttpStatusCode.Created)
             {
@@ -52,7 +52,6 @@ namespace Veles_Application.ViewModels
                 Methods.Messages.BadRequest(jsonResult);
             }
 
-            
         }
     }
 }

@@ -26,7 +26,6 @@ namespace Veles_Application.ViewModels
         private bool isSearchClicked = false;
         private bool isCreateClicked = false;
 
-        //public BaseViewModel groupModel = new GroupViewModel();
         private BaseViewModel midViewModel = new HomeViewModel();//set mid panel
         private BaseViewModel leftViewModel = new GroupViewModel();
         private BaseViewModel? rightViewModel;
@@ -87,7 +86,7 @@ namespace Veles_Application.ViewModels
 
             Task.Factory.StartNew(() => 
             {
-                FirstGroupOrDefoultAsync();
+                FirstGroupOrDefaultAsync();
             });
 
             EventsAggregator.OnMessageTransmitted += OnMessageRecived;
@@ -178,7 +177,7 @@ namespace Veles_Application.ViewModels
                 ExecutePanelChange(obj);
             else
             {
-                FirstGroupOrDefoultAsync();
+                FirstGroupOrDefaultAsync();
             }
                 
         }
@@ -209,7 +208,8 @@ namespace Veles_Application.ViewModels
             return groups = new ObservableCollection<GroupDto>();
         }
 
-        private async void FirstGroupOrDefoultAsync()
+        //When find group switch mid view to ChatView, otherwise set view as HomeView
+        private async void FirstGroupOrDefaultAsync()
         {
             ObservableCollection<GroupDto> groups;
             await Task.Run(() =>

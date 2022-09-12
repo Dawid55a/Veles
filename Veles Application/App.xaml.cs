@@ -21,9 +21,6 @@ namespace Veles_Application
         {
             var Window = new WindowView();
             Window.Show();
-            
-            //var mainView = new MainView();
-            //mainView.Show();
         }
     }
 }

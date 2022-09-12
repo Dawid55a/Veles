@@ -79,7 +79,6 @@
         </Grid>
 
         <!--Friend list-->
-        <!--Low piority-->
         <ListView Grid.Column="2" ItemsSource="{Binding GroupList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
