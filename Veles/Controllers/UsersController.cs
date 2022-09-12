@@ -20,11 +20,14 @@ public class UsersController : BaseApiController
         _groupRepository = groupRepository;
         _mapper = mapper;
     }
-
+    /// <summary>
+    /// Get all users
+    /// </summary>
+    /// <returns>List of userDto</returns>
     // GET: api/Users
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         var users = await _userRepository.GetUsersAsync();
         if (users == null)
@@ -34,11 +37,15 @@ public class UsersController : BaseApiController
 
         return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
     }
-
+    /// <summary>
+    /// Get user with id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>UserDto</returns>
     // GET: api/Users/5
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<ActionResult<UserDto>> GetUser(int id)
     {
         var user = await _userRepository.GetUserByIdAsync(id);
 
@@ -49,7 +56,11 @@ public class UsersController : BaseApiController
 
         return Ok(_mapper.Map<UserDto>(user));
     }
-
+    /// <summary>
+    /// Get users from group with name
+    /// </summary>
+    /// <param name="groupName"></param>
+    /// <returns>List of userNames</returns>
     // GET: api/Users/Group/Karols
     [Authorize]
     [HttpGet("Group/{groupName}")]
@@ -73,7 +84,11 @@ public class UsersController : BaseApiController
 
         return Ok(nicks);
     }
-
+    /// <summary>
+    /// Change user nick in group
+    /// </summary>
+    /// <param name="changeNickInGroupDto"></param>
+    /// <returns>ActionResult</returns>
     [Authorize]
     [HttpPut("change_nick")]
     public async Task<ActionResult> ChangeUserNameInGroup(ChangeNickInGroupDto changeNickInGroupDto)
@@ -95,54 +110,4 @@ public class UsersController : BaseApiController
 
         return Ok();
     }
-    // NOT IMPLEMENTED
-    // PUT: api/Users/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    /*[HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(int id, User user)
-    {
-        if (id != user.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(user).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!UserExists(id))
-            {
-                return NotFound();
-            }
-
-            throw;
-        }
-
-        return NoContent();
-    }*/
-
-    // DELETE: api/Users/5
-    /*[HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
-    {
-        if (_context.UserGroups == null)
-        {
-            return NotFound();
-        }
-
-        var user = await _context.UserGroups.FindAsync(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        _context.UserGroups.Remove(user);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }*/
 }

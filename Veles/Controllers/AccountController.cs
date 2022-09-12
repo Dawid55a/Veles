@@ -27,6 +27,11 @@ public class AccountController : BaseApiController
         _chatRepository = chatRepository;
     }
 
+    /// <summary>
+    /// Registering user to application based on registerDto, validating data and returning proper response.
+    /// </summary>
+    /// <param name="registerDto"></param>
+    /// <returns>ActionResult</returns>
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -80,6 +85,11 @@ public class AccountController : BaseApiController
             new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
+    /// <summary>
+    /// Logging to application with loginDto, checking password 
+    /// </summary>
+    /// <param name="loginDto"></param>
+    /// <returns>Token on success otherwise response</returns>
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("login")]
@@ -111,6 +121,11 @@ public class AccountController : BaseApiController
         return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
 
+    /// <summary>
+    /// Adding user authorized with token to message group specified in AddToGroupDto
+    /// </summary>
+    /// <param name="addToGroupDto"></param>
+    /// <returns>ActionResult</returns>
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -144,7 +159,11 @@ public class AccountController : BaseApiController
 
         return Ok();
     }
-
+    /// <summary>
+    /// Changing user password
+    /// </summary>
+    /// <param name="changePasswordDto"></param>
+    /// <returns>ActionResult</returns>
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -198,7 +217,10 @@ public class AccountController : BaseApiController
 
         return Ok(new TokenDto {UserName = user.UserName, Token = _tokenService.CreateToken(user)});
     }
-
+    /// <summary>
+    /// Removing account and every group he owns, changing nick name to removed in all group he is
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -243,13 +265,21 @@ public class AccountController : BaseApiController
 
         return Unauthorized("Changes was not saved");
     }
-
+    /// <summary>
+    /// Check if user with specified user name exist asynchronously
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns>True or False</returns>
     private async Task<bool> UserExists(string username)
     {
         var result = await _userRepository.GetUserByUsernameAsync(username);
         return result != null;
     }
-
+    /// <summary>
+    /// Helper method for validating email
+    /// </summary>
+    /// <param name="email">email string</param>
+    /// <returns>True of False</returns>
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))

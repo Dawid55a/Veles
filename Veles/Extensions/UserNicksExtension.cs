@@ -10,12 +10,7 @@ public static class UserNicksExtension
         var userGroupSelect = user.UserGroups
             .Where(ug => ug.UserId == user.Id)
             .Select(ug => new {ug.GroupId, ug.UserGroupNick});
-        var result = new List<GroupNick>();
-        foreach (var pair in userGroupSelect)
-        {
-            result.Add(new GroupNick(pair.GroupId, pair.UserGroupNick));
-        }
 
-        return result;
+        return userGroupSelect.Select(pair => new GroupNick(pair.GroupId, pair.UserGroupNick)).ToList();
     }
 }

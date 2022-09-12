@@ -19,7 +19,11 @@ public class TokenService : ITokenService
     {
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
     }
-
+    /// <summary>
+    /// Creating string token
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns>string</returns>
     public string CreateToken(User user)
     {
         var claims = new List<Claim>

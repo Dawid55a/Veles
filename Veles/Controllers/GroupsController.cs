@@ -23,11 +23,14 @@ public class GroupsController : BaseApiController
         _userRepository = userRepository;
         _mapper = mapper;
     }
-
+    /// <summary>
+    /// Get all groups
+    /// </summary>
+    /// <returns>List of group</returns>
     // GET: api/Groups
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroups()
     {
         var groups = await _groupRepository.GetGroups();
         if (groups == null)
@@ -37,11 +40,15 @@ public class GroupsController : BaseApiController
 
         return Ok(_mapper.Map<IEnumerable<GroupDto>>(groups));
     }
-
+    /// <summary>
+    /// Get groups based on patter working as Like in database
+    /// </summary>
+    /// <param name="namePattern"></param>
+    /// <returns>List of groups</returns>
     // GET: api/Groups/Name/Karo
     [Authorize]
     [HttpGet("Name/{namePattern}")]
-    public async Task<ActionResult<IEnumerable<Group>>> GetGroupsWithNameLike(string namePattern)
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroupsWithNameLike(string namePattern)
     {
         var groups = await _groupRepository.GetGroupsWithNameLikeAsync(namePattern);
         if (!groups.Any())
@@ -51,11 +58,15 @@ public class GroupsController : BaseApiController
 
         return Ok(_mapper.Map<IEnumerable<GroupDto>>(groups));
     }
-
+    /// <summary>
+    /// Get groups for user using username
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns>List of groupDto</returns>
     // GET: api/Groups/User/Karol
     [Authorize]
     [HttpGet("User/{username}")]
-    public async Task<ActionResult<IEnumerable<Group>>> GetGroupsForUser(string username)
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroupsForUser(string username)
     {
         var groups = await _chatRepository.GetGroupsForUserNameAsync(username);
         if (groups == null)
@@ -65,7 +76,11 @@ public class GroupsController : BaseApiController
 
         return Ok(_mapper.Map<IEnumerable<GroupDto>>(groups));
     }
-
+    /// <summary>
+    /// Get group with id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Group</returns>
     // GET: api/Groups/5
     [Authorize]
     [HttpGet("{id}")]
@@ -80,38 +95,11 @@ public class GroupsController : BaseApiController
 
         return group;
     }
-
-    // PUT: api/Groups/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    /*[HttpPut("{id}")]
-    public async Task<IActionResult> PutGroup(int id, Group group)
-    {
-        if (id != group.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(group).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!GroupExists(id))
-            {
-                return NotFound();
-            }
-
-            throw;
-        }
-
-        return NoContent();
-    }*/
-
-    // POST: api/Groups
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Creating group as specified in createGroupDto and with owner as in passed token
+    /// </summary>
+    /// <param name="createGroupDto"></param>
+    /// <returns>ActionResult</returns>
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<Group>> PostGroup(CreateGroupDto createGroupDto)
@@ -146,13 +134,22 @@ public class GroupsController : BaseApiController
 
         return Problem("Owner was not properly added to group");
     }
-
+    /// <summary>
+    /// Deleting group with specified id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>ActionResult</returns>
     // DELETE: api/Groups/5
     [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGroup(int id)
     {
-        //TODO: check if user is an owner of this group
+        var role = await _userRepository.GetUserRoleInGroup(User.GetUserId(), id);
+        if (role != Roles.Owner)
+        {
+            return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "You are not an owner of this group" });
+        }
+
         var group = await _groupRepository.GetGroupWithIdAsync(id);
         if (group == null)
         {
@@ -166,6 +163,6 @@ public class GroupsController : BaseApiController
             return Ok();
         }
 
-        return BadRequest("Group was not removed");
+        return BadRequest(new ResponseDto { Status = ResponseStatus.Error, Message = "Group was removed" });
     }
 }
